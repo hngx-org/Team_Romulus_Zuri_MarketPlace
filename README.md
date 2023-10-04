@@ -106,7 +106,7 @@ Under any circumstances should you merge a pull request on a specific branch to 
 | test     | Tests                    | Adding missing tests or correcting existing tests                                                           |
 | build    | Builds                   | Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)         |
 | ci       | Continuous Integrations  | Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs) |
-| chore    | Chores                   | Other changes that don't modify, frontend or test files                                                    |
+| chore    | Chores                   | Other changes that don't modify, backend or test files                                                    |
 | revert   | Reverts                  | Reverts a previous commit                                                                                   |
 
 > _Sample Commit Messages_
