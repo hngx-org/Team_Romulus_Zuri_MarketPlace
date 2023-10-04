@@ -48,7 +48,7 @@ Before setting up the project locally, ensure you have the following prerequisit
         pip install -r requirements.txt
 
 
-6. Create a .env file and set SECRET_KEY='yourkeys'
+6. Create a .env file and set neccesary secret keys below:
 
 
 7. Apply migrations to create the database schema:
