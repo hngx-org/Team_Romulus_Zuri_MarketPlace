@@ -54,3 +54,27 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+
+class ProductCategory(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]#defining the valid options for status field
+
+    name = models.CharField(max_length=225)
+    parent_category = models.IntegerField()
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+
+    def __str__(self) -> str:
+        return self.name
+    
+
+class ProductImage(models.Model):
+    id = models.AutoField(primary_key=True)
+    product_id = models.UUIDField(unique=True)
+    url = models.CharField(max_length=255, null=False, blank=False)
+
+    def __str__(self) -> str:
+        return self.url
+
