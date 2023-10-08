@@ -1,5 +1,5 @@
 from django.urls import path, include
-from  .views import SimilarProductView, FilterProductView, GetProductsSubCategories, ProductListByCategoryView, WishlistViewSet
+from  .views import SimilarProductView, FilterProductView, RecommendationView, GetProductsSubCategories, ProductListByCategoryView, WishlistViewSet
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -13,6 +13,7 @@ urlpatterns = [
     path('products/', FilterProductView.as_view(), name='filter_products'),
     path('wishlist/<str:pk>/delete/', WishlistViewSet.as_view({'delete': 'destroy'}), name='wishlist-delete'),
 
-    path('products/<str:category>/<str:subcategory>/', GetProductsSubCategories.as_view(), name='get_products_by_subcategories')
+    path('products/<str:category>/<str:subcategory>/', GetProductsSubCategories.as_view(), name='get_products_by_subcategories'),
 
+    path('recommendations/<int:user_id>/', RecommendationView.as_view(), name='recommendations'),
 ]
