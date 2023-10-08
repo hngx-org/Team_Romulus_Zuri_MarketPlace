@@ -1,13 +1,23 @@
 import uuid
 import random
 from django.core.management.base import BaseCommand
-from MarketPlace.models import Shop, Product, ProductCategory, ProductImage
+import os
+from django.conf import settings
+# if not settings.configured:
+settings.configure()
+# from MarketPlace.models import Shop, Product, ProductCategory, ProductImage
 
 class Command(BaseCommand):
     help = 'Seed database with testing data'
 
     def handle(self, *args, **options):
         # Seed ProductCategory instances
+        if not settings.configured:
+            settings.configure()
+        import django
+        django.setup()
+        from MarketPlace.models import Shop, Product, ProductCategory, ProductImage
+
         categories = ['Electronics', 'Clothing', 'Books', 'Furniture', 'Toys']
         for category_name in categories:
             ProductCategory.objects.create(name=category_name)

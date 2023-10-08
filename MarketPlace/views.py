@@ -8,7 +8,9 @@ import random
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 
-
+class Status(APIView):
+    def get(self, request):
+        return Response({"message": "Up and running"}, status=status.HTTP_200_OK)
 
 class SimilarProductView(APIView):
     @staticmethod
@@ -63,3 +65,10 @@ class GetProductsSubCategories(APIView):
         # Serialize the products
         serializer = ProductSerializer(products, many=True)
         return Response({'products': serializer.data}, status=status.HTTP_200_OK)
+    
+class GetProducts(APIView):
+    def get(self, request):
+        # get all products
+        products = Product.objects.all()
+        serializer = ProductSerializer(products, many=True)
+        return Response({"products": serializer.data}, status=status.HTTP_200_OK)
