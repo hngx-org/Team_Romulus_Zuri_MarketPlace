@@ -6,7 +6,7 @@ from django.urls import path
 from  .views import SimilarProductView, FilterProductView, ProductListByCategoryView
 
 urlpatterns = [
-    path('products/<str:categories>', ProductListByCategoryView.as_view()),
+    path('products/<str:categories>', ProductListByCategoryView.as_view(), name='get_all_products_by_categories'),
     path('similar_products/<uuid:product_id>/', SimilarProductView.as_view(), name='similar-products'),
     path('products/', FilterProductView.as_view(), name='filter_products'),
 

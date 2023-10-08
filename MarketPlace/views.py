@@ -63,8 +63,15 @@ class ProductListByCategoryView(APIView):
         try:
             category = ProductCategory.objects.get(name=categories)
             products = Product.objects.filter(category=category).order_by(sort_by)
+            
+            
+            if not products.exists():
+                # Category exists but has no products, return an empty list
+                return Response([], status=status.HTTP_200_OK)
+                
             serializer = self.serializer_class(products, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except ProductCategory.DoesNotExist:
-            serializer = self.serializer_class([], many=True)  # Assign a default serializer for an empty list
             return Response({'message': 'Category not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+
