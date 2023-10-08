@@ -58,8 +58,8 @@ class Product(models.Model):
 class ProductCategory(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
-        ('approved', 'Approved'),
-        ('rejected', 'Rejected'),
+        ('complete', 'Complete'),
+        ('failed', 'Failed'),
     ]#defining the valid options for status field
 
     name = models.CharField(max_length=225)
