@@ -33,7 +33,7 @@ class Product(models.Model):
     name = models.CharField(max_length=255, null=False)
     description = models.CharField(max_length=255, null=False)
     quantity = models.BigIntegerField(null=False)
-    category = models.IntegerField()
+    category = models.ForeignKey(ProductCategory, on_delete=models.SET_NULL, null=True)
     image_id = models.IntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2, null=False)
     discount_price = models.DecimalField(max_digits=10, decimal_places=2, null=False)
@@ -63,7 +63,7 @@ class ProductCategory(models.Model):
     ]#defining the valid options for status field
 
     name = models.CharField(max_length=225)
-    parent_category = models.IntegerField()
+    parent_category = models.ForeignKey('self', on_delete=models.SET_NULL, null=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
 
     def __str__(self) -> str:
