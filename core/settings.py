@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'MarketPlace',
     'rest_framework_swagger',
-    'drf_yasg',
     'product_view',
 ]
 
