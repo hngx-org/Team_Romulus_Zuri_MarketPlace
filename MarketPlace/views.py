@@ -6,6 +6,7 @@ from .models import Product, ProductCategory
 from .serializers import ProductSerializer
 import random
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 
 
 
@@ -55,13 +56,13 @@ class FilterProductView(APIView):
 
 class GetProductsSubCategories(APIView):
     def get(self, category, subcategory):
-        # Retrieve the category and subcategory objects
+        # Get the products related to the categories n sub categories
         category_obj = get_object_or_404(ProductCategory, name=category)
         subcategory_obj = get_object_or_404(ProductCategory, name=subcategory, parent_category=category_obj)
 
-        # Get products belonging to the specified subcategory
+        # Get products belonging to the provided subcategory
         products = Product.objects.filter(category=subcategory_obj)
 
-        # Serialize the products data as needed
+        # Serialize the products
         serializer = ProductSerializer(products, many=True)
         return Response({'products': serializer.data}, status=status.HTTP_200_OK)
