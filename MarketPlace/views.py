@@ -1,4 +1,4 @@
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -109,3 +109,19 @@ class WishlistViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Wishlist.DoesNotExist:
             return Response({'detail': 'Wishlist item not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+class WishlistProductsView(View):
+    def get(self, request, user_id):
+        wishlist_items = Wishlist.objects.filter(user_id=user_id)
+        wishlist_data = []
+        
+        for item in wishlist_items:
+            data = {
+                'product_id': item.product_id,
+                'created_at': item.created_at,     
+            }
+            wishlist_data.append(data)
+        
+        response_data = {'wishlist': wishlist_data}
+        
+        return JsonResponse(response_data)
