@@ -8,6 +8,10 @@ import random
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 
+from .models import ProductCategory
+
+
+  
 class Status(APIView):
     def get(self, request):
         return Response({"message": "Up and running"}, status=status.HTTP_200_OK)
@@ -53,6 +57,28 @@ class FilterProductView(APIView):
 
         return Response({'products': serializer.data}, status=status.HTTP_200_OK)
 
+class ProductListByCategoryView(APIView):
+    serializer_class = ProductSerializer
+
+    def get(self, request, categories):
+        sort_by = request.query_params.get('sort_by', 'name')
+
+        try:
+            category = ProductCategory.objects.get(name=categories)
+            products = Product.objects.filter(category=category).order_by(sort_by)
+            
+            
+            if not products.exists():
+                # Category exists but has no products, return an empty list
+                return Response([], status=status.HTTP_200_OK)
+                
+            serializer = self.serializer_class(products, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except ProductCategory.DoesNotExist:
+            return Response({'message': 'Category not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+
+
 class GetProductsSubCategories(APIView):
     def get(self, category, subcategory):
         # Get the products related to the categories n sub categories
@@ -72,3 +98,4 @@ class GetProducts(APIView):
         products = Product.objects.all()
         serializer = ProductSerializer(products, many=True)
         return Response({"products": serializer.data}, status=status.HTTP_200_OK)
+
