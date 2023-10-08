@@ -7,7 +7,15 @@ from .serializers import ProductSerializer
 import random
 from django.db.models import Q, Wishlist
 from django.shortcuts import get_object_or_404
+<<<<<<< HEAD
 from django.views import View
+=======
+
+from .models import ProductCategory
+
+
+  
+>>>>>>> 2ada629c1e37e99129e9d80096514783bb1ec078
 
 
 class SimilarProductView(APIView):
@@ -50,6 +58,28 @@ class FilterProductView(APIView):
         serializer = ProductSerializer(products, many=True)
 
         return Response({'products': serializer.data}, status=status.HTTP_200_OK)
+
+class ProductListByCategoryView(APIView):
+    serializer_class = ProductSerializer
+
+    def get(self, request, categories):
+        sort_by = request.query_params.get('sort_by', 'name')
+
+        try:
+            category = ProductCategory.objects.get(name=categories)
+            products = Product.objects.filter(category=category).order_by(sort_by)
+            
+            
+            if not products.exists():
+                # Category exists but has no products, return an empty list
+                return Response([], status=status.HTTP_200_OK)
+                
+            serializer = self.serializer_class(products, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except ProductCategory.DoesNotExist:
+            return Response({'message': 'Category not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+
 
 class GetProductsSubCategories(APIView):
     def get(self, category, subcategory):
