@@ -127,7 +127,7 @@ class UserProductInteraction(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 class WishListItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product_id = models.IntegerField()  # Adjust the field type to match your product ID type (e.g., Figma product ID)
+    products = models.ManyToManyField(Product)
     date_added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

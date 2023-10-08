@@ -11,6 +11,7 @@ import random
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.views import View
+from django.core.exceptions import ObjectDoesNotExist
 
   
 
@@ -127,15 +128,20 @@ class WishlistProductsView(View):
         return JsonResponse(response_data)
 
 class WishlistView(APIView):
-    def post(self, request, product_id):
-        # Retrieve product details (customize this part according to your model)
-        product = get_object_or_404(Product, id=product_id)
+    def post(self, request):
+
+        product_ids = request.data.get("products")
+
+        matching_products = Product.objects.filter(id__in=product_ids)
+        # Retrieve product details 
+        if matching_products.count() != len(product_ids):
+            raise ObjectDoesNotExist("One or more product IDs not found.")
 
         # Add the product to the user's wishlist
-        wishlist_item, created = WishListItem.objects.get_or_create(user=request.user, product_id=product.id)
+        wishlist_item, created = WishListItem.objects.get_or_create(user=request.user, products=matching_products)
 
         if created:
             serializer = WishListItemSerializer(wishlist_item)
-            return Response({'message': 'Product added to wishlist', 'wishlist_item': serializer.data}, status=status.HTTP_201_CREATED)
+            return Response({'message': 'Product(s) added to wishlist', 'wishlist_item': serializer.data}, status=status.HTTP_201_CREATED)
         else:
-            return Response({'message': 'Product already in wishlist'}, status=status.HTTP_200_OK)
+            return Response({'message': 'Product(s) already in wishlist'}, status=status.HTTP_200_OK)
