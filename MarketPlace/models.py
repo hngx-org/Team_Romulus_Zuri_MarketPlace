@@ -43,7 +43,7 @@ class Shop(models.Model):
 
     def __str__(self):
         return self.name
-    
+
 class ProductCategory(models.Model):    
     STATUS_CHOICES = [
         ('pending', 'Pending'),
@@ -58,6 +58,7 @@ class ProductCategory(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
 
 
 class Product(models.Model):
@@ -92,19 +93,6 @@ class Product(models.Model):
 
 
 
-# class ProductCategory(models.Model):
-#     STATUS_CHOICES = [
-#         ('pending', 'Pending'),
-#         ('complete', 'Complete'),
-#         ('failed', 'Failed'),
-#     ]#defining the valid options for status field
-
-#     name = models.CharField(max_length=225)
-#     parent_category_id = models.IntegerField()
-#     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
-
-#     def __str__(self) -> str:
-#         return self.name
     
 
 class ProductImage(models.Model):
