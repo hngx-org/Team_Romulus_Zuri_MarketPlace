@@ -1,9 +1,12 @@
 from django.http import Http404
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Product, ProductCategory
-from .serializers import ProductSerializer
+from .models import Product, ProductCategory, Wishlist
+from .serializers import ProductSerializer, WishlistSerializer
 import random
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
@@ -63,3 +66,23 @@ class GetProductsSubCategories(APIView):
         # Serialize the products
         serializer = ProductSerializer(products, many=True)
         return Response({'products': serializer.data}, status=status.HTTP_200_OK)
+    
+   
+class WishlistViewSet(viewsets.ModelViewSet):
+    queryset = Wishlist.objects.all()
+    serializer_class = WishlistSerializer
+
+    # Custom action to delete a product from the wishlist
+    def destroy(self, request, *args, **kwargs):
+        try:
+            product_id = kwargs.get('pk')
+            wishlist_item = Wishlist.objects.get(product_id=product_id)
+
+            # Check if the user is authorized to delete this item (you may need to add your own logic)
+            # For example, you can check if the user owns the wishlist item.
+
+            # Delete the wishlist item
+            wishlist_item.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Wishlist.DoesNotExist:
+            return Response({'detail': 'Wishlist item not found.'}, status=status.HTTP_404_NOT_FOUND)
