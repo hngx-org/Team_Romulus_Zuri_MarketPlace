@@ -49,7 +49,7 @@ class Product(models.Model):
     name = models.CharField(max_length=255, null=False)
     description = models.CharField(max_length=255, null=False)
     quantity = models.BigIntegerField(null=False)
-    category = models.ForeignKey(ProductCategory, on_delete=models.SET_NULL, null=True)
+    category = models.ForeignKey('ProductCategory', on_delete=models.SET_NULL, null=True)
     image_id = models.IntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2, null=False)
     discount_price = models.DecimalField(max_digits=10, decimal_places=2, null=False)
