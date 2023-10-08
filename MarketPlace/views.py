@@ -5,13 +5,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Product, ProductCategory, Wishlist, UserProfile, UserProductInteraction, WishListItem
-from .serializers import ProductSerializer, WishlistSerializer, WishListItemSerializer
+from .models import Product, ProductCategory, Wishlist, UserProfile, UserProductInteraction
+from .serializers import ProductSerializer, WishlistSerializer
 import random
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.views import View
-from django.core.exceptions import ObjectDoesNotExist
 
   
 
@@ -126,28 +125,3 @@ class WishlistProductsView(View):
         response_data = {'wishlist': wishlist_data}
         
         return JsonResponse(response_data)
-
-class WishlistView(APIView):
-    def post(self, request):
-
-        if not request.data:
-            return Response({'message': '"product_ids" required in the request data'}, status=status.HTTP_401_ERROR)
-
-        product_ids = request.data.get("product_ids")
-
-        if not len(product_ids):
-            return Response({'message': 'Please add a product'})
-        
-        matching_products = Product.objects.filter(id__in=product_ids)
-        # Retrieve product details 
-        if matching_products.count() != len(product_ids):
-            raise ObjectDoesNotExist("One or more product IDs not found.")
-
-        # Add the product to the user's wishlist
-        wishlist_item, created = WishListItem.objects.get_or_create(user=request.user, products=matching_products)
-
-        if created:
-            serializer = WishListItemSerializer(wishlist_item)
-            return Response({'message': 'Product(s) added to wishlist', 'wishlist_item': serializer.data}, status=status.HTTP_201_CREATED)
-        else:
-            return Response({'message': 'Product(s) already in wishlist'}, status=status.HTTP_200_OK)
