@@ -3,6 +3,25 @@ import uuid
 
 
 # Create your models here.
+
+# test user profile for making recommendation
+from django.contrib.auth.models import User
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    age = models.IntegerField()
+    gender = models.CharField(max_length=10) 
+
+
+# test product table for testing the recommendation logic
+# class Product(models.Model):
+#     name = models.CharField(max_length=100)
+#     description = models.TextField()
+#     category = models.CharField(max_length=50)
+#     price = models.DecimalField(max_digits=10, decimal_places=2)
+ 
+
+
 class Shop(models.Model):
     """defines the shop model"""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, null=False)
@@ -96,3 +115,11 @@ class Favorites(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.UUIDField(null=False)
     product_id = models.UUIDField(null=False)
+
+
+# table for implementing the recommendation login
+class UserProductInteraction(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    interaction_type = models.CharField(max_length=10)  # e.g., "viewed," "purchased"
+    timestamp = models.DateTimeField(auto_now_add=True)

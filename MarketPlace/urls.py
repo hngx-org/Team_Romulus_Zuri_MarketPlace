@@ -15,4 +15,5 @@ urlpatterns = [
     path('wishlist/<slug:user_id>/', WishlistProductsView.as_view(), name='get_wishlist_product'),
     path('products/<str:category>/<str:subcategory>/', GetProductsSubCategories.as_view(), name='get_products_by_subcategories')
 
+    #path('recommendations/<int:user_id>/', RecommendationView.as_view(), name='recommendations'),
 ]
