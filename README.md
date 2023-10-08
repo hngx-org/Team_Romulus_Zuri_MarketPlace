@@ -4,9 +4,9 @@
 
 Zuri MarketPlace API 
 
-Live link is at https://example.com/api
+Live link is at https://zuri-marketplace-a7cg4.ondigitalocean.app/api/
 
-Redoc docs at https://example.com/redoc/
+Redoc docs at https://zuri-marketplace-a7cg4.ondigitalocean.app/redoc/
 
 Markdown docs at [DOCUMENTATION.md](Documentation.md)
 
