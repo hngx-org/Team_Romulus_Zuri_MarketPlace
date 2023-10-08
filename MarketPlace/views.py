@@ -82,7 +82,7 @@ class GetProductsSubCategories(APIView):
     def get(self, category, subcategory):
         # Get the products related to the categories n sub categories
         category_obj = get_object_or_404(ProductCategory, name=category)
-        subcategory_obj = get_object_or_404(ProductCategory, name=subcategory, parent_category=category_obj)
+        subcategory_obj = get_object_or_404(ProductCategory, name=subcategory, parent_category_id=category_obj)
 
         # Get products belonging to the provided subcategory
         products = Product.objects.filter(category=subcategory_obj)
