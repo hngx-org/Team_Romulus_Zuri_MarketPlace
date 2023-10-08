@@ -9,14 +9,18 @@ from .serializers import ProductViewSerializer
 class GetLastViewedProducts(APIView):
     @staticmethod
     def get(self, request, user_id):
-        """Check if the user exists."""
-        try:
-            user = User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        """You check if the user exists by using User Model however, 
+        we not currently using User Model so I'd comment it out."""
+        # try:
+        #     user = User.objects.get(id=user_id)
+        # except User.DoesNotExist:
+        #     return Response(status=status.HTTP_404_NOT_FOUND)
 
-        """Get the list of products that the user has recently viewed."""
-        product_views = ProductView.objects.filter(user_id=user_id).order_by('-timestamp')
+        """Get the list of products that the user has recently viewed and also check if user exists."""
+        try:
+            product_views = ProductView.objects.filter(user_id=user_id).order_by('-timestamp')
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
         """If the user has not viewed any products recently, return an empty list."""
         if not product_views.exists():
