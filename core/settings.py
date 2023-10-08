@@ -26,7 +26,7 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*', 'localhost', 'https://zuri-marketplace-a7cg4.ondigitalocean.app', 'https://zuri-marketplace-a7cg4.ondigitalocean.app/api']
 
 
 # Application definition
