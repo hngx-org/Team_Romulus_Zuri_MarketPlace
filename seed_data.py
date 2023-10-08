@@ -29,7 +29,6 @@ class Command(BaseCommand):
             category = random.choice(ProductCategory.objects.all())
             Product.objects.create(
                 id=uuid.uuid4(),
-                user_id=uuid.uuid4(),
                 shop_id=shop,
                 name=f'Product {random.randint(1, 100)}',
                 description=f'Description for Product {random.randint(1, 100)}',
