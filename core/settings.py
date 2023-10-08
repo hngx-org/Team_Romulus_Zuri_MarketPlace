@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'MarketPlace',
     'rest_framework_swagger',
     'product_view',
+    'drf_yasg'
 ]
 
 MIDDLEWARE = [
