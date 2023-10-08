@@ -1,6 +1,7 @@
 from django.db import models
 import uuid
 
+
 # Create your models here.
 class Shop(models.Model):
     """defines the shop model"""
@@ -22,6 +23,21 @@ class Shop(models.Model):
         verbose_name_plural = "Shops"
 
     def __str__(self):
+        return self.name
+    
+class ProductCategory(models.Model):    
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('complete', 'Complete'),
+        ('failed', 'Failed'),
+    ]#defining the valid options for status field
+
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=225)
+    parent_category_id = models.ForeignKey('self', on_delete=models.SET_NULL, null=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+
+    def __str__(self) -> str:
         return self.name
 
 
@@ -54,23 +70,6 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-
-class ProductCategory(models.Model):    
-    STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('complete', 'Complete'),
-        ('failed', 'Failed'),
-    ]#defining the valid options for status field
-
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=225)
-    parent_category_id = models.ForeignKey('self', on_delete=models.SET_NULL, null=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
-
-    def __str__(self) -> str:
-        return self.name
-    
-
 class ProductImage(models.Model):
     id = models.AutoField(primary_key=True)
     product_id = models.UUIDField(unique=True)
@@ -79,3 +78,15 @@ class ProductImage(models.Model):
     def __str__(self) -> str:
         return self.url
 
+class Wishlist(models.Model):
+    id = models.AutoField(primary_key=True)
+    user_id = models.UUIDField()
+    product_id = models.UUIDField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class Favorite(models.Model):
+    id = models.AutoField(primary_key=True)
+    user_id = models.UUIDField(null=False)
+    product_id = models.UUIDField(null=False)
