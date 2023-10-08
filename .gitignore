@@ -5,6 +5,7 @@ __pycache__/
 *$py.class
 staticfiles
 
+
 # C extensions
 *.so
 
@@ -263,3 +264,6 @@ local_settings.py
 
 # production
 settings_production.py
+
+#venv
+MarketPlace/
