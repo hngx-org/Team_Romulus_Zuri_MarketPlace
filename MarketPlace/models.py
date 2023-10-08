@@ -86,7 +86,7 @@ class Wishlist(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
-class Favorite(models.Model):
+class Favorites(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.UUIDField(null=False)
     product_id = models.UUIDField(null=False)
