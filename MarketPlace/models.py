@@ -33,7 +33,7 @@ class Product(models.Model):
     name = models.CharField(max_length=255, null=False)
     description = models.CharField(max_length=255, null=False)
     quantity = models.BigIntegerField(null=False)
-    category = models.IntegerField()
+    category = models.ForeignKey(ProductCategory, on_delete=models.SET_NULL, null=True)
     image_id = models.IntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2, null=False)
     discount_price = models.DecimalField(max_digits=10, decimal_places=2, null=False)
@@ -53,4 +53,28 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ProductCategory(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]#defining the valid options for status field
+
+    name = models.CharField(max_length=225)
+    parent_category = models.ForeignKey('self', on_delete=models.SET_NULL, null=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+
+    def __str__(self) -> str:
+        return self.name
+    
+
+class ProductImage(models.Model):
+    id = models.AutoField(primary_key=True)
+    product_id = models.UUIDField(unique=True)
+    url = models.CharField(max_length=255, null=False, blank=False)
+
+    def __str__(self) -> str:
+        return self.url
 
