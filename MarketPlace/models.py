@@ -70,10 +70,6 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-
-
-    
-
 class ProductImage(models.Model):
     id = models.AutoField(primary_key=True)
     product_id = models.UUIDField(unique=True)
