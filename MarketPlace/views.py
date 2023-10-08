@@ -7,16 +7,9 @@ from .serializers import ProductSerializer
 import random
 from django.db.models import Q, Wishlist
 from django.shortcuts import get_object_or_404
-<<<<<<< HEAD
 from django.views import View
-=======
-
-from .models import ProductCategory
-
 
   
->>>>>>> 2ada629c1e37e99129e9d80096514783bb1ec078
-
 
 class SimilarProductView(APIView):
     @staticmethod
