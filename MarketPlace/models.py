@@ -55,16 +55,15 @@ class Product(models.Model):
         return self.name
 
 
-class ProductCategory(models.Model):    
+class ProductCategory(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
-        ('complete', 'Complete'),
-        ('failed', 'Failed'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
     ]#defining the valid options for status field
 
-    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=225)
-    parent_category_id = models.ForeignKey('self', on_delete=models.SET_NULL, null=True)
+    parent_category = models.ForeignKey('self', on_delete=models.SET_NULL, null=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
 
     def __str__(self) -> str:
