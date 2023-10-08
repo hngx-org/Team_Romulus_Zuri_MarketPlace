@@ -27,9 +27,6 @@ class SimilarProductView(APIView):
 
         serializer = ProductSerializer(recommended_products, many=True)
 
-        return Response({'similar_products': serializer.data}, status=status.HTTP_200_OK)
-
-
         return Response({'products': serializer.data}, status=status.HTTP_200_OK)
 
 class FilterProductView(APIView):
