@@ -130,8 +130,14 @@ class WishlistProductsView(View):
 class WishlistView(APIView):
     def post(self, request):
 
-        product_ids = request.data.get("products")
+        if not request.data:
+            return Response({'message': '"product_ids" required in the request data'}, status=status.HTTP_401_ERROR)
 
+        product_ids = request.data.get("product_ids")
+
+        if not len(product_ids):
+            return Response({'message': 'Please add a product'})
+        
         matching_products = Product.objects.filter(id__in=product_ids)
         # Retrieve product details 
         if matching_products.count() != len(product_ids):
