@@ -1,13 +1,13 @@
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Product, ProductCategory
+from .models import Product, ProductCategory, Wishlist
 from .serializers import ProductSerializer
 import random
-from django.db.models import Q
+from django.db.models import Q, Wishlist
 from django.shortcuts import get_object_or_404
-
+from django.views import View
 
 
 class SimilarProductView(APIView):
@@ -63,3 +63,20 @@ class GetProductsSubCategories(APIView):
         # Serialize the products
         serializer = ProductSerializer(products, many=True)
         return Response({'products': serializer.data}, status=status.HTTP_200_OK)
+
+
+class WishlistProductsView(View):
+    def get(self, request, user_id):
+        wishlist_items = Wishlist.objects.filter(user_id=user_id)
+        wishlist_data = []
+        
+        for item in wishlist_items:
+            data = {
+                'product_id': item.product_id.id,
+                'created_at': item.created_at,     
+            }
+            wishlist_data.append(data)
+        
+        response_data = {'wishlist': wishlist_data}
+        
+        return JsonResponse(response_data)
