@@ -5,8 +5,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Product, ProductCategory, Wishlist, UserProfile, UserProductInteraction
-from .serializers import ProductSerializer, WishlistSerializer
+from .models import Product, ProductCategory, Wishlist, UserProfile, UserProductInteraction, WishListItem
+from .serializers import ProductSerializer, WishlistSerializer, WishListItemSerializer
 import random
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
@@ -125,3 +125,17 @@ class WishlistProductsView(View):
         response_data = {'wishlist': wishlist_data}
         
         return JsonResponse(response_data)
+
+class WishlistView(APIView):
+    def post(self, request, product_id):
+        # Retrieve product details (customize this part according to your model)
+        product = get_object_or_404(Product, id=product_id)
+
+        # Add the product to the user's wishlist
+        wishlist_item, created = WishListItem.objects.get_or_create(user=request.user, product_id=product.id)
+
+        if created:
+            serializer = WishListItemSerializer(wishlist_item)
+            return Response({'message': 'Product added to wishlist', 'wishlist_item': serializer.data}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'message': 'Product already in wishlist'}, status=status.HTTP_200_OK)
