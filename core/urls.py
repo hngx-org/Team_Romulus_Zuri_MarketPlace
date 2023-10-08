@@ -17,7 +17,26 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions
+schema_view = get_schema_view(
+    openapi.Info(
+        title = "Zuri Market Place API", 
+        default_version = "v1",
+        description = "Zuri Marketplace is a place where people who create things like digital items and services can connect with people who want to buy them.",
+        contact = openapi.Contact(email="team_romurus@gmail.com"),
+        license = openapi.License(name="MIT License") 
+        ),
+        public = True,
+        # permission_classes=(permissions.AllowAny,),
+)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-   path('api/', include('MarketPlace.urls'))
+    path('api/', include('MarketPlace.urls')),
+    path('api/', include('product_view.urls')),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+
 ]

@@ -3,6 +3,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+staticfiles
 
 # C extensions
 *.so
@@ -29,6 +30,7 @@ wheels/
 *.egg
 env
 .env
+hngenv
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
