@@ -13,10 +13,9 @@ urlpatterns = [
     path('products/', FilterProductView.as_view(), name='filter_products'),
     path('wishlist/<str:pk>/delete/', WishlistViewSet.as_view({'delete': 'destroy'}), name='wishlist-delete'),
     path('wishlist/<slug:user_id>/', WishlistProductsView.as_view(), name='get_wishlist_product'),
-    path('products/<str:category>/<str:subcategory>/', GetProductsSubCategories.as_view(), name='get_products_by_subcategories')
+    path('products/<str:category>/<str:subcategory>/', GetProductsSubCategories.as_view(), name='get_products_by_subcategories'),
 
     #path('recommendations/<int:user_id>/', RecommendationView.as_view(), name='recommendations'),
-    path('api/products/<str:category>/<str:subcategory>/', GetProductsSubCategories.as_view(), name='get_products_by_subcategories'),
     path('wishlist/', WishlistView.as_view(), name='wishlist'),
     
 ]
