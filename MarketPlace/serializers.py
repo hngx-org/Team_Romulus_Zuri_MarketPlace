@@ -11,3 +11,4 @@ class WishlistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wishlist
         fields = '__all__'
+
