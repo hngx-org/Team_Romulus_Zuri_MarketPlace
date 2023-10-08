@@ -1,7 +1,7 @@
 import uuid
 import random
 from django.core.management.base import BaseCommand
-from MarketPlace.models import Shop, Product, ProductCategory, ProductImage
+from MarketPlace.models import Shop, Product, ProductCategory, ProductImage, Favorites, Wishlist
 
 class Command(BaseCommand):
     help = 'Seed database with testing data'
@@ -49,6 +49,20 @@ class Command(BaseCommand):
             ProductImage.objects.create(
                 product_id=product.id,
                 url=f'/path/to/product_images/{random.randint(1, 10)}.jpg',
+            )
+
+        # Seed Wishlist instances
+        for _ in range(5):
+            Wishlist.objects.create(
+                user_id=uuid.uuid4(),
+                product_id=uuid.uuid4()
+            )
+
+        # Seed Favorites instances
+        for _ in range(3):
+            Favorites.objects.create(
+                user_id=uuid.uuid4(),
+                product_id=uuid.uuid4()
             )
 
         self.stdout.write(self.style.SUCCESS('Successfully seeded database with testing data.'))
