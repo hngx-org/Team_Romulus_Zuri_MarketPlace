@@ -2,10 +2,11 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Product
+from .models import Product, ProductCategory
 from .serializers import ProductSerializer
 import random
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 
 from .models import ProductCategory
 
@@ -30,8 +31,8 @@ class SimilarProductView(APIView):
 
         serializer = ProductSerializer(recommended_products, many=True)
 
-        return Response({'similar_products': serializer.data}, status=status.HTTP_200_OK)
-    
+        return Response({'products': serializer.data}, status=status.HTTP_200_OK)
+
 class FilterProductView(APIView):
     def get(self, request):
         # Parameters from request
@@ -74,4 +75,18 @@ class ProductListByCategoryView(APIView):
         except ProductCategory.DoesNotExist:
             return Response({'message': 'Category not found.'}, status=status.HTTP_404_NOT_FOUND)
         
+
+
+class GetProductsSubCategories(APIView):
+    def get(self, category, subcategory):
+        # Get the products related to the categories n sub categories
+        category_obj = get_object_or_404(ProductCategory, name=category)
+        subcategory_obj = get_object_or_404(ProductCategory, name=subcategory, parent_category=category_obj)
+
+        # Get products belonging to the provided subcategory
+        products = Product.objects.filter(category=subcategory_obj)
+
+        # Serialize the products
+        serializer = ProductSerializer(products, many=True)
+        return Response({'products': serializer.data}, status=status.HTTP_200_OK)
 
