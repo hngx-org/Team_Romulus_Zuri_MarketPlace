@@ -15,7 +15,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 class Status(APIView):
     def get(request):
-        return Response({"Message": "API Endpoint server is Running"}, status=status.HTTP_200_OK
+        return Response({"Message": "API Endpoint server is Running"}, status=status.HTTP_200_OK)
 
 
 class SimilarProductView(APIView):
