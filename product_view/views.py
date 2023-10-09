@@ -4,24 +4,20 @@ from rest_framework.views import APIView
 from rest_framework import status
 
 from .models import ProductView
+from MarketPlace.models import User
 from .serializers import ProductViewSerializer
 
 class GetLastViewedProducts(APIView):
     @staticmethod
-    def get(self, request, user_id):
-        """You can check if the user exists by using User Model 
-        however, since I'd to comment it out since we're not making 
-        use of User Model at the moment."""
-        # try:
-        #     user = User.objects.get(id=user_id)
-        # except User.DoesNotExist:
-        #     return Response(status=status.HTTP_404_NOT_FOUND)
+    def get(self, user_id):
+        """Check if user exist."""
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
         """Get the list of products that the user has recently viewed and also check if user exists."""
-        try:
-            product_views = ProductView.objects.filter(user_id=user_id).order_by('-timestamp')
-        except:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        product_views = ProductView.objects.filter(user_id=user_id).order_by('-timestamp')
 
         """If the user has not viewed any products recently, return an empty list."""
         if not product_views.exists():

@@ -5,6 +5,7 @@ __pycache__/
 *$py.class
 staticfiles
 
+
 # C extensions
 *.so
 
@@ -112,16 +113,16 @@ myenv/
 
 Pipfile
 .DS_Store
-*.sqlite3
+# *.sqlite3
 *.pyc
 *.db
 *.pid
 .zip
 # django migrations 
-**/migrations/**
-!**/migrations
-!**/migrations/__init__.py
-node_modules
+# **/migrations/**
+# !**/migrations
+# !**/migrations/__init__.py
+# node_modules
 
 #custom folder
 BK/
@@ -242,16 +243,16 @@ myenv/
 
 Pipfile
 .DS_Store
-*.sqlite3
+# *.sqlite3
 *.pyc
 *.db
 *.pid
 .zip
 # django migrations 
-**/migrations/**
-!**/migrations
-!**/migrations/__init__.py
-node_modules
+# **/migrations/**
+# !**/migrations
+# !**/migrations/__init__.py
+# node_modules
 
 #custom folder
 BK/
@@ -263,3 +264,5 @@ local_settings.py
 
 # production
 settings_production.py
+
+#venv
