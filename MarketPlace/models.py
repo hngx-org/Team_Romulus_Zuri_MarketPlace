@@ -42,7 +42,7 @@ class User(models.Model):
     
     class Meta:
         """defines the metadata for the product model"""
-        manage = False
+        managed = False
         db_table = "user"
         verbose_name_plural = "Users"
 
@@ -81,7 +81,7 @@ class Shop(models.Model):
 
     class Meta:
         """defines the metadata for the shop model"""
-        manage = False
+        managed = False
         db_table = "shop"
         verbose_name_plural = "Shops"
 
@@ -103,7 +103,7 @@ class ProductCategory(models.Model):
     
     class Meta:
         """defines the metadata for the product model"""
-        manage = False
+        managed = False
         db_table = "product_category"
         verbose_name_plural = "ProductCategories"
 
@@ -123,7 +123,7 @@ class UserProductRating(models.Model):
     
     class Meta:
         """defines the metadata for the product model"""
-        manage = False
+        managed = False
         db_table = "user_product_rating"
         verbose_name_plural = "UserProductRatings"
 
@@ -162,7 +162,7 @@ class Product(models.Model):
 
     class Meta:
         """defines the metadata for the product model"""
-        manage = False
+        managed = False
         db_table = "product"
         verbose_name_plural = "Products"
 
@@ -181,7 +181,7 @@ class ProductImage(models.Model):
     
     class Meta:
         """defines the metadata for the product model"""
-        manage = False
+        managed = False
         db_table = "product_image"
         verbose_name_plural = "ProductImages"
 
@@ -197,12 +197,28 @@ class Wishlist(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     
+    class Meta:
+        """defines the metadata for the product model"""
+        managed = False
+        db_table = "wishlist"
+        verbose_name_plural = "Wishlists"
+
+    
+    
 
 
 class Favorites(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=False)
     product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=False)
+    
+    
+    class Meta:
+        """defines the metadata for the product model"""
+        managed = False
+        db_table = "favourite"
+        verbose_name_plural = "Favourites"
+
 
 # THIS TABLE IS NOT ON THE GENERAL, IT SHOULD BE COMMUNICATED BEFORE 
 # CREATION. 
