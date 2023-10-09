@@ -98,7 +98,7 @@ class ProductCategory(models.Model):
     parent_category_id = models.IntegerField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     
-    
+
     class Meta:
         """defines the metadata for the product model"""
         db_table = "product_category"
