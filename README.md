@@ -4,9 +4,9 @@
 
 Zuri MarketPlace API 
 
-Live link is at https://zuri-marketplace-a7cg4.ondigitalocean.app/api/
+Live link is at https://seahorse-app-gm8ty.ondigitalocean.app/api/
 
-Redoc docs at https://zuri-marketplace-a7cg4.ondigitalocean.app/docs/
+Doc link at [https://zuri-marketplace-a7cg4.ondigitalocean.app/docs/](https://seahorse-app-gm8ty.ondigitalocean.app/docs/)
 
 Markdown docs at [DOCUMENTATION.md](Documentation.md)
 
