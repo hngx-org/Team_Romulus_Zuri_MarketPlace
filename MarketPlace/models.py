@@ -73,7 +73,7 @@ class Shop(models.Model):
 
     class Meta:
         """defines the metadata for the shop model"""
-        manage = False
+        managed = False
         db_table = "shop"
         verbose_name_plural = "Shops"
 
@@ -95,7 +95,7 @@ class ProductCategory(models.Model):
     
     class Meta:
         """defines the metadata for the product model"""
-        manage = False
+        managed = False
         db_table = "product_category"
         verbose_name_plural = "ProductCategories"
 
@@ -146,7 +146,7 @@ class Product(models.Model):
 
     class Meta:
         """defines the metadata for the product model"""
-        manage = False
+        managed = False
         db_table = "product"
         verbose_name_plural = "Products"
 
@@ -165,7 +165,7 @@ class ProductImage(models.Model):
     
     class Meta:
         """defines the metadata for the product model"""
-        manage = False
+        managed = False
         db_table = "product_image"
         verbose_name_plural = "ProductImages"
 
