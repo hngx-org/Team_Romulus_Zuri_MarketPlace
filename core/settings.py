@@ -88,7 +88,8 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASE_ROUTERS = ['core.db_routers.DefaultDBRouter', 'core.db_routers.SharedDBRouter']
+
+# DATABASE_ROUTERS = ['core.db_routers.DefaultDBRouter', 'core.db_routers.SharedDBRouter']
 
 DATABASES = {
 
@@ -106,12 +107,15 @@ DATABASES = {
             'NAME': BASE_DIR / 'db.sqlite3',
         }
 }
+# DATABASE_ROUTERS = ['core.db_routers.DefaultDBRouter', 'core.db_routers.SharedDBRouter']
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     },
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    },
+
+}
     
 #     'test': {
 #         'ENGINE': 'django.db.backends.sqlite3',
