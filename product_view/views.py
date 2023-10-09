@@ -10,9 +10,7 @@ from .serializers import ProductViewSerializer
 class GetLastViewedProducts(APIView):
     @staticmethod
     def get(self, user_id):
-        """You can check if the user exists by using User Model 
-        however, I'd to comment out the below code since we're not 
-        making use of User Model at the moment."""
+        """Check if user exist."""
         # try:
         #     user = User.objects.get(id=user_id)
         # except User.DoesNotExist:
