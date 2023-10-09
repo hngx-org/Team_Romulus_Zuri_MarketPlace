@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASE_ROUTERS = ['api.db_routers.DefaultDBRouter', 'api.db_routers.SharedDBRouter']
+DATABASE_ROUTERS = ['core.db_routers.DefaultDBRouter', 'core.db_routers.SharedDBRouter']
 
 DATABASES = {
         'shared_db': {
