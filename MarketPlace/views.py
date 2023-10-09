@@ -14,7 +14,7 @@ from django.views import View
 from django.core.exceptions import ObjectDoesNotExist
 
 class Status(APIView):
-    def get(request):
+    def get(self, request):
         return Response({"Message": "API Endpoint server is Running"}, status=status.HTTP_200_OK)
 
 
@@ -85,8 +85,8 @@ class GetProductsSubCategories(APIView):
     def get(self, request, category, subcategory):
         # Get the products related to the categories n sub categories
         try:
-            category_obj = get_object_or_404(ProductCategory, name=category)
-            subcategory_obj = get_object_or_404(ProductSubCategory, name=subcategory, parent_category_id=category_obj)
+            category_obj = get_object_or_404(ProductCategory, id=category)
+            subcategory_obj = ProductSubCategory.objects.get(name=subcategory, parent_category_id=category_obj)
 
             # Get products belonging to the provided subcategory
             products = Product.objects.filter(subcategory_id=subcategory_obj)

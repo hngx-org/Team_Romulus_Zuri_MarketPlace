@@ -12,7 +12,7 @@ class Command(BaseCommand):
         # Seed ProductCategory instances
         import django
         django.setup()
-        from MarketPlace.models import Shop, Product, ProductCategory, ProductImage, Favorites, Wishlist, User
+        from MarketPlace.models import Shop, Product, ProductCategory, ProductSubCategory, ProductImage, Favorites, Wishlist, User
 
         # All other seed datas
         categories = ['Electronics', 'Clothing', 'Books', 'Furniture', 'Toys']
@@ -26,7 +26,7 @@ class Command(BaseCommand):
         for main_category in main_categories:
             for i in range(1, 5):
                 sub_category_name = f'{main_category.name}{i}'
-                ProductCategory.objects.create(
+                ProductSubCategory.objects.create(
                     name=sub_category_name,
                     parent_category_id=main_category.id
                 )
@@ -46,6 +46,7 @@ class Command(BaseCommand):
         for _ in range(10):
             shop = random.choice(Shop.objects.all())
             category = random.choice(ProductCategory.objects.all())
+            subCategory = ProductSubCategory.object.get(parent_category_id=category)
 
             # Choose a random ProductImage instance
             # product_image = random.choice(ProductImage.objects.all())
@@ -57,6 +58,7 @@ class Command(BaseCommand):
                 description=f'Description for Product {random.randint(1, 100)}',
                 quantity=random.randint(1, 100),
                 category_id=category,
+                subcategory_id = subCategory,
                 # image_id=product_image,  # Assign the ProductImage instance
                 price=random.uniform(10.0, 100.0),
                 discount_price=random.uniform(5.0, 50.0),
