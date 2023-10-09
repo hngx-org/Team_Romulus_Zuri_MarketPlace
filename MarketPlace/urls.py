@@ -1,5 +1,5 @@
 from django.urls import path, include
-from  .views import SimilarProductView, FilterProductView, GetProductsSubCategories, ProductListByCategoryView, WishlistProductsView, WishlistViewSet
+from  .views import SimilarProductView, FilterProductView, GetProductsSubCategories, ProductListByCategoryView, WishlistProductsView, WishlistViewSet, Status
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -7,6 +7,7 @@ router.register(r'wishlist', WishlistViewSet)
 
 
 urlpatterns = [
+    path('', Status.as_view(), name='status'),
     path('api/', include(router.urls)),
     path('products/<str:categories>', ProductListByCategoryView.as_view(), name='get_all_products_by_categories'),
     path('similar_products/<uuid:product_id>/', SimilarProductView.as_view(), name='similar-products'),
