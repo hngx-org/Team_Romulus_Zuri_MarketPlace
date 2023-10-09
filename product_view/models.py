@@ -21,4 +21,5 @@ class ProductView(models.Model):
         verbose_name_plural = "LastViewedProduct"
 
     def __str__(self):
-        return f'{self.user_id} viewed {self.product_id} at {self.viewed_at}'
+        return f'{self.user_id}'
+
