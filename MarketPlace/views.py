@@ -11,6 +11,9 @@ from django.shortcuts import get_object_or_404
 from .models import ProductCategory
 
 
+
+
+
 class SimilarProductView(APIView):
     @staticmethod
     def get(request, product_id):
