@@ -136,26 +136,27 @@ class WishlistProductsView(View):
         
         return JsonResponse(response_data)
     
-class WishlistView(View):
+class WishlistView(APIView):
     serializer_class = WishlistSerializer
 
     def post(self, request):
 
-        if not request.data:
-            return Response({'message': '"product_id" required in the request data'}, status=status.HTTP_401_ERROR)
+        if not request.data.get("product_id"):
+            return Response({'message': '"product_id" required in the request data'}, status=status.HTTP_400_BAD_REQUEST)
 
         product_id = request.data.get("product_id")
 
-        matching_products = Product.objects.filter(product_id=product_id)
-        # Retrieve product details 
-        if matching_products.count() != len(product_id):
-            raise ObjectDoesNotExist("Product ID not found.")
+        try:
+            # Retrieve product details 
+            product = Product.objects.get(id=product_id)
+        except ObjectDoesNotExist:
+            return Response({"message": "Product with provided id not found."}, status=status.HTTP_404_NOT_FOUND)
 
         # Add the product to the user's wishlist
-        wishlist_item, created = Wishlist.objects.get_or_create(user=request.user, product_id=product_id)
+        wishlist_item, created = Wishlist.objects.get_or_create(user_id=request.user.id, product_id=product)
 
         if created:
             serializer = self.serializer_class(wishlist_item)
-            return Response({'message': 'Product(s) added to wishlist', 'wishlist_item': serializer.data}, status=status.HTTP_201_CREATED)
+            return Response({'message': 'Product added to wishlist', 'wishlist_item': serializer.data}, status=status.HTTP_201_CREATED)
         else:
-            return Response({'message': 'Product(s) already in wishlist'}, status=status.HTTP_200_OK)
+            return Response({'message': 'Product already in wishlist'}, status=status.HTTP_200_OK)
