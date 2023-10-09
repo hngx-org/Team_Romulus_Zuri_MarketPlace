@@ -38,6 +38,7 @@ class Shop(models.Model):
 
     class Meta:
         """defines the metadata for the shop model"""
+        manage = False
         db_table = "shop"
         verbose_name_plural = "Shops"
 
@@ -55,6 +56,14 @@ class ProductCategory(models.Model):
     name = models.CharField(max_length=225)
     parent_category_id = models.ForeignKey('self', on_delete=models.SET_NULL, null=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    
+    
+    class Meta:
+        """defines the metadata for the product model"""
+        manage = False
+        db_table = "product_category"
+        verbose_name_plural = "ProductCategories"
+
 
     def __str__(self) -> str:
         return self.name
@@ -85,6 +94,7 @@ class Product(models.Model):
 
     class Meta:
         """defines the metadata for the product model"""
+        manage = False
         db_table = "product"
         verbose_name_plural = "Products"
 
@@ -99,6 +109,14 @@ class ProductImage(models.Model):
     id = models.AutoField(primary_key=True)
     product_id = models.UUIDField(unique=True)
     url = models.CharField(max_length=255, null=False, blank=False)
+    
+    
+    class Meta:
+        """defines the metadata for the product model"""
+        manage = False
+        db_table = "product_image"
+        verbose_name_plural = "ProductImages"
+
 
     def __str__(self) -> str:
         return self.url
@@ -109,6 +127,8 @@ class Wishlist(models.Model):
     product_id = models.UUIDField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    
 
 
 class Favorites(models.Model):
