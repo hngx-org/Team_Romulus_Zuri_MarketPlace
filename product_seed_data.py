@@ -1,58 +1,86 @@
-import os
-import django
+import uuid
+from decimal import Decimal
+from django.utils import timezone
+from M.models import Product, ProductImage, ProductCategory
 
-# Set up the Django environment
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "your_project.settings")  # Replace with your project's settings module
-django.setup()
+# Generate seed data for the ProductCategory model
+def create_product_categories():
+    categories = [
+        {
+            "name": "Category 1",
+            "parent_category_id": None,
+            "status": "complete",
+        },
+        {
+            "name": "Category 2",
+            "parent_category_id": None,
+            "status": "pending",
+        },
+        # Add more category data as needed
+    ]
 
-from MarketPlace.models import Product, ProductImage  # Replace 'myapp' with your actual app name
+    for category_data in categories:
+        ProductCategory.objects.create(**category_data)
 
-# Create Product instances
-product_instance_1 = Product.objects.create(
-    name="Product 1",
-    description="Description for Product 1",
-    quantity=10,
-    price=50.00,
-    discount_price=45.00,
-    tax=5.00,
-    admin_status="approved",
-    is_deleted="active",
-    currency="USD",
-)
+# Generate seed data for the ProductImage model
+def create_product_images():
+    images = [
+        {
+            "product_id": Product.objects.get(name="Product 1"),
+            "url": "image1.jpg",  # Set image URL
+        },
+        {
+            "product_id": Product.objects.get(name="Product 2"),
+            "url": "image2.jpg",  # Set image URL
+        },
+        # Add more image data as needed
+    ]
 
-product_instance_2 = Product.objects.create(
-    name="Product 2",
-    description="Description for Product 2",
-    quantity=20,
-    price=60.00,
-    discount_price=55.00,
-    tax=5.00,
-    admin_status="approved",
-    is_deleted="active",
-    currency="USD",
-)
+    for image_data in images:
+        ProductImage.objects.create(**image_data)
 
-# Now, you can use product_instance_1 and product_instance_2 in your seed data script.
+# Generate seed data for the Product model
+def create_products():
+    products = [
+        {
+            "shop_id": None,  # Set shop ID if available
+            "name": "Product 1",
+            "description": "Description for Product 1",
+            "quantity": 100,
+            "category_id": ProductCategory.objects.get(name="Category 1"),
+            "price": Decimal("19.99"),
+            "discount_price": Decimal("14.99"),
+            "tax": Decimal("2.0"),
+            "admin_status": "approved",
+            "is_deleted": "active",
+            "image_id": None,  # Set image ID if available
+            "rating_id": None,  # Set rating ID if available
+            "is_published": True,
+            "currency": "USD",
+        },
+        {
+            "shop_id": None,  # Set shop ID if available
+            "name": "Product 2",
+            "description": "Description for Product 2",
+            "quantity": 50,
+            "category_id": ProductCategory.objects.get(name="Category 2"),
+            "price": Decimal("29.99"),
+            "discount_price": Decimal("24.99"),
+            "tax": Decimal("3.0"),
+            "admin_status": "pending",
+            "is_deleted": "active",
+            "image_id": None,  # Set image ID if available
+            "rating_id": None,  # Set rating ID if available
+            "is_published": False,
+            "currency": "USD",
+        },
+        # Add more product data as needed
+    ]
 
+    for product_data in products:
+        Product.objects.create(**product_data)
 
-# Define seed data for ProductImages
-product_images = [
-    {
-        "product_id": product_instance_1.id,
-        "url": "https://example.com/image1.jpg",
-    },
-    {
-        "product_id": product_instance_2.id,
-        "url": "https://example.com/image2.jpg",
-    },
-    # Add more product image data as needed
-]
-
-# Create ProductImage instances in the database
-for image_data in product_images:
-    ProductImage.objects.create(
-        product_id=image_data["product_id"],
-        url=image_data["url"]
-    )
-
-print("Seed data for ProductImages has been inserted into the database.")
+# Call the functions to create seed data
+create_product_categories()
+create_product_images()
+create_products()
