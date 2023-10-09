@@ -40,13 +40,6 @@ class User(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     
-    class Meta:
-        """defines the metadata for the product model"""
-        managed = False
-        db_table = "user"
-        verbose_name_plural = "Users"
-
-
 
 
 class Shop(models.Model):
@@ -78,12 +71,6 @@ class Shop(models.Model):
     rating = models.DecimalField( max_digits=20, decimal_places=2, default=0.00)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        """defines the metadata for the shop model"""
-        managed = False
-        db_table = "shop"
-        verbose_name_plural = "Shops"
 
     def __str__(self):
         return self.name
