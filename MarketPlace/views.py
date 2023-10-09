@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Product, ProductCategory, ProductSubCategory, Wishlist, UserProfile, UserProductInteraction, WishListItem
+from .models import Product, ProductCategory, ProductSubCategory, Wishlist, WishListItem
 from .serializers import ProductSerializer, WishlistSerializer, WishListItemSerializer
 import random
 from django.db.models import Q
