@@ -91,14 +91,6 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASE_ROUTERS = ['api.db_routers.DefaultDBRouter', 'api.db_routers.SharedDBRouter']
 
 DATABASES = {
-        # 'shared_db': {
-        #     'ENGINE': 'django.db.backends.postgresql',
-        #     'NAME': os.environ.get('postgres'),
-        #     'HOST': os.environ.get('104.248.143.148'),
-        #     'PORT': os.environ.get('5432'),
-        #     'USER': os.environ.get('hngx'),
-        #     'PASSWORD': os.environ.get('hngx#dev'),
-        # },
         "default": {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
