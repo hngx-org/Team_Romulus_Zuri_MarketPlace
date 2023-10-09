@@ -42,7 +42,6 @@ class User(models.Model):
     
     class Meta:
         """defines the metadata for the product model"""
-        managed = False
         db_table = "user"
         verbose_name_plural = "Users"
 
@@ -81,7 +80,6 @@ class Shop(models.Model):
 
     class Meta:
         """defines the metadata for the shop model"""
-        managed = False
         db_table = "shop"
         verbose_name_plural = "Shops"
 
@@ -97,13 +95,12 @@ class ProductCategory(models.Model):
 
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=225)
-    parent_category_id = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
+    parent_category_id = models.IntegerField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     
     
     class Meta:
         """defines the metadata for the product model"""
-        managed = False
         db_table = "product_category"
         verbose_name_plural = "ProductCategories"
 
@@ -116,14 +113,13 @@ class ProductCategory(models.Model):
 class UserProductRating(models.Model):
     """This is the user product rating, how the product is rated"""
     id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=False)
-    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=False)
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
+    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
     rating = models.IntegerField(null=True)
     
     
     class Meta:
         """defines the metadata for the product model"""
-        managed = False
         db_table = "user_product_rating"
         verbose_name_plural = "UserProductRatings"
 
@@ -142,7 +138,7 @@ class Product(models.Model):
         ('temporary', 'Temporary')
     )
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, null=False)
-    shop_id = models.ForeignKey('Shop', on_delete=models.CASCADE, null=False)
+    shop_id = models.ForeignKey('Shop', on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=255, null=False)
     description = models.CharField(max_length=255, null=False)
     quantity = models.BigIntegerField(null=False)
@@ -152,8 +148,8 @@ class Product(models.Model):
     tax = models.DecimalField( max_digits=20, decimal_places=2, null=False)
     admin_status = models.CharField(max_length=20, choices=ADMIN_STATUS, default="pending")
     is_deleted = models.CharField(max_length=20, choices=PRODUCT_STATUS, default="active")
-    image_id = models.ForeignKey('ProductImage', on_delete=models.CASCADE, null=False)
-    rating_id = models.ForeignKey('UserProductRating', on_delete=models.CASCADE, null=False)
+    image_id = models.ForeignKey('ProductImage', on_delete=models.CASCADE, null=True)
+    rating_id = models.ForeignKey('UserProductRating', on_delete=models.CASCADE, null=True)
     is_published = models.BooleanField(default=False, null=False)
     currency = models.CharField(max_length=10, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -162,7 +158,6 @@ class Product(models.Model):
 
     class Meta:
         """defines the metadata for the product model"""
-        managed = False
         db_table = "product"
         verbose_name_plural = "Products"
 
@@ -175,13 +170,12 @@ class Product(models.Model):
 
 class ProductImage(models.Model):
     id = models.AutoField(primary_key=True)
-    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=False)
+    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
     url = models.CharField(max_length=255, null=False, blank=False)
     
     
     class Meta:
         """defines the metadata for the product model"""
-        managed = False
         db_table = "product_image"
         verbose_name_plural = "ProductImages"
 
@@ -191,15 +185,14 @@ class ProductImage(models.Model):
 
 class Wishlist(models.Model):
     id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=False)
-    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=False)
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
+    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     
     class Meta:
         """defines the metadata for the product model"""
-        managed = False
         db_table = "wishlist"
         verbose_name_plural = "Wishlists"
 
@@ -209,13 +202,12 @@ class Wishlist(models.Model):
 
 class Favorites(models.Model):
     id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=False)
-    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=False)
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
+    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
     
     
     class Meta:
         """defines the metadata for the product model"""
-        managed = False
         db_table = "favourite"
         verbose_name_plural = "Favourites"
 

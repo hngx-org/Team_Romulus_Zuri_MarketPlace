@@ -81,18 +81,18 @@ class ProductListByCategoryView(APIView):
         
 
 
-class GetProductsSubCategories(APIView):
-    def get(self, category, subcategory):
-        # Get the products related to the categories n sub categories
-        category_obj = get_object_or_404(ProductCategory, name=category)
-        subcategory_obj = get_object_or_404(ProductCategory, name=subcategory, parent_category_id=category_obj)
+# class GetProductsSubCategories(APIView):
+#     def get(self, category, subcategory):
+#         # Get the products related to the categories n sub categories
+#         category_obj = get_object_or_404(ProductCategory, name=category)
+#         subcategory_obj = get_object_or_404(ProductCategory, name=subcategory, parent_category_id=category_obj)
 
-        # Get products belonging to the provided subcategory
-        products = Product.objects.filter(category_id=subcategory_obj)
+#         # Get products belonging to the provided subcategory
+#         products = Product.objects.filter(category_id=subcategory_obj)
 
-        # Serialize the products
-        serializer = ProductSerializer(products, many=True)
-        return Response({'products': serializer.data}, status=status.HTTP_200_OK)
+#         # Serialize the products
+#         serializer = ProductSerializer(products, many=True)
+#         return Response({'products': serializer.data}, status=status.HTTP_200_OK)
     
    
 class WishlistViewSet(viewsets.ModelViewSet):
