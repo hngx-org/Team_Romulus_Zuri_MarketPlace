@@ -38,6 +38,14 @@ class User(models.Model):
     profile_pic = models.CharField(max_length=255)
     refresh_token = models.CharField(max_length=255, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    
+    class Meta:
+        """defines the metadata for the product model"""
+        managed = False
+        db_table = "user"
+        verbose_name_plural = "Users"
+
 
 
 
@@ -111,6 +119,14 @@ class UserProductRating(models.Model):
     user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=False)
     product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=False)
     rating = models.IntegerField(null=True)
+    
+    
+    class Meta:
+        """defines the metadata for the product model"""
+        managed = False
+        db_table = "user_product_rating"
+        verbose_name_plural = "UserProductRatings"
+
 
 class Product(models.Model):
     """defines the product models"""
@@ -181,12 +197,28 @@ class Wishlist(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     
+    class Meta:
+        """defines the metadata for the product model"""
+        managed = False
+        db_table = "wishlist"
+        verbose_name_plural = "Wishlists"
+
+    
+    
 
 
 class Favorites(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=False)
     product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=False)
+    
+    
+    class Meta:
+        """defines the metadata for the product model"""
+        managed = False
+        db_table = "favourite"
+        verbose_name_plural = "Favourites"
+
 
 # THIS TABLE IS NOT ON THE GENERAL, IT SHOULD BE COMMUNICATED BEFORE 
 # CREATION. 
