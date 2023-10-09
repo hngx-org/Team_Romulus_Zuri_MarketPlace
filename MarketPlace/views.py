@@ -13,7 +13,10 @@ from django.shortcuts import get_object_or_404
 from django.views import View
 from django.core.exceptions import ObjectDoesNotExist
 
-  
+class Status(APIView):
+    def get(request):
+        return Response({"Message": "API Endpoint server is Running"}, status=status.HTTP_200_OK)
+
 
 class SimilarProductView(APIView):
     @staticmethod
@@ -85,7 +88,7 @@ class GetProductsSubCategories(APIView):
         subcategory_obj = get_object_or_404(ProductCategory, name=subcategory, parent_category_id=category_obj)
 
         # Get products belonging to the provided subcategory
-        products = Product.objects.filter(category=subcategory_obj)
+        products = Product.objects.filter(category_id=subcategory_obj)
 
         # Serialize the products
         serializer = ProductSerializer(products, many=True)
