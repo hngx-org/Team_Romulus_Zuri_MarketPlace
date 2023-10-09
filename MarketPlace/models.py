@@ -42,7 +42,6 @@ class User(models.Model):
     
     class Meta:
         """defines the metadata for the product model"""
-        managed = False
         db_table = "user"
         verbose_name_plural = "Users"
 
@@ -81,7 +80,6 @@ class Shop(models.Model):
 
     class Meta:
         """defines the metadata for the shop model"""
-        managed = False
         db_table = "shop"
         verbose_name_plural = "Shops"
 
@@ -97,13 +95,12 @@ class ProductCategory(models.Model):
 
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=225)
-    parent_category_id = models.IntegerField(default=None, null=True, blank=True)
+    parent_category_id = models.IntegerField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     
-    
+
     class Meta:
         """defines the metadata for the product model"""
-        managed = False
         db_table = "product_category"
         verbose_name_plural = "ProductCategories"
 
@@ -145,7 +142,6 @@ class UserProductRating(models.Model):
     
     class Meta:
         """defines the metadata for the product model"""
-        managed = False
         db_table = "user_product_rating"
         verbose_name_plural = "UserProductRatings"
 
@@ -175,8 +171,8 @@ class Product(models.Model):
     tax = models.DecimalField( max_digits=20, decimal_places=2, null=False)
     admin_status = models.CharField(max_length=20, choices=ADMIN_STATUS, default="pending")
     is_deleted = models.CharField(max_length=20, choices=PRODUCT_STATUS, default="active")
-    # image_id = models.ForeignKey('ProductImage', on_delete=models.CASCADE, null=False)
-    # rating_id = models.ForeignKey('UserProductRating', on_delete=models.CASCADE, null=False)
+    image_id = models.ForeignKey('ProductImage', on_delete=models.CASCADE, null=True)
+    rating_id = models.ForeignKey('UserProductRating', on_delete=models.CASCADE, null=True)
     is_published = models.BooleanField(default=False, null=False)
     currency = models.CharField(max_length=10, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -185,7 +181,6 @@ class Product(models.Model):
 
     class Meta:
         """defines the metadata for the product model"""
-        managed = False
         db_table = "product"
         verbose_name_plural = "Products"
 
@@ -199,12 +194,11 @@ class Product(models.Model):
 class ProductImage(models.Model):
     id = models.AutoField(primary_key=True)
     product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
-    url = models.CharField(max_length=255, null=True, blank=True)
+    url = models.CharField(max_length=255, null=False, blank=False)
     
     
     class Meta:
         """defines the metadata for the product model"""
-        managed = False
         db_table = "product_image"
         verbose_name_plural = "ProductImages"
 
@@ -222,7 +216,6 @@ class Wishlist(models.Model):
     
     class Meta:
         """defines the metadata for the product model"""
-        managed = False
         db_table = "wishlist"
         verbose_name_plural = "Wishlists"
 
@@ -238,7 +231,6 @@ class Favorites(models.Model):
     
     class Meta:
         """defines the metadata for the product model"""
-        managed = False
         db_table = "favourite"
         verbose_name_plural = "Favourites"
 
