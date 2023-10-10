@@ -20,7 +20,7 @@ class GetLastViewedProducts(APIView):
         try:
             product_views = ProductView.objects.filter(user_id=user_id).order_by('-timestamp')
         except:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'The the specified user does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
         """If the user has not viewed any products recently, return an empty list."""
         if not product_views.exists():
