@@ -21,18 +21,20 @@ class Status(APIView):
 
 class SimilarProductView(APIView):
     @staticmethod
-    def get(request, product_id):
+    def get(request, category_id):
         try:
-            current_product = Product.objects.get(id=product_id)
+            current_product = Product.objects.get(id=category_id)
+            print(f'current_product: {current_product.id}')
         except Product.DoesNotExist:
             return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
         
-        similar_products = Product.objects.filter(category_id=current_product.category_id).exclude(id=product_id)
+        similar_products = Product.objects.filter(category_id=current_product.category_id).exclude(id=category_id)
         similar_products = sample(list(similar_products), 4)
 
         serializer = ProductSerializer(similar_products, many=True)
 
         return Response({'products': serializer.data}, status=status.HTTP_200_OK)
+
 
 class FilterProductView(APIView):
     def get(self, request):
