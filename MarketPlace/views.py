@@ -35,6 +35,7 @@ class SimilarProductView(APIView):
         return Response({'products': serializer.data}, status=status.HTTP_200_OK)
 
 
+
 class FilterProductView(APIView):
     def get(self, request):
         # Parameters from request
