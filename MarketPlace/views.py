@@ -2,7 +2,7 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Product
+from .models import Product, ProductCategory
 from .serializers import ProductSerializer
 import random
 from django.db.models import Q
@@ -41,7 +41,7 @@ class FilterProductView(APIView):
             products = products.filter(discount_price__lte=discount)
         
         if category:
-            products = products.filter(category=category)
+            products = products.filter(category_id__name=category)
 
         if keywords:
             products = products.filter(Q(name__icontains=keywords) | Q(description__icontains=keywords))
