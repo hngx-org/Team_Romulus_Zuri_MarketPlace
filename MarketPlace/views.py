@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Product, ProductCategory, Wishlist, UserProfile, UserProductInteraction, WishListItem
+from .models import Product, ProductCategory, ProductSubCategory, Wishlist, UserProfile, UserProductInteraction, WishListItem
 from .serializers import ProductSerializer, WishlistSerializer, WishListItemSerializer
 import random
 from django.db.models import Q
@@ -30,7 +30,7 @@ class SimilarProductView(APIView):
         except Product.DoesNotExist:
             return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        similar_products = Product.objects.filter(category=current_product.category).exclude(id=product_id)
+        similar_products = Product.objects.filter(category_id=current_product.category_id).exclude(id=product_id)
 
         similar_products = list(similar_products)
         random.shuffle(similar_products)
@@ -71,7 +71,7 @@ class ProductListByCategoryView(APIView):
 
         try:
             category = ProductCategory.objects.get(name=categories)
-            products = Product.objects.filter(category=category).order_by(sort_by)
+            products = Product.objects.filter(category_id=category).order_by(sort_by)
             
             
             if not products.exists():
@@ -85,18 +85,24 @@ class ProductListByCategoryView(APIView):
         
 
 
-# class GetProductsSubCategories(APIView):
-#     def get(self, category, subcategory):
-#         # Get the products related to the categories n sub categories
-#         category_obj = get_object_or_404(ProductCategory, name=category)
-#         subcategory_obj = get_object_or_404(ProductCategory, name=subcategory, parent_category_id=category_obj)
+class GetProductsSubCategories(APIView):
+    def get(self, request, category, subcategory):
+        # Get the products related to the categories n sub categories
+        try:
+            category_obj = get_object_or_404(ProductCategory, name=category)
+            subcategory_obj = get_object_or_404(ProductSubCategory, name=subcategory, parent_category_id=category_obj)
 
-#         # Get products belonging to the provided subcategory
-#         products = Product.objects.filter(category_id=subcategory_obj)
+            # Get products belonging to the provided subcategory
+            products = Product.objects.filter(subcategory_id=subcategory_obj)
 
-#         # Serialize the products
-#         serializer = ProductSerializer(products, many=True)
-#         return Response({'products': serializer.data}, status=status.HTTP_200_OK)
+            if not products:
+                return Response({"Message": "There are no products in this subCategory"}, status=status.HTTP_200_OK)
+
+            # Serialize the products
+            serializer = ProductSerializer(products, many=True)
+            return Response({'products': serializer.data}, status=status.HTTP_200_OK)
+        except ProductSubCategory.DoesNotExist:
+            return Response({"Message": "Subcategory does not exist"}, status=status.HTTP_404_NOT_FOUND)
     
    
 class WishlistViewSet(viewsets.ModelViewSet):

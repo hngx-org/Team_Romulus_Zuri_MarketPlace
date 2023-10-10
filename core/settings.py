@@ -40,9 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
 
-    
-    
-
     'MarketPlace',
     'rest_framework_swagger',
     'product_view',
@@ -109,13 +106,34 @@ DATABASES = {
 }
 # DATABASE_ROUTERS = ['core.db_routers.DefaultDBRouter', 'core.db_routers.SharedDBRouter']
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    },
+# DATABASES = {
+# <<<<<<< HEAD
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     },
 
-}
+# =======
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql',
+#             'NAME': os.environ.get('DB_NAME'),
+#             'HOST': os.environ.get('DB_HOST'),
+#             'PORT': os.environ.get('DB_PORT'),
+#             'USER': os.environ.get('DB_USER'),
+#             'PASSWORD': os.environ.get('DB_PASSWORD'),
+#         },
+#         "default": {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': BASE_DIR / 'db.sqlite3',
+#         }
+# >>>>>>> 7ebe181e54fd72dcbfebcb01768cf3584a069545
+# }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     },
     
 #     'test': {
 #         'ENGINE': 'django.db.backends.sqlite3',
