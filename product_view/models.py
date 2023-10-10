@@ -1,5 +1,6 @@
 from django.db import models
 from uuid import uuid4
+from MarketPlace.models import Product
 
 class ProductView(models.Model):
     """Represent a ProductView.
@@ -42,34 +43,34 @@ class User(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
-class Product(models.Model):
-    """defines the product models"""
-    ADMIN_STATUS = (
-        ('pending', 'Pending'),
-        ('reviewed', 'Reviewed'),
-        ('approved', 'Approved'),
-        ('suspended', 'Suspended'),
-        ('blacklisted', 'Blacklisted')
-    )
-    PRODUCT_STATUS = (
-        ('active', 'Active'),
-        ('temporary', 'Temporary')
-    )
-    id = models.UUIDField(primary_key=True, default=uuid4, null=False)
-    shop_id = models.BigIntegerField(null=False)
-    name = models.CharField(max_length=255, null=False)
-    description = models.CharField(max_length=255, null=False)
-    quantity = models.BigIntegerField(null=False)
-    category_id = models.CharField(max_length=255, null=False)
-    subcategory_id = models.CharField(max_length=255, null=False)
-    price = models.DecimalField( max_digits=20, decimal_places=2, null=False)
-    discount_price = models.DecimalField( max_digits=20, decimal_places=2, null=False)
-    tax = models.DecimalField( max_digits=20, decimal_places=2, null=False)
-    admin_status = models.CharField(max_length=20, choices=ADMIN_STATUS, default="pending")
-    is_deleted = models.CharField(max_length=20, choices=PRODUCT_STATUS, default="active")
-    image_id = models.CharField(max_length=255, null=False)
-    rating_id = models.BigIntegerField(null=False)
-    is_published = models.BooleanField(default=False, null=False)
-    currency = models.CharField(max_length=10, null=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+# class Product(models.Model):
+#     """defines the product models"""
+#     ADMIN_STATUS = (
+#         ('pending', 'Pending'),
+#         ('reviewed', 'Reviewed'),
+#         ('approved', 'Approved'),
+#         ('suspended', 'Suspended'),
+#         ('blacklisted', 'Blacklisted')
+#     )
+#     PRODUCT_STATUS = (
+#         ('active', 'Active'),
+#         ('temporary', 'Temporary')
+#     )
+#     id = models.UUIDField(primary_key=True, default=uuid4, null=False)
+#     shop_id = models.BigIntegerField(null=False)
+#     name = models.CharField(max_length=255, null=False)
+#     description = models.CharField(max_length=255, null=False)
+#     quantity = models.BigIntegerField(null=False)
+#     category_id = models.CharField(max_length=255, null=False)
+#     subcategory_id = models.CharField(max_length=255, null=False)
+#     price = models.DecimalField( max_digits=20, decimal_places=2, null=False)
+#     discount_price = models.DecimalField( max_digits=20, decimal_places=2, null=False)
+#     tax = models.DecimalField( max_digits=20, decimal_places=2, null=False)
+#     admin_status = models.CharField(max_length=20, choices=ADMIN_STATUS, default="pending")
+#     is_deleted = models.CharField(max_length=20, choices=PRODUCT_STATUS, default="active")
+#     image_id = models.CharField(max_length=255, null=False)
+#     rating_id = models.BigIntegerField(null=False)
+#     is_published = models.BooleanField(default=False, null=False)
+#     currency = models.CharField(max_length=10, null=False)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
