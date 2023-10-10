@@ -5,7 +5,7 @@ from .models import Product, Wishlist, WishListItem
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = '__all__'
+        fields = ('id', 'name', 'description')
 
 class WishlistSerializer(serializers.ModelSerializer):
     class Meta:
