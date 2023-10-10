@@ -48,7 +48,7 @@ class FilterProductView(APIView):
             products = products.filter(discount_price__lte=discount)
         
         if category:
-            products = products.filter(category=category)
+            products = products.filter(category_id__name=category)
 
         if keywords:
             products = products.filter(Q(name__icontains=keywords) | Q(description__icontains=keywords))
