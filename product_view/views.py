@@ -3,7 +3,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 
-from product_view.models import ProductView, User, Product
+from product_view.models import ProductView, User
+from MarketPlace.models import Product
 from .serializers import ProductViewSerializer
 
 class GetLastViewedProducts(APIView):
