@@ -6,8 +6,7 @@ router.register(r'wishlist', WishlistViewSet)
 
 
 urlpatterns = [
-    path('', Status.as_view(), name='status'),
-    path('api/', include(router.urls)),
+    path('', include(router.urls)),
     path('products/<str:categories>', ProductListByCategoryView.as_view(), name='get_all_products_by_categories'),
     path('similar_products/<uuid:product_id>/', SimilarProductView.as_view(), name='similar-products'),
     path('products/', FilterProductView.as_view(), name='filter_products'),
