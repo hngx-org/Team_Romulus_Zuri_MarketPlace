@@ -5,13 +5,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Product, ProductCategory, ProductSubCategory, Wishlist, UserProfile, UserProductInteraction, WishListItem
-from .serializers import ProductSerializer, WishlistSerializer, WishListItemSerializer
-import random
+from .models import Product, ProductCategory, ProductSubCategory, Wishlist, UserProfile, UserProductInteraction
+from .serializers import ProductSerializer, WishlistSerializer
+from random import sample
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.views import View
 from django.core.exceptions import ObjectDoesNotExist
+
 
 class Status(APIView):
     def get(request):
@@ -20,22 +21,20 @@ class Status(APIView):
 
 class SimilarProductView(APIView):
     @staticmethod
-    def get(request, product_id):
+    def get(request, category_id):
         try:
-            current_product = Product.objects.get(id=product_id)
+            current_product = Product.objects.get(id=category_id)
+            print(f'current_product: {current_product.id}')
         except Product.DoesNotExist:
             return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        similar_products = Product.objects.filter(category_id=current_product.category_id).exclude(id=category_id)
+        similar_products = sample(list(similar_products), 4)
 
-        similar_products = Product.objects.filter(category=current_product.category).exclude(id=product_id)
-
-        similar_products = list(similar_products)
-        random.shuffle(similar_products)
-
-        recommended_products = similar_products[:4]
-
-        serializer = ProductSerializer(recommended_products, many=True)
+        serializer = ProductSerializer(similar_products, many=True)
 
         return Response({'products': serializer.data}, status=status.HTTP_200_OK)
+
 
 class FilterProductView(APIView):
     def get(self, request):
@@ -137,26 +136,41 @@ class WishlistProductsView(View):
         return JsonResponse(response_data)
     
 class WishlistView(APIView):
+    serializer_class = WishlistSerializer
+
     def post(self, request):
 
-        if not request.data:
-            return Response({'message': '"product_ids" required in the request data'}, status=status.HTTP_401_ERROR)
+        if not request.data.get("product_id"):
+            return Response({'message': '"product_id" required in the request data'}, status=status.HTTP_400_BAD_REQUEST)
 
-        product_ids = request.data.get("product_ids")
+        product_id = request.data.get("product_id")
 
-        if not len(product_ids):
-            return Response({'message': 'Please add a product'})
-
-        matching_products = Product.objects.filter(id__in=product_ids)
-        # Retrieve product details 
-        if matching_products.count() != len(product_ids):
-            raise ObjectDoesNotExist("One or more product IDs not found.")
+        try:
+            # Retrieve product details 
+            product = Product.objects.get(id=product_id)
+        except ObjectDoesNotExist:
+            return Response({"message": "Product with provided id not found."}, status=status.HTTP_404_NOT_FOUND)
 
         # Add the product to the user's wishlist
-        wishlist_item, created = WishListItem.objects.get_or_create(user=request.user, products=matching_products)
+        wishlist_item, created = Wishlist.objects.get_or_create(user_id=request.user.id, product_id=product)
 
         if created:
-            serializer = WishListItemSerializer(wishlist_item)
-            return Response({'message': 'Product(s) added to wishlist', 'wishlist_item': serializer.data}, status=status.HTTP_201_CREATED)
+            serializer = self.serializer_class(wishlist_item)
+            return Response({'message': 'Product added to wishlist', 'wishlist_item': serializer.data}, status=status.HTTP_201_CREATED)
         else:
-            return Response({'message': 'Product(s) already in wishlist'}, status=status.HTTP_200_OK)
+            return Response({'message': 'Product already in wishlist'}, status=status.HTTP_200_OK)
+
+class PopularityBasedRecommendationView(APIView):
+    def get(self, request):
+        try:
+            # Retrieve popular products (e.g., top 10 products based on quantity)
+            popular_products = Product.objects.order_by('-quantity')[:10]
+            
+            # Serialize the recommended products
+            serializer = ProductSerializer(popular_products, many=True)
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
