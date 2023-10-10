@@ -86,12 +86,14 @@ class Shop(models.Model):
     def __str__(self):
         return self.name
 
+
 class ProductCategory(models.Model):    
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('complete', 'Complete'),
         ('failed', 'Failed'),
-    ]#defining the valid options for status field
+    ]
+    #defining the valid options for status field
 
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=225)
