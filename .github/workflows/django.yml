@@ -39,3 +39,18 @@ jobs:
       # - name: Runing the tests
       #   run: |
       #     python manage.py test
+
+  deploy:
+    runs-on: ubuntu-latest
+    name: deploy our django application to digital ocean
+    needs: [build]
+    steps:
+       - name: Checkout code
+         uses: actions/checkout@v2
+
+       - name: DigitalOcean App Platform deployment
+         uses: digitalocean/app_action@v1.1.5 # This is the action
+         with:
+            app_name: coral-app # Change it to your Digital Ocean app name
+            token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} # Set DIGITALOCEAN_ACCESS_TOKEN in Repository secrets
+            # branch: "master"
