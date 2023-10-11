@@ -118,27 +118,8 @@ class WishlistViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Wishlist.DoesNotExist:
             return Response({'detail': 'Wishlist item not found.'}, status=status.HTTP_404_NOT_FOUND)
-
-class WishlistProductsView(View):
-    def get(self, request, user_id):
-        wishlist_items = Wishlist.objects.filter(user_id=user_id)
-        wishlist_data = []
-        
-        for item in wishlist_items:
-            data = {
-                'product_id': item.product_id,
-                'created_at': item.created_at,     
-            }
-            wishlist_data.append(data)
-        
-        response_data = {'wishlist': wishlist_data}
-        
-        return JsonResponse(response_data)
     
-class WishlistView(APIView):
-    serializer_class = WishlistSerializer
-
-    def post(self, request):
+    def create(self, request):
 
         if not request.data.get("product_id"):
             return Response({'message': '"product_id" required in the request data'}, status=status.HTTP_400_BAD_REQUEST)
@@ -160,4 +141,19 @@ class WishlistView(APIView):
         else:
             return Response({'message': 'Product already in wishlist'}, status=status.HTTP_200_OK)
 
+
+class WishlistProductsView(View):
+    def get(self, request, user_id):
+        wishlist_items = Wishlist.objects.filter(user_id=user_id)
+        wishlist_data = []
         
+        for item in wishlist_items:
+            data = {
+                'product_id': item.product_id,
+                'created_at': item.created_at,     
+            }
+            wishlist_data.append(data)
+        
+        response_data = {'wishlist': wishlist_data}
+        
+        return JsonResponse(response_data)
