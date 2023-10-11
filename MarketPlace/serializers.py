@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Product, Wishlist, WishListItem
+from .models import Product, Wishlist
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -8,12 +8,7 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class WishlistSerializer(serializers.ModelSerializer):
+    product_details = ProductSerializer(source='product_id', read_only=True)  # Create a nested ProductSerializer field
     class Meta:
         model = Wishlist
         fields = '__all__'
-
-class WishListItemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = WishListItem
-        fields = '__all__'
-

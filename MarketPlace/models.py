@@ -5,22 +5,6 @@ import uuid
 
 # Create your models here.
 
-# test user profile for making recommendation
-from django.contrib.auth.models import User
-
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    age = models.IntegerField()
-    gender = models.CharField(max_length=10) 
-
-
-# test product table for testing the recommendation logic
-# class Product(models.Model):
-#     name = models.CharField(max_length=100)
-#     description = models.TextField()
-#     category = models.CharField(max_length=50)
-#     price = models.DecimalField( max_digits=20, decimal_places=2)
- 
 # User model from the schema
 class User(models.Model):
     """Identifies the user model based on the schema"""
@@ -87,12 +71,14 @@ class Shop(models.Model):
     def __str__(self):
         return self.name
 
+
 class ProductCategory(models.Model):    
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('complete', 'Complete'),
         ('failed', 'Failed'),
-    ]#defining the valid options for status field
+    ]
+    #defining the valid options for status field
 
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=225)
@@ -188,7 +174,7 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-
+    
 
     
 
