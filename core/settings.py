@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'MarketPlace',
     'rest_framework_swagger',
     'product_view',
+    'Product_filter',
 
     'drf_yasg'
 
