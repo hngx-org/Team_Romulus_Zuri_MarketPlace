@@ -70,12 +70,14 @@ class Shop(models.Model):
     def __str__(self):
         return self.name
 
+
 class ProductCategory(models.Model):    
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('complete', 'Complete'),
         ('failed', 'Failed'),
-    ]#defining the valid options for status field
+    ]
+    #defining the valid options for status field
 
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=225)
@@ -219,10 +221,11 @@ class Favorites(models.Model):
         verbose_name_plural = "Favourites"
 
 
-class WishListItem(models.Model):
+# THIS TABLE IS NOT ON THE GENERAL, IT SHOULD BE COMMUNICATED BEFORE 
+# CREATION. 
+# table for implementing the recommendation login
+class UserProductInteraction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    products = models.ManyToManyField(Product)
-    date_added = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.user.username}'s Wishlist Item"
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    interaction_type = models.CharField(max_length=10)  # e.g., "viewed," "purchased"
+    timestamp = models.DateTimeField(auto_now_add=True)
