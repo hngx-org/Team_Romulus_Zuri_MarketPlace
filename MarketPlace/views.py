@@ -12,10 +12,11 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.views import View
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator
 
 
 class Status(APIView):
-    def get(request):
+    def get(self, request):
         return Response({"Message": "API Endpoint server is Running"}, status=status.HTTP_200_OK)
 
 
@@ -83,21 +84,44 @@ class ProductListByCategoryView(APIView):
 class GetProductsSubCategories(APIView):
     def get(self, request, category, subcategory):
         # Get the products related to the categories n sub categories
+        # set the number of items to return per pages
+        page_size = request.GET.get('page_size', 3)
+
+        if not isinstance(category, str):
+            return Response({"error": "Category name must be string"}, status=status.HTTP_400_BAD_REQUEST)
+        if not isinstance(subcategory, str):
+            return Response({"error": "Sub category name must be string"}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
-            category_obj = get_object_or_404(ProductCategory, name=category)
-            subcategory_obj = get_object_or_404(ProductSubCategory, name=subcategory, parent_category_id=category_obj)
+            try:
+                category_obj = ProductCategory.objects.get(name=category)
+            except ProductCategory.DoesNotExist:
+                return Response({"Message": f"There is no product category named {category}"}, status=status.HTTP_404_NOT_FOUND)
+
+            try:
+                subcategory_obj = ProductSubCategory(name=subcategory, parent_category_id=category_obj)
+            except Exception as e:
+                return Response({'error': f'This is the error message {e}'})
+
+
 
             # Get products belonging to the provided subcategory
-            products = Product.objects.filter(subcategory_id=subcategory_obj)
+            products = Product.objects.filter(subcategory_id=subcategory_obj).order_by('category_id')
 
-            if not products:
-                return Response({"Message": "There are no products in this subCategory"}, status=status.HTTP_200_OK)
+            if not products.exists():
+                return Response([], {"Message": "There are no products in this subCategory"}, status=status.HTTP_200_OK)
 
             # Serialize the products
-            serializer = ProductSerializer(products, many=True)
+            # serializer = ProductSerializer(products, many=True)
+            # pagination
+            pagination = Paginator(products, page_size)
+            page_number = request.GET.get('page')
+            products_per_page = pagination.get_page(page_number)
+            serializer = ProductSerializer(products_per_page, many=True)
             return Response({'products': serializer.data}, status=status.HTTP_200_OK)
         except ProductSubCategory.DoesNotExist:
             return Response({"Message": "Subcategory does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Server Malfunction, we are fixing it'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
    
 class WishlistViewSet(viewsets.ModelViewSet):

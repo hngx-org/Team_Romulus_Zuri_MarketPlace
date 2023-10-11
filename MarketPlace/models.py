@@ -1,5 +1,6 @@
 from django.db import models
 import uuid
+from django.utils import timezone
 
 
 # Create your models here.
@@ -88,17 +89,10 @@ class Shop(models.Model):
 
 
 class ProductCategory(models.Model):    
-    STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('complete', 'Complete'),
-        ('failed', 'Failed'),
-    ]
-    #defining the valid options for status field
-
+    
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=225)
-    parent_category_id = models.IntegerField()
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
     
 
     class Meta:
@@ -111,26 +105,21 @@ class ProductCategory(models.Model):
         return self.name
 
 class ProductSubCategory(models.Model):    
-    STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('complete', 'Complete'),
-        ('failed', 'Failed'),
-    ]#defining the valid options for status field
-
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=225)
     parent_category_id = models.ForeignKey("ProductCategory", on_delete=models.CASCADE)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
     
     
     class Meta:
         """defines the metadata for the product model"""
-        db_table = "product_subcategory"
+        db_table = "product_sub_category"
         verbose_name_plural = "ProductSubCategories"
 
 
     def __str__(self) -> str:
         return self.name
+
 # the below class is not really needed for any function on our side
 # it's just added to ensure the Product class conforms with the schema
 
@@ -167,7 +156,7 @@ class Product(models.Model):
     description = models.CharField(max_length=255, null=False)
     quantity = models.BigIntegerField(null=False)
     category_id = models.ForeignKey('ProductCategory', on_delete=models.SET_NULL, null=True)
-    subcategory_id = models.ForeignKey("ProductSubCategory", on_delete=models.SET_NULL, null=True)
+    subcategory_id = models.ForeignKey('ProductSubCategory', on_delete=models.SET_NULL, null=True)
     price = models.DecimalField( max_digits=20, decimal_places=2, null=False)
     discount_price = models.DecimalField( max_digits=20, decimal_places=2, null=False)
     tax = models.DecimalField( max_digits=20, decimal_places=2, null=False)
@@ -236,12 +225,9 @@ class Favorites(models.Model):
         db_table = "favourite"
         verbose_name_plural = "Favourites"
 
-
-# THIS TABLE IS NOT ON THE GENERAL, IT SHOULD BE COMMUNICATED BEFORE 
-# CREATION. 
 # table for implementing the recommendation login
 class UserProductInteraction(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey("User", on_delete=models.CASCADE)
+    product = models.ForeignKey("Product", on_delete=models.CASCADE)
     interaction_type = models.CharField(max_length=10)  # e.g., "viewed," "purchased"
     timestamp = models.DateTimeField(auto_now_add=True)

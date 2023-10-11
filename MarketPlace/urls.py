@@ -12,7 +12,7 @@ urlpatterns = [
     path('products/', FilterProductView.as_view(), name='filter_products'),
     path('wishlist/<str:pk>/delete/', WishlistViewSet.as_view({'delete': 'destroy'}), name='wishlist-delete'),
     path('wishlist/<slug:user_id>/', WishlistProductsView.as_view(), name='get_wishlist_product'),
-    path('products/<str:category>/<str:subcategory>/', GetProductsSubCategories.as_view(), name='get_products_by_subcategories'),
+    path('products/<category>/<subcategory>/', GetProductsSubCategories.as_view(), name='get_products_by_subcategories'),
     path('wishlist/', WishlistProductsView.as_view(), name='wishlist'),
     path('recommendations/', PopularityBasedRecommendationView.as_view(), name='popularity_recommendations'),
 ]
