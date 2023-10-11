@@ -4,7 +4,6 @@ import uuid
 
 # Create your models here.
 
- 
 # User model from the schema
 class User(models.Model):
     """Identifies the user model based on the schema"""
