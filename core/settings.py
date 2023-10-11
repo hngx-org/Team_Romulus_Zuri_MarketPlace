@@ -26,7 +26,7 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'localhost', 'https://zuri-marketplace-a7cg4.ondigitalocean.app', 'https://zuri-marketplace-a7cg4.ondigitalocean.app/api']
+ALLOWED_HOSTS = ['*', 'localhost', 'https://coral-app-8bk8j.ondigitalocean.app/api']
 
 
 # Application definition
@@ -42,9 +42,9 @@ INSTALLED_APPS = [
 
     'MarketPlace',
     'rest_framework_swagger',
-    'product_view',
-    'Product_filter',
-    'product_recommendation',
+    # 'product_view',
+    # 'Product_filter',
+    # 'product_recommendation',
 
     'drf_yasg'
 
@@ -87,11 +87,11 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASE_ROUTERS = ['core.db_routers.DefaultDBRouter', 'core.db_routers.SharedDBRouter']
+DATABASE_ROUTERS = ['core.db_routers.DefaultRouter', 'core.db_routers.PrimaryRouter']
 
 DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
+        'primary': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': os.environ.get('DB_NAME'),
             'HOST': os.environ.get('DB_HOST'),
             'PORT': os.environ.get('DB_PORT'),
