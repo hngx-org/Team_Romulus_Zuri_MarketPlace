@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'product_view',
     'Product_filter',
+    'product_recommendation',
 
     'drf_yasg'
 

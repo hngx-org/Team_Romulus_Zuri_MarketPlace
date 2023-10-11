@@ -220,12 +220,3 @@ class Favorites(models.Model):
         db_table = "favourite"
         verbose_name_plural = "Favourites"
 
-
-# THIS TABLE IS NOT ON THE GENERAL, IT SHOULD BE COMMUNICATED BEFORE 
-# CREATION. 
-# table for implementing the recommendation login
-class UserProductInteraction(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    interaction_type = models.CharField(max_length=10)  # e.g., "viewed," "purchased"
-    timestamp = models.DateTimeField(auto_now_add=True)

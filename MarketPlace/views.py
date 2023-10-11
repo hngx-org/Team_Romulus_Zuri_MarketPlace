@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Product, ProductCategory, ProductSubCategory, Wishlist, UserProfile, UserProductInteraction
+from .models import Product, ProductCategory, ProductSubCategory, Wishlist
 from .serializers import ProductSerializer, WishlistSerializer
 from random import sample
 from django.db.models import Q
@@ -160,17 +160,4 @@ class WishlistView(APIView):
         else:
             return Response({'message': 'Product already in wishlist'}, status=status.HTTP_200_OK)
 
-class PopularityBasedRecommendationView(APIView):
-    def get(self, request):
-        try:
-            # Retrieve popular products (e.g., top 10 products based on quantity)
-            popular_products = Product.objects.order_by('-quantity')[:10]
-            
-            # Serialize the recommended products
-            serializer = ProductSerializer(popular_products, many=True)
-            
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         

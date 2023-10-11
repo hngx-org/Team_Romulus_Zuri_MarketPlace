@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from MarketPlace.models import Product, UserProductRating, Shop
+from MarketPlace.models import Product
 from MarketPlace.serializers import ProductSerializer
 
 # Create your views here.
