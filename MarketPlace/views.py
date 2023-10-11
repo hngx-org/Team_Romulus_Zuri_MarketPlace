@@ -71,7 +71,7 @@ class ProductListByCategoryView(APIView):
 
         try:
             category = ProductCategory.objects.get(name=categories)
-            products = Product.objects.filter(category_id=category).order_by(sort_by)
+            products = Product.objects.filter(category_id=category).order_by(sort_by).first()
             
             
             if not products.exists():
