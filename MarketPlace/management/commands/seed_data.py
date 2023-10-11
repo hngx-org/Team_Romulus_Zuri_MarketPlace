@@ -47,14 +47,14 @@ class Command(BaseCommand):
             shop = random.choice(Shop.objects.all())
             category = random.choice(ProductCategory.objects.all())
             subcategory = random.choice(ProductSubCategory.objects.filter(parent_category_id=category))
-
+            name = f'Product {random.randint(1, 100)}'
             # Choose a random ProductImage instance
             # product_image = random.choice(ProductImage.objects.all())
 
             Product.objects.create(
                 id=uuid.uuid4(),
                 shop_id=shop,
-                name=f'Product {random.randint(1, 100)}',
+                name=name,
                 description=f'Description for {name}',
                 quantity=random.randint(1, 100),
                 category_id=category,

@@ -79,6 +79,15 @@ class ProductListByCategoryView(APIView):
         except ProductCategory.DoesNotExist:
             return Response({'message': 'Category not found.'}, status=status.HTTP_404_NOT_FOUND)
         
+class GetAllCategoriesName(APIView):
+    def get(self, request):
+        categories_name = ProductCategory.objects.all()
+        names = []
+        if len(categories_name) > 0:
+            for cat in categories_name:
+                if cat.name not in names:
+                    names.append(cat.name)
+        return Response({"categories name": names}, status=status.HTTP_200_OK)
 
 
 class GetProductsSubCategories(APIView):
@@ -99,9 +108,9 @@ class GetProductsSubCategories(APIView):
                 return Response({"Message": f"There is no product category named {category}"}, status=status.HTTP_404_NOT_FOUND)
 
             try:
-                subcategory_obj = ProductSubCategory(name=subcategory, parent_category_id=category_obj)
-            except Exception as e:
-                return Response({'error': f'This is the error message {e}'})
+                subcategory_obj = ProductSubCategory.objects.get(name=subcategory, parent_category_id=category_obj)
+            except ProductSubCategory.DoesNotExist:
+                return Response({'error': f'There is no sub category named {subcategory} under {category}'})
 
 
 
@@ -109,7 +118,7 @@ class GetProductsSubCategories(APIView):
             products = Product.objects.filter(subcategory_id=subcategory_obj).order_by('category_id')
 
             if not products.exists():
-                return Response([], {"Message": "There are no products in this subCategory"}, status=status.HTTP_200_OK)
+                return Response({"products": [], "Message": "There are no products in this subCategory"}, status=status.HTTP_200_OK)
 
             # Serialize the products
             # serializer = ProductSerializer(products, many=True)
