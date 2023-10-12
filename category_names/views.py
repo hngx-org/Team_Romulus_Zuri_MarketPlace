@@ -3,22 +3,29 @@ from django.shortcuts import render
 # Create your views here.
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from MarketPlace.models import ProductCategory
+from MarketPlace.models import ProductCategory, ProductSubCategory
 from rest_framework import status
-from .serializers import ProductCategorySerializer
+from .serializers import ProductCategorySerializer, ProductSubCategorySerializer
+
+
 
 class CategoryNameView(APIView):
     def get(self, request):
         try:
             categories = ProductCategory.objects.all()
-            category_names = set()  # To store unique category names
-            serializer = []
+            category_data = []
 
             for category in categories:
-                if category.name not in category_names:
-                    serializer.append(ProductCategorySerializer(category).data)
-                    category_names.add(category.name)
+                category_serializer = ProductCategorySerializer(category).data
 
-            return Response({'category': serializer}, status=status.HTTP_200_OK)
+                # Include subcategories within the category
+                subcategories = ProductSubCategory.objects.filter(parent_category=category)
+                subcategory_data = ProductSubCategorySerializer(subcategories, many=True).data
+                category_serializer['subcategories'] = subcategory_data
+
+                category_data.append(category_serializer)
+
+            return Response({'categories': category_data}, status=status.HTTP_200_OK)
         except Exception as e:
+            
             return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
