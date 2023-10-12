@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'corsheaders',
+    'fetch_wishlist',
 
     'MarketPlace',
     'recently_viewed',
@@ -46,7 +48,11 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'product_filter',
     'product_recommendation',
+
     'product_retrieval',
+
+    'add_to_wishlist',
+
 
     'drf_yasg'
 
@@ -57,6 +63,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
