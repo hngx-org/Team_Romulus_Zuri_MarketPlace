@@ -89,3 +89,7 @@ class WishlistViewSetTest(TestCase):
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data["message"], '"product_id" required in the request data')
+        
+    def tearDown(self):
+        self.user.delete()
+        self.product.delete()
