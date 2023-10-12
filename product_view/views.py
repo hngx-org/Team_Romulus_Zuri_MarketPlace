@@ -43,7 +43,6 @@ class SortProducts(APIView):
         valid_sorting_options = [
             'name_asc', 'name_desc',
             'date_created_asc', 'date_created_desc',
-            'rating_asc', 'rating_desc',
             'price_asc', 'price_desc'
         ]
 
@@ -54,10 +53,8 @@ class SortProducts(APIView):
         sorting_mapping = {
             'name_asc': 'name',
             'name_desc': '-name',
-            'date_created_asc': 'created_at',
-            'date_created_desc': '-created_at',
-            'rating_asc': 'rating_id__rating',
-            'rating_desc': '-rating_id__rating',
+            'date_created_asc': 'createdat',
+            'date_created_desc': '-createdat',
             'price_asc': 'price',
             'price_desc': '-price'
         }
