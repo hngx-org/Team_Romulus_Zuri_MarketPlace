@@ -4,6 +4,8 @@ from product_view.models import ProductView
 from django.contrib.auth.models import User
 import uuid
 from datetime import datetime, timedelta
+from rest_framework.test import APIClient
+from rest_framework import status
 
 class ProductViewTestCase(TestCase):
 
@@ -36,3 +38,47 @@ class ProductViewTestCase(TestCase):
         non_existent_user_id = 999999  # A non-existent user ID
         response = self.client.get(reverse('get_last_viewed_products', args=[non_existent_user_id]))
         self.assertEqual(response.status_code, 404)
+
+
+class SortProductsTestCase(TestCase):
+    def setUp(self):
+        # Initialize the client
+        self.client = APIClient()
+
+    def test_sort_by_name_asc(self):
+        url = reverse('sort-products')
+        response = self.client.get(url, {'sorting_option': 'name_asc'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+       
+    def test_sort_by_name_desc(self):
+        url = reverse('sort-products')
+        response = self.client.get(url, {'sorting_option': 'name_desc'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)       
+
+    def test_sort_by_date_created_asc(self):
+        url = reverse('sort-products')
+        response = self.client.get(url, {'sorting_option': 'date_created_asc'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+    def test_sort_by_date_created_desc(self):
+        url = reverse('sort-products')
+        response = self.client.get(url, {'sorting_option': 'date_created_desc'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_sort_by_price_asc(self):
+        url = reverse('sort-products')
+        response = self.client.get(url, {'sorting_option': 'price_asc'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+       
+    def test_sort_by_price_desc(self):
+        url = reverse('sort-products')
+        response = self.client.get(url, {'sorting_option': 'price_desc'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_invalid_sorting_option(self):
+        url = reverse('sort-products')
+        response = self.client.get(url, {'sorting_option': 'invalid_option'})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        
+
+

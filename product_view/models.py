@@ -1,6 +1,6 @@
 from django.db import models
 from uuid import uuid4
-from MarketPlace.models import Product
+
 
 class ProductView(models.Model):
     """Represent a ProductView.
