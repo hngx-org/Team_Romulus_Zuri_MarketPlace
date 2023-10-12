@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from django.utils import timezone
-from .serializers import UserProductInteractionSerializer
+from .serializers import UserProductInteractionSerializer, ProductItemSerializer
 import uuid
 
 # Create your views here.
@@ -20,6 +20,11 @@ class CreateRecentlyViewd(generics.GenericAPIView):
         print('the status code of the response is ', query_response.status_code)
         return Response(query_response.data)        
 
+
+class GetProductItem(generics.RetrieveAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductItemSerializer
+    lookup_field = 'id'
 
 
 """This function adds updates the users recently viewed"""
