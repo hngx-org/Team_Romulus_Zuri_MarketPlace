@@ -3,7 +3,7 @@
 #   * Rearrange models' order
 #   * Make sure each model has one field with primary_key=True
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
+#   * Remove `# managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
@@ -14,7 +14,7 @@ class AboutDetail(models.Model):
     section = models.ForeignKey('Section', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'about_detail'
 
 
@@ -26,7 +26,7 @@ class Activity(models.Model):
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'activity'
 
 
@@ -36,7 +36,7 @@ class Answer(models.Model):
     correct_option = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'answer'
 
 
@@ -53,7 +53,7 @@ class Assessment(models.Model):
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'assessment'
 
 
@@ -62,7 +62,7 @@ class AssessmentCategory(models.Model):
     skill = models.ForeignKey('Skill', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'assessment_category'
 
 
@@ -70,7 +70,7 @@ class AuthGroup(models.Model):
     name = models.CharField(unique=True, max_length=150)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'auth_group'
 
 
@@ -80,7 +80,7 @@ class AuthGroupPermissions(models.Model):
     permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'auth_group_permissions'
         unique_together = (('group', 'permission'),)
 
@@ -91,7 +91,7 @@ class AuthPermission(models.Model):
     codename = models.CharField(max_length=100)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'auth_permission'
         unique_together = (('content_type', 'codename'),)
 
@@ -109,7 +109,7 @@ class AuthUser(models.Model):
     date_joined = models.DateTimeField()
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'auth_user'
 
 
@@ -119,7 +119,7 @@ class AuthUserGroups(models.Model):
     group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'auth_user_groups'
         unique_together = (('user', 'group'),)
 
@@ -130,7 +130,7 @@ class AuthUserUserPermissions(models.Model):
     permission = models.ForeignKey(AuthPermission, models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'auth_user_user_permissions'
         unique_together = (('user', 'permission'),)
 
@@ -147,7 +147,7 @@ class Award(models.Model):
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'award'
 
 
@@ -159,7 +159,7 @@ class Cart(models.Model):
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'cart'
 
 
@@ -175,7 +175,7 @@ class Certificate(models.Model):
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'certificate'
 
 
@@ -188,7 +188,7 @@ class Complaint(models.Model):
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'complaint'
 
 
@@ -200,7 +200,7 @@ class ComplaintComment(models.Model):
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'complaint_comment'
 
 
@@ -214,7 +214,7 @@ class Coupon(models.Model):
     expiry_date = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'coupon'
 
 
@@ -225,7 +225,7 @@ class CustomField(models.Model):
     value = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'custom_field'
 
 
@@ -234,7 +234,7 @@ class CustomUserSection(models.Model):
     section = models.ForeignKey('Section', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'custom_user_section'
 
 
@@ -242,7 +242,7 @@ class Degree(models.Model):
     type = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'degree'
 
 
@@ -256,7 +256,7 @@ class DjangoAdminLog(models.Model):
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'django_admin_log'
 
 
@@ -265,7 +265,7 @@ class DjangoContentType(models.Model):
     model = models.CharField(max_length=100)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'django_content_type'
         unique_together = (('app_label', 'model'),)
 
@@ -277,7 +277,7 @@ class DjangoMigrations(models.Model):
     applied = models.DateTimeField()
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'django_migrations'
 
 
@@ -287,7 +287,7 @@ class DjangoSession(models.Model):
     expire_date = models.DateTimeField()
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'django_session'
 
 
@@ -302,7 +302,7 @@ class EducationDetail(models.Model):
     section = models.ForeignKey('Section', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'education_detail'
 
 
@@ -315,7 +315,7 @@ class EmailVerification(models.Model):
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'email_verification'
 
 
@@ -324,7 +324,7 @@ class Favorites(models.Model):
     product = models.ForeignKey('Product', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'favorites'
 
 
@@ -332,7 +332,7 @@ class Images(models.Model):
     url = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'images'
 
 
@@ -342,7 +342,7 @@ class InterestDetail(models.Model):
     section = models.ForeignKey('Section', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'interest_detail'
 
 
@@ -352,7 +352,7 @@ class LastViewedProduct(models.Model):
     viewed_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'last_viewed_product'
 
 
@@ -366,7 +366,7 @@ class MailLog(models.Model):
     request_origin = models.CharField(max_length=225, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'mail_log'
 
 
@@ -374,7 +374,7 @@ class MailType(models.Model):
     name = models.CharField(max_length=225, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'mail_type'
 
 
@@ -383,7 +383,7 @@ class NotificationConfirmation(models.Model):
     status = models.TextField(blank=True, null=True)  # This field type is a guess.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'notification_confirmation'
 
 
@@ -396,7 +396,7 @@ class NotificationSetting(models.Model):
     user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'notification_setting'
 
 
@@ -411,7 +411,7 @@ class Order(models.Model):
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'order'
 
 
@@ -428,7 +428,7 @@ class OrderItem(models.Model):
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'order_item'
 
 
@@ -437,7 +437,7 @@ class Permission(models.Model):
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'permission'
 
 
@@ -445,7 +445,7 @@ class Permissions(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'permissions'
 
 
@@ -455,7 +455,7 @@ class PortfolioDetail(models.Model):
     user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'portfolio_detail'
 
 
@@ -465,7 +465,7 @@ class PortfoliosAnalytics(models.Model):
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'portfolios_analytics'
 
 
@@ -490,7 +490,7 @@ class Product(models.Model):
     user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'product'
 
 
@@ -500,7 +500,7 @@ class ProductCategory(models.Model):
     product = models.ForeignKey(Product, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'product_category'
 
 
@@ -509,7 +509,7 @@ class ProductImage(models.Model):
     url = models.CharField(max_length=255)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'product_image'
 
 
@@ -520,7 +520,7 @@ class ProductLogs(models.Model):
     log_date = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'product_logs'
 
 
@@ -532,7 +532,7 @@ class ProductReview(models.Model):
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'product_review'
 
 
@@ -542,7 +542,7 @@ class ProductSubCategory(models.Model):
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'product_sub_category'
 
 
@@ -557,7 +557,7 @@ class Project(models.Model):
     section = models.ForeignKey('Section', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'project'
 
 
@@ -566,7 +566,7 @@ class ProjectsImage(models.Model):
     image = models.ForeignKey(Images, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'projects_image'
 
 
@@ -576,7 +576,7 @@ class PromoProduct(models.Model):
     user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'promo_product'
 
 
@@ -595,7 +595,7 @@ class Promotion(models.Model):
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'promotion'
 
 
@@ -606,7 +606,7 @@ class Question(models.Model):
     question_type = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'question'
 
 
@@ -617,7 +617,7 @@ class Report(models.Model):
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'report'
 
 
@@ -627,7 +627,7 @@ class Revenue(models.Model):
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'revenue'
 
 
@@ -635,7 +635,7 @@ class Role(models.Model):
     name = models.CharField(max_length=225, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'role'
 
 
@@ -645,7 +645,7 @@ class RolesPermissions(models.Model):
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'roles_permissions'
 
 
@@ -660,7 +660,7 @@ class SalesAnalytics(models.Model):
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'sales_analytics'
 
 
@@ -671,7 +671,7 @@ class SalesReport(models.Model):
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'sales_report'
 
 
@@ -681,7 +681,7 @@ class Section(models.Model):
     meta = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'section'
 
 
@@ -699,7 +699,7 @@ class Shop(models.Model):
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'shop'
 
 
@@ -710,7 +710,7 @@ class ShopLogs(models.Model):
     log_date = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'shop_logs'
 
 
@@ -720,7 +720,7 @@ class Skill(models.Model):
     parent_skill = models.ForeignKey('self', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'skill'
 
 
@@ -734,7 +734,7 @@ class SkillBadge(models.Model):
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'skill_badge'
 
 
@@ -744,7 +744,7 @@ class SkillsDetail(models.Model):
     section = models.ForeignKey(Section, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'skills_detail'
 
 
@@ -752,7 +752,7 @@ class SocialMedia(models.Model):
     name = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'social_media'
 
 
@@ -762,7 +762,7 @@ class SocialUser(models.Model):
     url = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'social_user'
 
 
@@ -771,7 +771,7 @@ class StoreTraffic(models.Model):
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'store_traffic'
 
 
@@ -781,7 +781,7 @@ class TrackPromotion(models.Model):
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'track_promotion'
 
 
@@ -789,7 +789,7 @@ class Tracks(models.Model):
     track = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'tracks'
 
 
@@ -805,7 +805,7 @@ class Transaction(models.Model):
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'transaction'
 
 
@@ -830,7 +830,7 @@ class User(models.Model):
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'user'
 
 
@@ -842,7 +842,7 @@ class UserAnalytics(models.Model):
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'user_analytics'
 
 
@@ -855,7 +855,7 @@ class UserAssessment(models.Model):
     submission_date = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'user_assessment'
 
 
@@ -867,7 +867,7 @@ class UserBadge(models.Model):
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'user_badge'
 
 
@@ -876,7 +876,7 @@ class UserPermission(models.Model):
     permission = models.ForeignKey(Permission, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'user_permission'
 
 
@@ -887,7 +887,7 @@ class UserProductInteraction(models.Model):
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'user_product_interaction'
 
 
@@ -897,7 +897,7 @@ class UserProductRating(models.Model):
     rating = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'user_product_rating'
 
 
@@ -908,7 +908,7 @@ class UserResponse(models.Model):
     selected_response = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'user_response'
 
 
@@ -917,7 +917,7 @@ class UserTrack(models.Model):
     track = models.ForeignKey(Tracks, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'user_track'
 
 
@@ -928,7 +928,7 @@ class Wishlist(models.Model):
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'wishlist'
 
 
@@ -945,5 +945,5 @@ class WorkExperienceDetail(models.Model):
     section = models.ForeignKey(Section, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'work_experience_detail'
