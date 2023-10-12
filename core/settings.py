@@ -26,7 +26,7 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'localhost', 'https://zuri-marketplace-a7cg4.ondigitalocean.app', 'https://zuri-marketplace-a7cg4.ondigitalocean.app/api']
+ALLOWED_HOSTS = ['*', 'localhost', 'https://coral-app-8bk8j.ondigitalocean.app/api']
 
 
 # Application definition
@@ -39,21 +39,31 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'corsheaders',
+    'fetch_wishlist',
 
     'MarketPlace',
+    'recently_viewed',
+    'addrecent',
     'rest_framework_swagger',
-    'product_view',
-    'Product_filter',
+    'product_filter',
     'product_recommendation',
+
+    'product_retrieval',
+
+    'add_to_wishlist',
+
 
     'drf_yasg'
 
 ]
 
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -87,21 +97,33 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASE_ROUTERS = ['core.db_routers.DefaultDBRouter', 'core.db_routers.SharedDBRouter']
+DATABASE_ROUTERS = ['core.db_routers.DefaultRouter', 'core.db_routers.PrimaryRouter']
 
 DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('DB_NAME'),
-            'HOST': os.environ.get('DB_HOST'),
-            'PORT': os.environ.get('DB_PORT'),
-            'USER': os.environ.get('DB_USER'),
-            'PASSWORD': os.environ.get('DB_PASSWORD'),
-        },
+        # 'primary': {
+        #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        #     'NAME': os.environ.get('DB_NAME'),
+        #     'HOST': os.environ.get('DB_HOST'),
+        #     'PORT': os.environ.get('DB_PORT'),
+        #     'USER': os.environ.get('DB_USER'),
+        #     'PASSWORD': os.environ.get('DB_PASSWORD'),
+        # },
         "default": {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'railway',
+            'HOST': 'containers-us-west-179.railway.app',
+            'PORT': 6985,
+            'USER': 'postgres',
+            'PASSWORD': '6ohmepstiEAAfsHRtc1E',
+        },
+        "primary": {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'railway',
+            'HOST': 'containers-us-west-126.railway.app',
+            'PORT': 6537,
+            'USER': 'postgres',
+            'PASSWORD': 'y3zGd6gD3DVzkRTbZCOH',
+        },
 }
 
 # DATABASES = {
@@ -155,6 +177,8 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer', 
     ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5
 }
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
@@ -170,3 +194,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ALLOW_ALL_ORIGINS = True
