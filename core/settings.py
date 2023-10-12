@@ -42,9 +42,6 @@ INSTALLED_APPS = [
 
     'MarketPlace',
     'rest_framework_swagger',
-    # 'product_view',
-    # 'Product_filter',
-    # 'product_recommendation',
 
     'drf_yasg'
 
@@ -90,18 +87,30 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASE_ROUTERS = ['core.db_routers.DefaultRouter', 'core.db_routers.PrimaryRouter']
 
 DATABASES = {
-        'primary': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': os.environ.get('DB_NAME'),
-            'HOST': os.environ.get('DB_HOST'),
-            'PORT': os.environ.get('DB_PORT'),
-            'USER': os.environ.get('DB_USER'),
-            'PASSWORD': os.environ.get('DB_PASSWORD'),
-        },
+        # 'primary': {
+        #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        #     'NAME': os.environ.get('DB_NAME'),
+        #     'HOST': os.environ.get('DB_HOST'),
+        #     'PORT': os.environ.get('DB_PORT'),
+        #     'USER': os.environ.get('DB_USER'),
+        #     'PASSWORD': os.environ.get('DB_PASSWORD'),
+        # },
         "default": {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'railway',
+            'HOST': 'containers-us-west-179.railway.app',
+            'PORT': 6985,
+            'USER': 'postgres',
+            'PASSWORD': '6ohmepstiEAAfsHRtc1E',
+        },
+        "primary": {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'railway',
+            'HOST': 'containers-us-west-126.railway.app',
+            'PORT': 6537,
+            'USER': 'postgres',
+            'PASSWORD': 'y3zGd6gD3DVzkRTbZCOH',
+        },
 }
 
 # DATABASES = {

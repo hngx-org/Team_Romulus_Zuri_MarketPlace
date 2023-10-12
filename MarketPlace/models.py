@@ -475,14 +475,14 @@ class Product(models.Model):
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     quantity = models.BigIntegerField()
-    category = models.ForeignKey('ProductCategory', models.DO_NOTHING, blank=True, null=True, related_name="product_category")
+    category = models.ForeignKey('ProductCategory', models.DO_NOTHING, blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     discount_price = models.DecimalField(max_digits=10, decimal_places=2)
     tax = models.DecimalField(max_digits=10, decimal_places=2)
     admin_status = models.TextField(blank=True, null=True)  # This field type is a guess.
     is_deleted = models.TextField(blank=True, null=True)  # This field type is a guess.
     rating = models.ForeignKey('UserProductRating', models.DO_NOTHING, blank=True, null=True)
-    image = models.ForeignKey('ProductImage', models.DO_NOTHING, blank=True, null=True, related_name="product_image")
+    # image = models.ForeignKey('ProductImage', models.DO_NOTHING, blank=True, null=True)
     is_published = models.BooleanField()
     currency = models.CharField(max_length=10)
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
@@ -497,7 +497,7 @@ class Product(models.Model):
 class ProductCategory(models.Model):
     name = models.CharField(max_length=225, blank=True, null=True)
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
-    product = models.ForeignKey(Product, models.DO_NOTHING, blank=True, null=True)
+    # product = models.ForeignKey(Product, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
