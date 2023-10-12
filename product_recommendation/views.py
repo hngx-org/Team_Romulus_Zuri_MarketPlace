@@ -55,4 +55,20 @@ class ProductRecommendationView(APIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+class SimilarProductRecommendationView(APIView):
+    @staticmethod
+    def get(request, product_id):
+        try:
+            current_product = Product.objects.get(id=product_id)
+
+        except Product.DoesNotExist:
+            return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        similar_products = Product.objects.filter(category_id=current_product.category_id).exclude(id=product_id)
+
+        recommendedproducts = similar_products[:4]
+
+        serializer = ProductSerializer(recommendedproducts, many=True)
+
+        return Response({'products': serializer.data}, status=status.HTTP_200_OK)
 
