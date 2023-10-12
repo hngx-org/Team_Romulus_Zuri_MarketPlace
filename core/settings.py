@@ -48,10 +48,11 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'product_filter',
     'product_recommendation',
-    'product_view',
     'product_retrieval',
 
     'add_to_wishlist',
+    'category_names',
+    'delete_wishlist',
 
 
     'drf_yasg'
@@ -194,5 +195,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Add your frontend origin here
+]
+
+# Allow cookies to be sent with the request
+CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_ALL_ORIGINS = True

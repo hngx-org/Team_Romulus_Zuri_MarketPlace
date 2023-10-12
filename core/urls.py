@@ -47,5 +47,4 @@ urlpatterns = [
     path('api/', include('add_to_wishlist.urls')),
     path('api/', include('addrecent.urls')),
     path('api/', include('product_category.urls')),
-    path('api/', include('product_view.urls')),
 ]
