@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'product_filter',
     'product_recommendation',
-
+    'product_view',
     'product_retrieval',
 
     'add_to_wishlist',
