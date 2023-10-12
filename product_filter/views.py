@@ -26,7 +26,7 @@ class FilterProductView(APIView):
             products = products.filter(category_id__name=category)
 
         if sub_category:
-            products = products.filter(subcategory_id__name=sub_category)
+            products = products.filter(category__productsubcategory__name=sub_category)
 
         if keywords:
             products = products.filter(Q(name__icontains=keywords) | Q(description__icontains=keywords))
