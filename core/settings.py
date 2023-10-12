@@ -42,7 +42,9 @@ INSTALLED_APPS = [
 
     'MarketPlace',
     'all_products',
+    'recently_viewed',
     'rest_framework_swagger',
+    'product_filter',
 
     'drf_yasg'
 
