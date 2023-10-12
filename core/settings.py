@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'MarketPlace',
+    'recently_viewed',
+   
     'rest_framework_swagger',
     'product_filter',
 
