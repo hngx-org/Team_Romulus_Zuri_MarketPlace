@@ -19,16 +19,19 @@ class GetCategoryNames(APIView):
         for cat in categories:
             if cat not in name:
                 name.append(cat.name)
-        return Response({"categories name": names}, status=status.HTTP_200_OK)
+        return Response({"categories name": name}, status=status.HTTP_200_OK)
 
 class GetImage(APIView):
     def get(self, request, imageId):
-        images = ProductImage.objects.get(id=imageId)
-        response = {
-                'message': 'This is the url to where the image is hosted',
-                'url': images.url
+        try:
+            images = ProductImage.objects.get(id=imageId)
+            response = {
+                    'message': 'This is the url to where the image is hosted',
+                    'url': images.url
                 }
-        return Response(response, status=status.HTTP_200_OK)
+            return Response(response, status=status.HTTP_200_OK)
+        except ProductImage.DoesNotExist:
+            return Response({"error": "ProductImage does not exist", "reason": "Beans has been cooked"})
 
 class GetProductsSubCategory(APIView):
     def get(self, request, category, subcategory):
