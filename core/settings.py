@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'fetch_wishlist',
 
     'MarketPlace',
     'recently_viewed',
