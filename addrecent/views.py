@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from django.utils import timezone
+from django.http import Http404
 from .serializers import UserProductInteractionSerializer, ProductItemSerializer
 import uuid
 
@@ -25,6 +26,20 @@ class GetProductItem(generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductItemSerializer
     lookup_field = 'id'
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+        except Http404:
+            return Response({'message': 'Product not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        user_id = kwargs.get('user_id')
+        product_id = kwargs.get('id')
+        qurery_response = addRecentlyViewed(user_id=user_id, product_id=product_id)
+        if qurery_response.status_code == status.HTTP_201_CREATED:
+            return super().retrieve(request, *args, **kwargs)
+        else:
+            return Response(qurery_response.data, status= qurery_response.status_code)
 
 
 """This function adds updates the users recently viewed"""
