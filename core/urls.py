@@ -42,4 +42,5 @@ urlpatterns = [
     path('api/', include('product_recommendation.urls')),
     path('api/', include('fetch_wishlist.urls')),
     path('api/', include('add_to_wishlist.urls')),
+    path('api/', include('product_category.urls')),
 ]
