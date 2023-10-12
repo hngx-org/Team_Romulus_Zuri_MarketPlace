@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'MarketPlace',
+    'all_products',
     'rest_framework_swagger',
 
     'drf_yasg'
@@ -164,6 +165,8 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer', 
     ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,
 }
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
