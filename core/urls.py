@@ -48,4 +48,5 @@ urlpatterns = [
     path('api/', include('addrecent.urls')),
     path('api/', include('product_category.urls')),
     path('api/', include('category_names.urls')),
+    path('api/', include('delete_wishlist.urls')),
 ]

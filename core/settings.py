@@ -53,6 +53,7 @@ INSTALLED_APPS = [
 
     'add_to_wishlist',
     'category_names',
+    'delete_wishlist',
 
 
     'drf_yasg'
