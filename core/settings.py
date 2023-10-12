@@ -26,7 +26,7 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'https://coral-app-8bk8j.ondigitalocean.app/api']
+ALLOWED_HOSTS = ['localhost', 'https://coral-app-8bk8j.ondigitalocean.app/api/', 'https://coral-app-8bk8j.ondigitalocean.app/']
 
 
 # Application definition
