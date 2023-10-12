@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'product_retrieval',
 
     'add_to_wishlist',
+    'category_names',
 
 
     'drf_yasg'
