@@ -1,8 +1,11 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from MarketPlace.models import Product
+from MarketPlace.models import Product, ProductCategory
 from MarketPlace.serializers import ProductSerializer
+from rest_framework.test import APIClient
+from django.test import TestCase
+
 
 class ProductRecommendationViewTest(APITestCase):
     def setUp(self):
@@ -65,4 +68,48 @@ class ProductRecommendationViewTest(APITestCase):
         self.assertEqual(response_set, serializer_set)
     
 
+class TestSimilarProductView(TestCase):
+    def setUp(self):
+        self.client = APIClient()
 
+        # To create sample categories
+        self.category1 = ProductCategory.objects.create(name='Electronics',)
+        self.category2 = ProductCategory.objects.create(name='Online_Tutoring')
+
+        # To create sample products
+        self.product1 = Product.objects.create(name='product1',
+                                               description='Product1 description', quantity=10,
+                                               category=self.category1, price=1000.00, discount_price=900.00,
+                                               tax=50.00, is_published=True, currency='Naira')
+        self.product2 = Product.objects.create(name='product2',
+                                               description='Product2 description device', quantity=15,
+                                               category=self.category1, price=1500.00, discount_price=1350.00,
+                                               tax=75.00, is_published=True, currency='Naira')
+        self.product3 = Product.objects.create(name='product3',
+                                               description='Product3 description', quantity=25,
+                                               category=self.category1, price=1300.00, discount_price=1250.00,
+                                               tax=65.00, is_published=True, currency='Naira')
+        self.product4 = Product.objects.create(name='product4',
+                                               description='Product4 description', quantity=45,
+                                               category=self.category2, price=1300.00, discount_price=1250.00,
+                                               tax=65.00, is_published=True, currency='Naira')
+
+    def test_get_similar_products(self):
+        # GET request to SimilarProductView endpoint
+        url = reverse('similar-products', kwargs={'product_id': self.product1.id})
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)  # print(response.data)
+
+        # To confirm that the products returned are similar products
+        self.assertEqual(len(response.data['products']), 2)
+
+        # To confirm that the 'un-similar' product is not among returned products
+        json_response = response.json()
+        product4 = ProductSerializer(self.product4)
+        self.assertNotEqual(json_response['products'][-1], product4.data)
+        print(json_response['products'])  # print(json_response['products'][-1])
+
+        # To confirm the products returned have the same category
+        for product in response.data['products']:
+            self.assertEqual(product['category_id'], self.category1.id)
+        # self.assertTrue(response['products'][:], self.category1.id)
