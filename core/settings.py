@@ -42,9 +42,6 @@ INSTALLED_APPS = [
 
     'MarketPlace',
     'rest_framework_swagger',
-    # 'product_view',
-    # 'Product_filter',
-    # 'product_recommendation',
 
     'drf_yasg'
 
@@ -99,12 +96,20 @@ DATABASES = {
         #     'PASSWORD': os.environ.get('DB_PASSWORD'),
         # },
         "default": {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'railway',
+            'HOST': 'containers-us-west-179.railway.app',
+            'PORT': 6985,
+            'USER': 'postgres',
+            'PASSWORD': '6ohmepstiEAAfsHRtc1E',
         },
         "primary": {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db2.sqlite3',
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'railway',
+            'HOST': 'containers-us-west-126.railway.app',
+            'PORT': 6537,
+            'USER': 'postgres',
+            'PASSWORD': 'y3zGd6gD3DVzkRTbZCOH',
         },
 }
 
