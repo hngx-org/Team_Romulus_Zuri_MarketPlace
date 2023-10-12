@@ -40,4 +40,5 @@ urlpatterns = [
     path('api/', include('product_filter.urls')),
     path('api/', include('limited_offer.urls')),
     path('api/', include('product_recommendation.urls')),
+    path('api/', include('addrecent.urls'))
 ]
