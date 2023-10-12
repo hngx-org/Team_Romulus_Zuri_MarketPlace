@@ -64,7 +64,7 @@ class SimilarProductRecommendationView(APIView):
         except Product.DoesNotExist:
             return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        similar_products = Product.objects.filter(category_id=current_product.category_id).exclude(id=product_id)
+        similar_products = Product.objects.filter(category=current_product.category).exclude(id=product_id)
 
         recommendedproducts = similar_products[:4]
 
