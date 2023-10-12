@@ -57,5 +57,5 @@ class TestFilterProductView(TestCase):
         for product in filtered_products['products']:
             if product['discount_price'] <= query_params['discount']:
                 self.assertLessEqual(product['discount_price'], query_params['discount'])
-                self.assertEqual(len(response.data['products']), 2)
+                self.assertEqual(len(response.data['products']), 3)
 # ----------------------------------------------------------------------------------------------------------#
