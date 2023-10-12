@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'fetch_wishlist',
 
     'MarketPlace',
     'recently_viewed',
