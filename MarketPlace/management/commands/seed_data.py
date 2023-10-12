@@ -42,6 +42,34 @@ class Command(BaseCommand):
                 rating=random.uniform(3.0, 5.0),
             )
 
+        # images
+        images = ['https://images.unsplash.com/photo-1675889335685-4ac82f1e47ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MTQ2MjV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcwOTU1Nzl8&ixlib=rb-4.0.3&q=80&w=1080',
+                  'https://images.unsplash.com/photo-1694059243983-49081f1a4a46?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MTQ2MjV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcwOTU1Nzl8&ixlib=rb-4.0.3&q=80&w=1080',
+                  'https://images.unsplash.com/photo-1694060851779-7b4bc50e6a0b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MTQ2MjV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcwOTU1Nzl8&ixlib=rb-4.0.3&q=80&w=1080',
+                  'https://images.unsplash.com/photo-1694299782738-4aa23cb3922e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MTQ2MjV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcwOTU1Nzl8&ixlib=rb-4.0.3&q=80&w=1080',
+                  'https://images.unsplash.com/photo-1694802519363-42c4067833c9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MTQ2MjV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcwOTU1Nzl8&ixlib=rb-4.0.3&q=80&w=1080',
+                  'https://images.unsplash.com/photo-1695392689359-de22b1cbb9e6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MTQ2MjV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcwOTU1Nzl8&ixlib=rb-4.0.3&q=80&w=1080',
+                  'https://images.unsplash.com/photo-1695531333363-e1d7464c40f4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MTQ2MjV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcwOTU1Nzl8&ixlib=rb-4.0.3&q=80&w=1080',
+                  'https://images.unsplash.com/photo-1695551742096-06c79fe0aca2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MTQ2MjV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcwOTU1Nzl8&ixlib=rb-4.0.3&q=80&w=1080',
+                  'https://images.unsplash.com/photo-1695742865516-2d6b264414eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MTQ2MjV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcwOTU1Nzl8&ixlib=rb-4.0.3&q=80&w=1080',
+                  'https://images.unsplash.com/photo-1695754188473-ec8b56ddcfba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MTQ2MjV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcwOTU1Nzl8&ixlib=rb-4.0.3&q=80&w=1080',
+                  'https://images.unsplash.com/photo-1695844918823-8ec54d7d839c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MTQ2MjV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcwOTU1Nzl8&ixlib=rb-4.0.3&q=80&w=1080',
+                  'https://images.un-splash.com/photo-1695977318848-fd0f317ea79a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MTQ2MjV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcwOTU1Nzl8&ixlib=rb-4.0.3&q=80&w=1080',
+                  'https://images.unsplash.com/photo-1696081248264-5df487eb0138?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MTQ2MjV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcwOTU1Nzl8&ixlib=rb-4.0.3&q=80&w=1080',
+                  'https://images.unsplash.com/photo-1696104901055-425157b698d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MTQ2MjV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcwOTU1Nzl8&ixlib=rb-4.0.3&q=80&w=1080',
+                  'https://images.unsplash.com/photo-1696215325855-082b3aba071c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MTQ2MjV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcwOTU1Nzl8&ixlib=rb-4.0.3&q=80&w=1080',
+                  'https://images.unsplash.com/photo-1696334871741-e7bc08fc4a69?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MTQ2MjV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcwOTU1Nzl8&ixlib=rb-4.0.3&q=80&w=1080',
+                  'https://images.unsplash.com/photo-1696456550326-077615aba562?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MTQ2MjV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcwOTU1Nzl8&ixlib=rb-4.0.3&q=80&w=1080',
+                  'https://images.unsplash.com/photo-1696789990379-14b4271d8da2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MTQ2MjV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcwOTU1Nzl8&ixlib=rb-4.0.3&q=80&w=1080',
+                  'https://images.unsplash.com/photo-1696888340375-ca8e5a508b14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MTQ2MjV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcwOTU1Nzl8&ixlib=rb-4.0.3&q=80&w=1080',
+                  'https://images.unsplash.com/photo-1696946775093-96fcbd47213a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MTQ2MjV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcwOTU1Nzl8&ixlib=rb-4.0.3&q=80&w=1080']
+
+        #image instance
+        for _ in range(10):
+            ProductImage.objects.create(
+                    url=random.choice(images)
+                    )
+
         # Seed Product instances
         for _ in range(10):
             shop = random.choice(Shop.objects.all())
@@ -49,7 +77,7 @@ class Command(BaseCommand):
             subcategory = random.choice(ProductSubCategory.objects.filter(parent_category_id=category))
             name = f'Product {random.randint(1, 100)}'
             # Choose a random ProductImage instance
-            # product_image = random.choice(ProductImage.objects.all())
+            product_image = random.choice(ProductImage.objects.all())
 
             Product.objects.create(
                 id=uuid.uuid4(),
@@ -59,7 +87,7 @@ class Command(BaseCommand):
                 quantity=random.randint(1, 100),
                 category_id=category,
                 subcategory_id = subcategory,
-                # image_id=product_image,  # Assign the ProductImage instance
+                image_id=product_image,  # Assign the ProductImage instance
                 price=random.uniform(10.0, 100.0),
                 discount_price=random.uniform(5.0, 50.0),
                 tax=random.uniform(1.0, 10.0),
@@ -70,15 +98,12 @@ class Command(BaseCommand):
             )
 
 
-        # Seed ProductImage instances
+        # Seed ProductImage instances 
         if ProductImage.objects.exists():  # Check if there are any ProductImage instances
             for product in Product.objects.all():
-                # image_file_path = f'C:/Users/Admin/Documents/Team_Romulus_Zuri_MarketPlace-1/images/{random.randint(1, 10)}.jpg'
-                # product_image = random.choice(ProductImage.objects.all())  # Choose a random ProductImage instance
-                ProductImage.objects.create(
-                    product_id=product.id,
-                    url='https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg'  # Use the URL from the existing ProductImage
-                )
+                for imag in ProductImage.objects.all():
+                    if product.image_id == imag:
+                        imag.product_id = product
 
         # create users
         for _ in range(5):

@@ -5,8 +5,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Product, ProductCategory, ProductSubCategory, Wishlist, UserProfile, UserProductInteraction
-from .serializers import ProductSerializer, WishlistSerializer
+from .models import Product, ProductCategory, ProductSubCategory, Wishlist, UserProfile, UserProductInteraction, ProductImage
+from .serializers import ProductSerializer, WishlistSerializer, ProductImageSerializer
 from random import sample
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
@@ -89,7 +89,15 @@ class GetAllCategoriesName(APIView):
                     names.append(cat.name)
         return Response({"categories name": names}, status=status.HTTP_200_OK)
 
-
+class GetImage(APIView):
+    def get(self, request, imageId):
+        images = ProductImage.objects.get(id=imageId)
+        serializer = ProductImageSerializer(images, many=True)
+        response = {
+                'message': 'This is the url to where the image is hosted',
+                'url': images.url
+                }
+        return Response(response, status=status.HTTP_200_OK)
 class GetProductsSubCategories(APIView):
     def get(self, request, category, subcategory):
         # Get the products related to the categories n sub categories

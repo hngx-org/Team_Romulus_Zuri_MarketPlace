@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import SimilarProductView, Status, GetAllCategoriesName, FilterProductView, ProductListByCategoryView, WishlistProductsView, WishlistViewSet, Status, GetProductsSubCategories, PopularityBasedRecommendationView
+from .views import SimilarProductView, Status, GetAllCategoriesName, FilterProductView, ProductListByCategoryView, WishlistProductsView, WishlistViewSet, Status, GetProductsSubCategories, PopularityBasedRecommendationView, GetImage
 from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register(r'wishlist', WishlistViewSet)
@@ -8,6 +8,7 @@ router.register(r'wishlist', WishlistViewSet)
 urlpatterns = [
     # path('', include(router.urls)),
     path('', Status.as_view(), name="status"),
+    path('image/<imageId>', GetImage.as_view(), name='image'),
     path('categories', GetAllCategoriesName.as_view(), name="category_name"),
     path('products/<str:categories>', ProductListByCategoryView.as_view(), name='get_all_products_by_categories'),
     path('similar_products/<uuid:product_id>/', SimilarProductView.as_view(), name='similar-products'),
