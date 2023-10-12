@@ -45,10 +45,12 @@ INSTALLED_APPS = [
    
     'rest_framework_swagger',
     'product_filter',
+    'product_recommendation',
 
     'drf_yasg'
 
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
