@@ -55,7 +55,7 @@ class WishlistViewSetTest(TestCase):
 
     def test_create_wishlist_item(self):
         url = reverse("wishlist_create")
-        data = {"product_id": str(self.product.id)}
+        data = {"product_id": str(self.product.id), "user_id": str(self.user.id)}
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["message"], "Product added to wishlist")
