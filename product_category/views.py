@@ -9,10 +9,10 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 class ProductListByCategoryView(APIView):
-    def get(self, request, categories):
+    def get(self, request, category):
         # sort_by = request.query_params.get('sort_by', 'name')
-        category = ProductCategory.objects.get(name=categories)
-        products = Product.objects.filter(category=category)
+        product_category = ProductCategory.objects.get(name=category)
+        products = Product.objects.filter(category=product_category)
         try:
             if not products:
                 return Response({'message': 'The category exists, but has no products'}, status=status.HTTP_200_OK)
