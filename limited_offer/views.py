@@ -23,7 +23,7 @@ class LimitedOfferListView(generics.ListAPIView):
         Returns:
         - queryset: A filtered queryset containing products with discounts.
         """
-        queryset = Product.objects.filter(discount_price__isnull=False)
+        queryset = Product.objects.filter(discount_price__isnull=False).exclude(discount_price=0.00)
         return queryset
 
     def list(self, request, *args, **kwargs):
