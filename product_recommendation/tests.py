@@ -103,7 +103,7 @@ class TestSimilarProductView(TestCase):
         # To confirm that the products returned are similar products
         self.assertEqual(len(response.data['products']), 2)
 
-        # To confirm that the 'un-similar' product is not among returned products
+        # To confirm that the 'un-similar' product is not among the returned products
         json_response = response.json()
         product4 = ProductSerializer(self.product4)
         self.assertNotEqual(json_response['products'][-1], product4.data)
