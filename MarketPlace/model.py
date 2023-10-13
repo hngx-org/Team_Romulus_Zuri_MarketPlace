@@ -66,6 +66,24 @@ class AssessmentCategory(models.Model):
         db_table = 'assessment_category'
 
 
+class Assessments(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    skill_id = models.BigIntegerField(blank=True, null=True)
+    title = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    start_date = models.DateTimeField(blank=True, null=True)
+    end_date = models.DateTimeField(blank=True, null=True)
+    duration_minutes = models.BigIntegerField(blank=True, null=True)
+    pass_score = models.BigIntegerField(blank=True, null=True)
+    status = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'assessments'
+
+
 class AuthGroup(models.Model):
     name = models.CharField(unique=True, max_length=150)
 
@@ -219,8 +237,8 @@ class Coupon(models.Model):
 
 
 class CustomField(models.Model):
-    field_type = models.CharField(max_length=255, blank=True, null=True)
-    field_name = models.CharField(max_length=255, blank=True, null=True)
+    field_type = models.CharField(blank=True, null=True)
+    field_name = models.CharField(blank=True, null=True)
     custom_section = models.ForeignKey('CustomUserSection', models.DO_NOTHING, blank=True, null=True)
     value = models.TextField(blank=True, null=True)
 
@@ -239,7 +257,7 @@ class CustomUserSection(models.Model):
 
 
 class Degree(models.Model):
-    type = models.CharField(max_length=255, blank=True, null=True)
+    type = models.CharField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -293,11 +311,11 @@ class DjangoSession(models.Model):
 
 class EducationDetail(models.Model):
     degree = models.ForeignKey(Degree, models.DO_NOTHING, blank=True, null=True)
-    field_of_study = models.CharField(max_length=255, blank=True, null=True)
-    school = models.CharField(max_length=255, blank=True, null=True)
-    field_from = models.CharField(max_length=255, db_column='\n  from', blank=True, null=True)  # Field renamed to remove unsuitable characters. Field renamed because it started with '_'.
+    field_of_study = models.CharField(blank=True, null=True)
+    school = models.CharField(blank=True, null=True)
+    from_field = models.CharField(db_column='from', blank=True, null=True)  # Field renamed because it was a Python reserved word.
     description = models.TextField(blank=True, null=True)
-    to = models.CharField(max_length=255, blank=True, null=True)
+    to = models.CharField(blank=True, null=True)
     user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
     section = models.ForeignKey('Section', models.DO_NOTHING, blank=True, null=True)
 
@@ -308,8 +326,8 @@ class EducationDetail(models.Model):
 
 class EmailVerification(models.Model):
     user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
-    email = models.CharField(max_length=255, blank=True, null=True)
-    token = models.CharField(max_length=255, blank=True, null=True)
+    email = models.CharField(blank=True, null=True)
+    token = models.CharField(blank=True, null=True)
     expiration_date = models.DateTimeField()
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
@@ -320,20 +338,16 @@ class EmailVerification(models.Model):
 
 
 class Favorites(models.Model):
-    id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
-    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
-
+    user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
+    product = models.ForeignKey('Product', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        """defines the metadata for the product model"""
-        db_table = "favorites"
         managed = False
-        verbose_name_plural = "Favorites"
+        db_table = 'favorites'
 
 
 class Images(models.Model):
-    url = models.CharField(max_length=255, blank=True, null=True)
+    url = models.CharField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -351,26 +365,20 @@ class InterestDetail(models.Model):
 
 
 class LastViewedProduct(models.Model):
-    class LastViewedProduct(models.Model):
-    id = models.AutoField(primary_key=True)
-    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
-    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
-    name = models.CharField(max_length=225)
-    viewed_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
+    product = models.ForeignKey('Product', models.DO_NOTHING, blank=True, null=True)
+    viewed_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        db_table = "last_viewed_product"
         managed = False
-        verbose_name_plural = "LastViewedProducts"
+        db_table = 'last_viewed_product'
 
-    def __str__(self) -> str:
-        return self.name
 
 class MailLog(models.Model):
     email = models.CharField(max_length=225, blank=True, null=True)
     message_data = models.TextField(blank=True, null=True)  # This field type is a guess.
     message_type = models.ForeignKey('MailType', models.DO_NOTHING, blank=True, null=True)
-    stdefaultatus = models.TextField(db_column='stDEFAULTatus', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
+    status = models.TextField(blank=True, null=True)  # This field type is a guess.
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
     request_origin = models.CharField(max_length=225, blank=True, null=True)
@@ -451,17 +459,9 @@ class Permission(models.Model):
         db_table = 'permission'
 
 
-class Permissions(models.Model):
-    name = models.CharField(max_length=255, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'permissions'
-
-
 class PortfolioDetail(models.Model):
-    city = models.CharField(max_length=255, blank=True, null=True)
-    country = models.CharField(max_length=255, blank=True, null=True)
+    city = models.CharField(blank=True, null=True)
+    country = models.CharField(blank=True, null=True)
     user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
@@ -480,77 +480,47 @@ class PortfoliosAnalytics(models.Model):
 
 
 class Product(models.Model):
-    """defines the product models"""
-    ADMIN_STATUS = (
-        ('pending', 'Pending'),
-        ('reviewed', 'Reviewed'),
-        ('approved', 'Approved'),
-        ('suspended', 'Suspended'),
-        ('blacklisted', 'Blacklisted')
-    )
-    PRODUCT_STATUS = (
-        ('active', 'Active'),
-        ('temporary', 'Temporary')
-    )
-    id = models.UUIDField(primary_key=True, default=uuid4, null=False)
-    shop_id = models.ForeignKey('Shop', on_delete=models.CASCADE, null=True)
-    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
-    name = models.CharField(max_length=255, null=False)
-    description = models.CharField(max_length=255, null=False)
-    quantity = models.BigIntegerField(null=False)
-    category_id = models.ForeignKey('ProductCategory', on_delete=models.CASCADE, null=True)
-    product_category_id = models.ForeignKey('ProductCategory', on_delete=models.CASCADE, null=True)
-    price = models.DecimalField( max_digits=20, decimal_places=2, null=False)
-    discount_price = models.DecimalField( max_digits=20, decimal_places=2, null=False)
-    tax = models.DecimalField( max_digits=20, decimal_places=2, null=False)
-    admin_status = models.CharField(max_length=20, choices=ADMIN_STATUS, default="pending")
-    is_deleted = models.CharField(max_length=20, choices=PRODUCT_STATUS, default="active")
-    image_id = models.ForeignKey('ProductImage', on_delete=models.CASCADE, null=True)
-    rating_id = models.ForeignKey('UserProductRating', on_delete=models.CASCADE, null=True)
-    is_published = models.BooleanField(default=False, null=False)
-    currency = models.CharField(max_length=10, null=False)
-    createdAt = models.DateTimeField(auto_now_add=True)
-    updatedAt = models.DateTimeField(auto_now=True)
-
+    id = models.UUIDField(primary_key=True)
+    shop = models.ForeignKey('Shop', models.DO_NOTHING, blank=True, null=True)
+    name = models.CharField(max_length=255)
+    description = models.CharField(max_length=255)
+    quantity = models.BigIntegerField()
+    category = models.ForeignKey('ProductCategory', models.DO_NOTHING, blank=True, null=True)
+    user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    discount_price = models.DecimalField(max_digits=10, decimal_places=2)
+    tax = models.DecimalField(max_digits=10, decimal_places=2)
+    admin_status = models.TextField(blank=True, null=True)  # This field type is a guess.
+    is_deleted = models.TextField(blank=True, null=True)  # This field type is a guess.
+    rating = models.ForeignKey('UserProductRating', models.DO_NOTHING, blank=True, null=True)
+    is_published = models.BooleanField()
+    currency = models.CharField(max_length=10)
+    createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
+    updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        """defines the metadata for the product model"""
-        db_table = "product"
-        verbose_name_plural = "Products"
+        managed = False
+        db_table = 'product'
 
-    def __str__(self):
-        return self.name
 
 class ProductCategory(models.Model):
-    id = models.AutoField(primary_key=True)
-    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
-    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
-    name = models.CharField(max_length=225)
-    createdAt = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
+    name = models.CharField(max_length=225, blank=True, null=True)
+    createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        """defines the metadata for the product model"""
-        db_table = "product_category"
         managed = False
-        verbose_name_plural = "ProductCategories"
-
-    def __str__(self) -> str:
-        return self.name
+        db_table = 'product_category'
 
 
 class ProductImage(models.Model):
-    id = models.AutoField(primary_key=True)
-    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
-    url = models.CharField(max_length=255, null=False, blank=False)
+    product = models.ForeignKey(Product, models.DO_NOTHING, blank=True, null=True)
+    url = models.CharField(max_length=255)
 
     class Meta:
-        """defines the metadata for the product model"""
-        db_table = "product_image"
         managed = False
-        verbose_name_plural = "ProductImages"
+        db_table = 'product_image'
 
-    def __str__(self) -> str:
-        return self.url
 
 class ProductLogs(models.Model):
     user = models.ForeignKey('User', models.DO_NOTHING)
@@ -576,24 +546,19 @@ class ProductReview(models.Model):
 
 
 class ProductSubCategory(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=225)
-    parent_category_id = models.ForeignKey("ProductCategory", on_delete=models.CASCADE)
-    createdAt = models.DateTimeField(auto_now_add=True)
+    name = models.CharField(max_length=225, blank=True, null=True)
+    parent_category = models.ForeignKey(ProductCategory, models.DO_NOTHING, blank=True, null=True)
+    createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        """defines the metadata for the product model"""
-        db_table = "product_sub_category"
         managed = False
-        verbose_name_plural = "ProductSubCategories"
+        db_table = 'product_sub_category'
 
-    def __str__(self) -> str:
-        return self.name
 
 class Project(models.Model):
-    title = models.CharField(max_length=255, blank=True, null=True)
-    year = models.CharField(max_length=255, blank=True, null=True)
-    url = models.CharField(max_length=255, blank=True, null=True)
+    title = models.CharField(blank=True, null=True)
+    year = models.CharField(blank=True, null=True)
+    url = models.CharField(blank=True, null=True)
     tags = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     thumbnail = models.IntegerField(blank=True, null=True)
@@ -676,13 +641,11 @@ class Revenue(models.Model):
 
 
 class Role(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=225, blank=True, null=True)
 
     class Meta:
-        db_table = "role"
         managed = False
-        verbose_name_plural = "roles"
+        db_table = 'role'
 
 
 class RolesPermissions(models.Model):
@@ -722,7 +685,7 @@ class SalesReport(models.Model):
 
 
 class Section(models.Model):
-    name = models.CharField(max_length=255, blank=True, null=True)
+    name = models.CharField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     meta = models.TextField(blank=True, null=True)
 
@@ -732,42 +695,22 @@ class Section(models.Model):
 
 
 class Shop(models.Model):
-    """defines the shop model"""
-    SHOP_STATUS = (
-        ('active', 'Active'),
-        ('temporary', 'Temporary')
-    )
-    RESTRICTED = (
-        ('no', 'No'),
-        ('temporary', 'Temporary'),
-        ('permanent', 'Permanent')
-    )
-    ADMIN_STATUS = (
-        ('pending', 'Pending'),
-        ('reviewed', 'Reviewed'),
-        ('approved', 'Approved'),
-        ('suspended', 'Suspended'),
-        ('blacklisted', 'Blacklisted')
-    )
-    id = models.UUIDField(primary_key=True, default=uuid4, null=False)
-    merchant_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
-    name = models.CharField(max_length=255, null=False)
-    policy_confirmation = models.BooleanField(default=False)
-    restricted = models.CharField(max_length=20, choices=RESTRICTED, default="no")
-    admin_status = models.CharField(max_length=20, choices=ADMIN_STATUS, default="pending")
-    is_deleted = models.CharField(max_length=20, choices=SHOP_STATUS, default='active')
-    reviewed = models.BooleanField(default=False)
-    rating = models.DecimalField( max_digits=20, decimal_places=2, default=0.00)
-    createdAt = models.DateTimeField(auto_now_add=True)
-    updatedAt = models.DateTimeField(auto_now=True)
+    id = models.UUIDField(primary_key=True)
+    merchant = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
+    name = models.CharField(max_length=255, blank=True, null=True)
+    policy_confirmation = models.BooleanField(blank=True, null=True)
+    restricted = models.TextField(blank=True, null=True)  # This field type is a guess.
+    admin_status = models.TextField(blank=True, null=True)  # This field type is a guess.
+    is_deleted = models.TextField(blank=True, null=True)  # This field type is a guess.
+    reviewed = models.BooleanField(blank=True, null=True)
+    rating = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
+    updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        """defines the metadata for the shop model"""
-        db_table = "shop"
-        verbose_name_plural = "Shops"
+        managed = False
+        db_table = 'shop'
 
-    def __str__(self):
-        return self.name
 
 class ShopLogs(models.Model):
     user = models.ForeignKey('User', models.DO_NOTHING)
@@ -852,7 +795,7 @@ class TrackPromotion(models.Model):
 
 
 class Tracks(models.Model):
-    track = models.CharField(max_length=255, blank=True, null=True)
+    track = models.CharField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -876,35 +819,29 @@ class Transaction(models.Model):
 
 
 class User(models.Model):
-    """Identifies the user model based on the schema"""
-    id = models.UUIDField(primary_key=True, default=uuid4, null=False)
-    username = models.CharField(max_length=255, null=False)
-    first_name = models.CharField(max_length=255, null=False)
-    last_name = models.CharField(max_length=255, null=False)
-    email = models.CharField(max_length=255, null=False)
-    role_id = models.ForeignKey('Role', on_delete=models.CASCADE)
-    section_order = models.CharField(max_length=200, null=True)
-    password = models.CharField(max_length=255)
-    provider = models.CharField(max_length=255)
-    phone_number = models.CharField(max_length=255)
-    is_verified = models.BooleanField(default=False)
-    two_factor_auth = models.BooleanField(default=False)
-    location = models.CharField(max_length=255)
-    country = models.CharField(max_length=255)
-    profile_pic = models.CharField(max_length=255)
-    profile_cover_photo = models.CharField(max_length=200)
-    refresh_token = models.CharField(max_length=255, null=False)
-    createdAt = models.DateTimeField(auto_now_add=True)
-
+    id = models.UUIDField(primary_key=True)
+    username = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    email = models.CharField(max_length=255)
+    role = models.ForeignKey(Role, models.DO_NOTHING, blank=True, null=True)
+    section_order = models.TextField(blank=True, null=True)
+    password = models.CharField(max_length=255, blank=True, null=True)
+    provider = models.CharField(max_length=255, blank=True, null=True)
+    phone_number = models.CharField(max_length=255, blank=True, null=True)
+    is_verified = models.BooleanField(blank=True, null=True)
+    two_factor_auth = models.BooleanField(blank=True, null=True)
+    location = models.CharField(max_length=255, blank=True, null=True)
+    country = models.CharField(max_length=255, blank=True, null=True)
+    profile_pic = models.TextField(blank=True, null=True)
+    profile_cover_photo = models.TextField(blank=True, null=True)
+    refresh_token = models.CharField(max_length=255)
+    createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        """defines the metadata for the product model"""
-        db_table = "user"
         managed = False
-        verbose_name_plural = "Users"
+        db_table = 'user'
 
-    def __str__(self) -> str:
-        return self.name
 
 class UserAnalytics(models.Model):
     metric_total_number_users = models.IntegerField(blank=True, null=True)
@@ -931,6 +868,22 @@ class UserAssessment(models.Model):
         db_table = 'user_assessment'
 
 
+class UserAssessments(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    user_id = models.TextField(blank=True, null=True)
+    assessment = models.ForeignKey(Assessments, models.DO_NOTHING, blank=True, null=True)
+    score = models.BigIntegerField(blank=True, null=True)
+    time_spent = models.BigIntegerField(blank=True, null=True)
+    submission_date = models.DateTimeField(blank=True, null=True)
+    status = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'user_assessments'
+
+
 class UserBadge(models.Model):
     assessment = models.ForeignKey(Assessment, models.DO_NOTHING, blank=True, null=True)
     user = models.ForeignKey(User, models.DO_NOTHING, blank=True, null=True)
@@ -953,11 +906,10 @@ class UserPermission(models.Model):
 
 
 class UserProductInteraction(models.Model):
-    id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey("User", on_delete=models.CASCADE)
-    product_id = models.ForeignKey("Product", on_delete=models.CASCADE)
-    interaction_type = models.CharField(max_length=20)  # e.g., "viewed," "purchased"
-    createdAt = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, models.DO_NOTHING, blank=True, null=True)
+    product = models.ForeignKey(Product, models.DO_NOTHING, blank=True, null=True)
+    interaction_type = models.CharField(blank=True, null=True)
+    createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -965,18 +917,14 @@ class UserProductInteraction(models.Model):
 
 
 class UserProductRating(models.Model):
-    """This is the user product rating, how the product is rated"""
-    id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
-    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
-    rating = models.IntegerField(null=True)
-
+    user_id = models.UUIDField(blank=True, null=True)
+    product_id = models.UUIDField(blank=True, null=True)
+    rating = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        """defines the metadata for the product model"""
-        db_table = "user_product_rating"
         managed = False
-        verbose_name_plural = "UserProductRatings"
+        db_table = 'user_product_rating'
+
 
 class UserResponse(models.Model):
     user_assessment = models.ForeignKey(UserAssessment, models.DO_NOTHING, blank=True, null=True)
@@ -999,28 +947,24 @@ class UserTrack(models.Model):
 
 
 class Wishlist(models.Model):
-    id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
-    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
-    createdAt = models.DateTimeField(auto_now_add=True)
-    updatedAt = models.DateTimeField(auto_now=True)
-
+    user = models.ForeignKey(User, models.DO_NOTHING, blank=True, null=True)
+    product = models.ForeignKey(Product, models.DO_NOTHING, blank=True, null=True)
+    createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
+    updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        """defines the metadata for the product model"""
-        db_table = "wishlist"
         managed = False
-        verbose_name_plural = "Wishlists"
+        db_table = 'wishlist'
 
 
 class WorkExperienceDetail(models.Model):
-    role = models.CharField(max_length=255, blank=True, null=True)
-    company = models.CharField(max_length=255, blank=True, null=True)
+    role = models.CharField(blank=True, null=True)
+    company = models.CharField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    start_month = models.CharField(max_length=255, blank=True, null=True)
-    start_year = models.CharField(max_length=255, blank=True, null=True)
-    end_month = models.CharField(max_length=255, blank=True, null=True)
-    end_year = models.CharField(max_length=255, blank=True, null=True)
+    start_month = models.CharField(blank=True, null=True)
+    start_year = models.CharField(blank=True, null=True)
+    end_month = models.CharField(blank=True, null=True)
+    end_year = models.CharField(blank=True, null=True)
     is_employee = models.BooleanField(blank=True, null=True)
     user = models.ForeignKey(User, models.DO_NOTHING, blank=True, null=True)
     section = models.ForeignKey(Section, models.DO_NOTHING, blank=True, null=True)
