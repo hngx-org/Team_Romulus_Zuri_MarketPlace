@@ -20,6 +20,7 @@ class ProductItemSerializer(serializers.ModelSerializer):
 
     def get_currency_symbol(self, obj):
         currency_code = getattr(obj, 'currency')#getting the currency code of the product 
+        currency_code = str(currency_code).upper()#changing the currency code to string and then to uppercase
         currency_symobol = currency_data.get(currency_code, "$")#getting the corresponding currency symbol default of dollar symbol if the symbol is not found
         return currency_symobol
 
