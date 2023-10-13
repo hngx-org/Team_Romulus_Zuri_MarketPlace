@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from MarketPlace.models import Product, ProductImage, ProductCategory, ProductSubCategory
 from django.core.paginator import Paginator
-from .serializers import ProductSerializer, ProductsubCatSerializer
+from .serializers import ProductSerializer, ImageSerializer, ProductsubCatSerializer
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.views import APIView
 from rest_framework import status
@@ -20,6 +20,15 @@ class GetCategoryNames(APIView):
             if cat not in name:
                 name.append(cat.name)
         return Response({"categories name": name}, status=status.HTTP_200_OK)
+
+class ShowImages(APIView):
+    def get(self, request):
+        try:
+            images = ProductImage.objects.all()
+            serializer = ImageSerializer(images, many=True)
+            return Response({'All images': serializer.data}, status=status_HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': e})
 
 class GetImage(APIView):
     def get(self, request, productId):

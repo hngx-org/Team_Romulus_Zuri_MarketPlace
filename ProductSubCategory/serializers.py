@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from MarketPlace.models import Product, ProductSubCategory
+from MarketPlace.models import Product, ProductSubCategory, ProductImage
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,4 +9,9 @@ class ProductSerializer(serializers.ModelSerializer):
 class ProductsubCatSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductSubCategory
+        fields = '__all__'
+
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImage
         fields = '__all__'
