@@ -18,6 +18,8 @@ class WishlistCreateView(views.APIView):
             type=openapi.TYPE_OBJECT,
             properties={
                 'product_id': openapi.Schema(type=openapi.TYPE_STRING, description="The product's ID (uuid string)"),
+                'user_id': openapi.Schema(type=openapi.TYPE_STRING, description="The user's ID (uuid string)"),
+
             }),
         responses={
             201: openapi.Response('product added to wishlist successfully', schema=openapi.Schema(
@@ -44,8 +46,12 @@ class WishlistCreateView(views.APIView):
 
         if not request.data.get("product_id"):
             return Response({'message': 'product required in the request data'}, status=status.HTTP_400_BAD_REQUEST)
+        if not request.data.get("user_id"):
+            return Response({'message': 'no wishlist for this user'}, status=status.HTTP_400_BAD_REQUEST)
+        
 
         product_id = request.data.get("product_id")
+        user_id = request.data.get('user_id')
         
         # required for unittests. (Uncomment the following lines)
         # try:
@@ -58,12 +64,13 @@ class WishlistCreateView(views.APIView):
         try:
             # Retrieve product details
             Product.objects.get(id=product_id)
+            User.objects.get(id= user_id)
         except ObjectDoesNotExist:
             return Response({"message": "Product not found."}, status=status.HTTP_404_NOT_FOUND)
 
         # Add the product to the user's wishlist
         wishlist_item, created = Wishlist.objects.get_or_create(
-            user_id=request.user.id, product_id=product_id)  # Change the 'request.user.id' to 'user' when carrying out unittests.
+            user_id=user_id, product_id=product_id)  # Change the 'request.user.id' to 'user' when carrying out unittests.
 
         serializer = self.serializer_class(wishlist_item)
 

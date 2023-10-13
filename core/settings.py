@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'ProductSubCategory',
     'product_recommendation',
     'product_retrieval',
+    'product_view',
 
     'add_to_wishlist',
     'category_names',
