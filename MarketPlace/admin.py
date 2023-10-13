@@ -1,10 +1,11 @@
 from django.contrib import admin
-from .models import ProductCategory, ProductImage, Product, Shop, Wishlist, User
+from MarketPlace.models import *
+import django.apps
 
-# Register your models here.
-admin.site.register(ProductImage)
-admin.site.register(ProductCategory)
-admin.site.register(Product)
-admin.site.register(Shop)
-admin.site.register(Wishlist)
-admin.site.register(User)
+models = django.apps.apps.get_models()
+
+for model in models:
+	try:
+		admin.site.register(model)
+	except:
+		pass

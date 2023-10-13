@@ -5,6 +5,9 @@ __pycache__/
 *$py.class
 staticfiles
 
+Pipfile
+Pipfile.lock
+
 
 # C extensions
 *.so
@@ -88,7 +91,7 @@ celerybeat-schedule
 *.sage.py
 
 # dotenv
-# .env
+.env
 
 # virtualenv
 .venv
@@ -118,11 +121,11 @@ Pipfile
 *.db
 *.pid
 .zip
-# django migrations 
-# **/migrations/**
-# !**/migrations
-# !**/migrations/__init__.py
-# node_modules
+django migrations 
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py
+node_modules
 
 #custom folder
 BK/

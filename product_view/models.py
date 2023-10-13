@@ -1,46 +1,46 @@
 from django.db import models
 from uuid import uuid4
-from MarketPlace.models import Product
 
-class ProductView(models.Model):
-    """Represent a ProductView.
+
+# class ProductView(models.Model):
+#     """Represent a ProductView.
     
-    Attributes:
-        id: The id of the recently viewed product as an integer.
-        user_id: The user id of the product as a string.
-        product_id: The product id of the product as a string.
-        viewed_at: The viewd date and time of the product as a string.
-    """
-    id = models.UUIDField(primary_key=True, default=uuid4)
-    user_id = models.UUIDField()
-    product_id = models.UUIDField()
-    viewed_at = models.DateTimeField(auto_now_add=True)
+#     Attributes:
+#         id: The id of the recently viewed product as an integer.
+#         user_id: The user id of the product as a string.
+#         product_id: The product id of the product as a string.
+#         viewed_at: The viewd date and time of the product as a string.
+#     """
+#     id = models.UUIDField(primary_key=True, default=uuid4)
+#     user_id = models.UUIDField()
+#     product_id = models.UUIDField()
+#     viewed_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        """defines the metadata for the product model"""
-        db_table = "last_viewed_product"
-        verbose_name_plural = "LastViewedProduct"
+#     class Meta:
+#         """defines the metadata for the product model"""
+#         db_table = "last_viewed_product"
+#         verbose_name_plural = "LastViewedProduct"
 
-    def __str__(self):
-        return f'{self.user_id} viewed {self.product_id} at {self.viewed_at}'
+#     def __str__(self):
+#         return f'{self.user_id} viewed {self.product_id} at {self.viewed_at}'
 
-class User(models.Model):
-    """Identifies the user model based on the schema"""
-    id = models.UUIDField(primary_key=True, default=uuid4, null=False)
-    username = models.CharField(max_length=255, null=False)
-    first_name = models.CharField(max_length=255, null=False)
-    last_name = models.CharField(max_length=255, null=False)
-    email = models.CharField(max_length=255, null=False)
-    section_order = models.CharField(max_length=200, null=True)
-    password = models.CharField(max_length=255)
-    provider = models.CharField(max_length=255)
-    is_verified = models.BooleanField(default=False)
-    two_factor_auth = models.BooleanField(default=False)
-    location = models.CharField(max_length=255)
-    country = models.CharField(max_length=255)
-    profile_pic = models.CharField(max_length=255)
-    refresh_token = models.CharField(max_length=255, null=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+# class User(models.Model):
+#     """Identifies the user model based on the schema"""
+#     id = models.UUIDField(primary_key=True, default=uuid4, null=False)
+#     username = models.CharField(max_length=255, null=False)
+#     first_name = models.CharField(max_length=255, null=False)
+#     last_name = models.CharField(max_length=255, null=False)
+#     email = models.CharField(max_length=255, null=False)
+#     section_order = models.CharField(max_length=200, null=True)
+#     password = models.CharField(max_length=255)
+#     provider = models.CharField(max_length=255)
+#     is_verified = models.BooleanField(default=False)
+#     two_factor_auth = models.BooleanField(default=False)
+#     location = models.CharField(max_length=255)
+#     country = models.CharField(max_length=255)
+#     profile_pic = models.CharField(max_length=255)
+#     refresh_token = models.CharField(max_length=255, null=False)
+#     created_at = models.DateTimeField(auto_now_add=True)
 
 
 # class Product(models.Model):
