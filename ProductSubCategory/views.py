@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from MarketPlace.models import Product, ProductImage, ProductCategory, ProductSubCategory
 from django.core.paginator import Paginator
-from .serializers import ProductSerializer
+from .serializers import ProductSerializer, ProductsubCatSerializer
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.views import APIView
 from rest_framework import status
@@ -51,28 +51,34 @@ class GetProductsSubCategory(APIView):
                 return Response({"Message": f"There is no product category named {category}"}, status=status.HTTP_404_NOT_FOUND)
 
             try:
-                subcategory_obj = ProductSubCategory.objects.get(name=subcategory, parent_category_id=category_obj)
+                subcategory_obj = ProductSubCategory.objects.filter(name=subcategory, parent_category=category_obj)
             except ProductSubCategory.DoesNotExist:
                 return Response({'error': f'There is no sub category named {subcategory} under {category}'})
+            except Exception as e:
+                return Response({'error': e})
 
 
 
             # Get products belonging to the provided subcategory
             try:
-                products = Product.objects.filter(subcategory_id=subcategory_obj).order_by('category_id')
+                
+                products = ProductSubCategory.objects.filter(parent_category=category_obj, name=subcategory).select_related('parent_category')
+                prod = Product.objects.filter(category=category_obj)
+
             except Exception as e:
-                return Response({"error": "Product does not have a subcategory attribute implemented yet"}, status=status.HTTP_501_NOT_IMPLEMENTED)
+                return Response({"error": e}, status=status.HTTP_501_NOT_IMPLEMENTED)
 
 
             if not products.exists():
                 return Response({"products": [], "Message": "There are no products in this subCategory"}, status=status.HTTP_200_OK)
 
             # pagination
-            pagination = Paginator(products, page_size)
+            pagination = Paginator(prod, page_size)
             page_number = request.GET.get('page')
             products_per_page = pagination.get_page(page_number)
-            serializer = ProductSerializer(products_per_page, many=True)
-            return Response({'products': serializer.data}, status=status.HTTP_200_OK)
+            serializer = ProductsubCatSerializer(products_per_page, many=True)
+            se = ProductSerializer(prod,  many=True)
+            return Response({'products': se.data}, status=status.HTTP_200_OK)
 
         except ProductSubCategory.DoesNotExist:
             return Response({"Message": "Subcategory does not exist"}, status=status.HTTP_404_NOT_FOUND)
