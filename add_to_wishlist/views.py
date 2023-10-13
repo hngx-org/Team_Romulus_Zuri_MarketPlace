@@ -51,26 +51,23 @@ class WishlistCreateView(views.APIView):
         
 
         product_id = request.data.get("product_id")
-        user_id = request.data.get('user_id')
         
-        # required for unittests. (Uncomment the following lines)
-        # try:
-        #     user_id = request.data.get("user_id")
-        #     user_obj = User.objects.get(id=user_id)
-        #     user = user_obj
-        # except:
-        #     user = request.user.id
+        try:
+            user_id = request.data.get("user_id")
+            user_obj = User.objects.get(id=user_id)
+            user = user_obj
+        except:
+            user = request.user.id
 
         try:
             # Retrieve product details
             Product.objects.get(id=product_id)
-            User.objects.get(id= user_id)
         except ObjectDoesNotExist:
             return Response({"message": "Product not found."}, status=status.HTTP_404_NOT_FOUND)
 
         # Add the product to the user's wishlist
         wishlist_item, created = Wishlist.objects.get_or_create(
-            user_id=user_id, product_id=product_id)  # Change the 'request.user.id' to 'user' when carrying out unittests.
+            user_id=user, product_id=product_id)  
 
         serializer = self.serializer_class(wishlist_item)
 
