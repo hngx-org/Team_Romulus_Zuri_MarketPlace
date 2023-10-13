@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import delete_from_wishlist
+from .views import DeleteWishlistItem
 
 urlpatterns = [
-    path('wishlist/<uuid:product_id>/', delete_from_wishlist, name='delete_from_wishlist'),
+    path('wishlist/<str:product_id>/', DeleteWishlistItem.as_view(), name='delete_wishlist_item'),
 ]
