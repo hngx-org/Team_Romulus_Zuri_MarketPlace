@@ -1,0 +1,228 @@
+from django.db import models
+from uuid import uuid4
+from django.utils import timezone
+
+# User model from the schema
+class User(models.Model):
+    """Identifies the user model based on the schema"""
+    id = models.UUIDField(primary_key=True, default=uuid4, null=False)
+    username = models.CharField(max_length=255, null=False)
+    first_name = models.CharField(max_length=255, null=False)
+    last_name = models.CharField(max_length=255, null=False)
+    email = models.CharField(max_length=255, null=False)
+    role_id = models.ForeignKey('Role', on_delete=models.CASCADE)
+    section_order = models.CharField(max_length=200, null=True)
+    password = models.CharField(max_length=255)
+    provider = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=255)
+    is_verified = models.BooleanField(default=False)
+    two_factor_auth = models.BooleanField(default=False)
+    location = models.CharField(max_length=255)
+    country = models.CharField(max_length=255)
+    profile_pic = models.CharField(max_length=255)
+    profile_cover_photo = models.CharField(max_length=200)
+    refresh_token = models.CharField(max_length=255, null=False)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    
+    
+    class Meta:
+        """defines the metadata for the product model"""
+        db_table = "user"
+        verbose_name_plural = "Users"
+
+    def __str__(self) -> str:
+        return self.name
+
+class Shop(models.Model):
+    """defines the shop model"""
+    SHOP_STATUS = (
+        ('active', 'Active'),
+        ('temporary', 'Temporary')
+    )
+    RESTRICTED = (
+        ('no', 'No'),
+        ('temporary', 'Temporary'),
+        ('permanent', 'Permanent')
+    )
+    ADMIN_STATUS = (
+        ('pending', 'Pending'),
+        ('reviewed', 'Reviewed'),
+        ('approved', 'Approved'),
+        ('suspended', 'Suspended'),
+        ('blacklisted', 'Blacklisted')
+    )
+    id = models.UUIDField(primary_key=True, default=uuid4, null=False)
+    merchant_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
+    name = models.CharField(max_length=255, null=False)
+    policy_confirmation = models.BooleanField(default=False)
+    restricted = models.CharField(max_length=20, choices=RESTRICTED, default="no")
+    admin_status = models.CharField(max_length=20, choices=ADMIN_STATUS, default="pending")
+    is_deleted = models.CharField(max_length=20, choices=SHOP_STATUS, default='active')
+    reviewed = models.BooleanField(default=False)
+    rating = models.DecimalField( max_digits=20, decimal_places=2, default=0.00)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        """defines the metadata for the shop model"""
+        db_table = "shop"
+        verbose_name_plural = "Shops"
+
+    def __str__(self):
+        return self.name
+
+class ProductCategory(models.Model):    
+    
+    id = models.AutoField(primary_key=True)
+    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
+    name = models.CharField(max_length=225)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        """defines the metadata for the product model"""
+        db_table = "product_category"
+        verbose_name_plural = "ProductCategories"
+
+    def __str__(self) -> str:
+        return self.name
+
+class ProductSubCategory(models.Model):    
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=225)
+    parent_category_id = models.ForeignKey("ProductCategory", on_delete=models.CASCADE)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        """defines the metadata for the product model"""
+        db_table = "product_sub_category"
+        verbose_name_plural = "ProductSubCategories"
+
+    def __str__(self) -> str:
+        return self.name
+
+class LastViewedProduct(models.Model):
+    id = models.AutoField(primary_key=True)
+    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
+    name = models.CharField(max_length=225)
+    viewed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "last_viewed_product"
+        managed = False
+        verbose_name_plural = "LastViewedProducts"
+
+    def __str__(self) -> str:
+        return self.name
+    
+class Role(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = "role"
+        managed = False
+        verbose_name_plural = "roles"
+
+class UserProductRating(models.Model):
+    """This is the user product rating, how the product is rated"""
+    id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
+    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
+    rating = models.IntegerField(null=True)
+    
+    
+    class Meta:
+        """defines the metadata for the product model"""
+        db_table = "user_product_rating"
+        verbose_name_plural = "UserProductRatings"
+
+class Product(models.Model):
+    """defines the product models"""
+    ADMIN_STATUS = (
+        ('pending', 'Pending'),
+        ('reviewed', 'Reviewed'),
+        ('approved', 'Approved'),
+        ('suspended', 'Suspended'),
+        ('blacklisted', 'Blacklisted')
+    )
+    PRODUCT_STATUS = (
+        ('active', 'Active'),
+        ('temporary', 'Temporary')
+    )
+    id = models.UUIDField(primary_key=True, default=uuid4, null=False)
+    shop_id = models.ForeignKey('Shop', on_delete=models.CASCADE, null=True)
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
+    name = models.CharField(max_length=255, null=False)
+    description = models.CharField(max_length=255, null=False)
+    quantity = models.BigIntegerField(null=False)
+    category_id = models.ForeignKey('ProductCategory', on_delete=models.CASCADE, null=True)
+    product_category_id = models.ForeignKey('ProductCategory', on_delete=models.CASCADE, null=True)
+    price = models.DecimalField( max_digits=20, decimal_places=2, null=False)
+    discount_price = models.DecimalField( max_digits=20, decimal_places=2, null=False)
+    tax = models.DecimalField( max_digits=20, decimal_places=2, null=False)
+    admin_status = models.CharField(max_length=20, choices=ADMIN_STATUS, default="pending")
+    is_deleted = models.CharField(max_length=20, choices=PRODUCT_STATUS, default="active")
+    image_id = models.ForeignKey('ProductImage', on_delete=models.CASCADE, null=True)
+    rating_id = models.ForeignKey('UserProductRating', on_delete=models.CASCADE, null=True)
+    is_published = models.BooleanField(default=False, null=False)
+    currency = models.CharField(max_length=10, null=False)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
+
+
+    class Meta:
+        """defines the metadata for the product model"""
+        db_table = "product"
+        verbose_name_plural = "Products"
+
+    def __str__(self):
+        return self.name
+
+class ProductImage(models.Model):
+    id = models.AutoField(primary_key=True)
+    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
+    url = models.CharField(max_length=255, null=False, blank=False)
+    
+    
+    class Meta:
+        """defines the metadata for the product model"""
+        db_table = "product_image"
+        verbose_name_plural = "ProductImages"
+
+
+    def __str__(self) -> str:
+        return self.url
+
+class Wishlist(models.Model):
+    id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
+    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
+    
+    
+    class Meta:
+        """defines the metadata for the product model"""
+        db_table = "wishlist"
+        managed = False
+        verbose_name_plural = "Wishlists"
+
+class Favorites(models.Model):
+    id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
+    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
+    
+    
+    class Meta:
+        """defines the metadata for the product model"""
+        db_table = "favorites"
+        verbose_name_plural = "Favorites"
+
+class UserProductInteraction(models.Model):
+    id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey("User", on_delete=models.CASCADE)
+    product_id = models.ForeignKey("Product", on_delete=models.CASCADE)
+    interaction_type = models.CharField(max_length=20)  # e.g., "viewed," "purchased"
+    createdAt = models.DateTimeField(auto_now_add=True)

@@ -13,13 +13,16 @@ class GetCategoryNames(APIView):
     '''This class will return the names of all the categories in the database'''
 
     def get(self, request):
-        '''Return the categories'''
+        '''Return the names of all categories'''
         categories = ProductCategory.objects.all()
         name = []
         for cat in categories:
             if cat not in name:
                 name.append(cat.name)
-        return Response({"categories name": name}, status=status.HTTP_200_OK)
+        if len(name) > 0:
+            return Response({"categories name": name}, status=status.HTTP_200_OK)
+        else:
+            return Response({"Names" : [], "message": "There are no categories in the db."}, status=status.HTTP_204_NO_CONTENT)
 
 class GetImage(APIView):
     def get(self, request, imageId):
