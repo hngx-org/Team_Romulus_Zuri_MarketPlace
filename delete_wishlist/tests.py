@@ -1,46 +1,35 @@
-# delete_wishlist/tests.py
-from django.urls import reverse
-from rest_framework.test import APITestCase
-from rest_framework import status
+from django.test import TestCase
 from django.contrib.auth.models import User
-from MarketPlace.models import Product, Wishlist
+from rest_framework.test import APIClient
+from rest_framework import status
+from MarketPlace.models import Wishlist
+import uuid
 
-class DeleteFromWishlistTestCase(APITestCase):
+class DeletewishlistAPITestCase(TestCase):
     def setUp(self):
-        # Create a user
-        self.user = User.objects.create_user(username="testuser", password="testpassword")
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.client = APIClient()
+        self.client.login(username='testuser', password='testpassword')
+        self.wishlist_item = Wishlist.objects.create(user_id=self.user.id, product_id=uuid.uuid4())
 
-        # Create a product
-        self.product = Product.objects.create(id="your_product_id", name="Test Product", description="Product Description", quantity=10, price=100.0)
+    def test_delete_wishlist_item(self):
+        response = self.client.delete(f'/api/wishlist/{str(self.wishlist_item.product_id)}/')
+        
+        # Check if the response status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        # Check if the wishlist item has been deleted from the database
+        self.assertFalse(Wishlist.objects.filter(id=self.wishlist_item.id).exists())
 
-        # Create a wishlist item
-        self.wishlist_item = Wishlist.objects.create(user=self.user, product=self.product)
-
-        # Authenticate the user
-        self.client.force_authenticate(user=self.user)
-
-    def test_delete_product_from_wishlist(self):
-        # Ensure the product exists in the user's wishlist
-        self.assertEqual(Wishlist.objects.filter(user=self.user, product=self.product).count(), 1)
-
-        # Send a DELETE request to remove the product from the wishlist
-        url = reverse('delete_from_wishlist', args=[str(self.product.id)])
-        response = self.client.delete(url)
-
-        # Check if the response status code is 204 (No Content)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-
-        # Ensure the product is no longer in the wishlist
-        self.assertEqual(Wishlist.objects.filter(user=self.user, product=self.product).count(), 0)
-
-    def test_delete_nonexistent_product_from_wishlist(self):
-        # Send a DELETE request to remove a non-existent product from the wishlist
-        non_existent_product_id = "non_existent_product_id"
-        url = reverse('delete_from_wishlist', args=[non_existent_product_id])
-        response = self.client.delete(url)
-
-        # Check if the response status code is 404 (Not Found)
+    def test_delete_wishlist_item_invalid_uuid(self):
+        response = self.client.delete('/api/wishlist/invalid-uuid/')
+        
+        # Check if the response status code is 400 Bad Request for an invalid UUID
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        
+    def test_delete_wishlist_item_not_found(self):
+        non_existent_uuid = uuid.uuid4()  # Create a UUID that doesn't exist in the database
+        response = self.client.delete(f'/api/wishlist/{str(non_existent_uuid)}/')
+        
+        # Check if the response status code is 404 Not Found for a non-existent item
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-        # Ensure the wishlist is not modified
-        self.assertEqual(Wishlist.objects.filter(user=self.user).count(), 1)
