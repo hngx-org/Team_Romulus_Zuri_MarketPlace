@@ -1,7 +1,6 @@
-# delete_wishlist/urls.py
 from django.urls import path
-from .views import delete_product_from_wishlist
+from .views import delete_from_wishlist
 
 urlpatterns = [
-    path('wishlist/<int:product_id>/', delete_product_from_wishlist, name='delete_product_from_wishlist'),
+    path('wishlist/<uuid:product_id>/', delete_from_wishlist, name='delete_from_wishlist'),
 ]
