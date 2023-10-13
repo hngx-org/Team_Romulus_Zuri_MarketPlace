@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'recently_viewed',
     'addrecent',
     'rest_framework_swagger',
-    'product_filter',
+    # 'product_filter',
+    'ProductSubCategory',
     'product_recommendation',
     'product_retrieval',
 
