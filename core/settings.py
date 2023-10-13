@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'addrecent',
     'rest_framework_swagger',
     'product_filter',
+    'product_category',
     'ProductSubCategory',
     'product_recommendation',
     'product_retrieval',
