@@ -1,13 +1,17 @@
+from django.shortcuts import render
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
+from MarketPlace.models import Product
+from MarketPlace.serializers import ProductSerializer
+
+# Create your views here.
+
 from django.db.models import F
 from django.db.models import FloatField
 from django.db.models import Min
 from django.db.models import Avg
-from rest_framework import serializers
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from MarketPlace.models import Product, ProductImage, User
-from .serializers import ProductSerializer, ProductImageSerializer, UserSerializer
+
 
 class ProductRecommendationView(APIView):
     def get(self, request):
@@ -43,28 +47,12 @@ class ProductRecommendationView(APIView):
             )[:20]
 
             # Serialize the recommended products
-            product_serializer = ProductSerializer(recommended_products, many=True)
-            
-            # Add product images and user information to each product in the response
-            for product_data in product_serializer.data:
-                product_id = product_data['id']
-                product = Product.objects.get(id=product_id)
-                product_images = ProductImage.objects.filter(product=product)
-                user = User.objects.get(id=product.user_id)
+            serializer = ProductSerializer(recommended_products, many=True)
 
-                product_data['product_images'] = ProductImageSerializer(product_images, many=True).data
-                product_data['user'] = UserSerializer(user).data
-
-            return Response(product_serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-
-
-
 
 
 class SimilarProductRecommendationView(APIView):
