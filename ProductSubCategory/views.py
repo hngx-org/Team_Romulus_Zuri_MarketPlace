@@ -22,9 +22,9 @@ class GetCategoryNames(APIView):
         return Response({"categories name": name}, status=status.HTTP_200_OK)
 
 class GetImage(APIView):
-    def get(self, request, imageId):
+    def get(self, request, productId):
         try:
-            images = ProductImage.objects.get(id=imageId)
+            images = ProductImage.objects.get(product=productId)
             response = {
                     'message': 'This is the url to where the image is hosted',
                     'url': images.url
