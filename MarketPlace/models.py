@@ -320,12 +320,16 @@ class EmailVerification(models.Model):
 
 
 class Favorites(models.Model):
-    user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
-    product = models.ForeignKey('Product', models.DO_NOTHING, blank=True, null=True)
+    id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
+    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
+
 
     class Meta:
+        """defines the metadata for the product model"""
+        db_table = "favorites"
         managed = False
-        db_table = 'favorites'
+        verbose_name_plural = "Favorites"
 
 
 class Images(models.Model):
@@ -347,14 +351,20 @@ class InterestDetail(models.Model):
 
 
 class LastViewedProduct(models.Model):
-    user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
-    product = models.ForeignKey('Product', models.DO_NOTHING, blank=True, null=True)
-    viewed_at = models.DateTimeField(blank=True, null=True)
+    class LastViewedProduct(models.Model):
+    id = models.AutoField(primary_key=True)
+    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
+    name = models.CharField(max_length=225)
+    viewed_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        db_table = "last_viewed_product"
         managed = False
-        db_table = 'last_viewed_product'
+        verbose_name_plural = "LastViewedProducts"
 
+    def __str__(self) -> str:
+        return self.name
 
 class MailLog(models.Model):
     email = models.CharField(max_length=225, blank=True, null=True)
@@ -470,48 +480,77 @@ class PortfoliosAnalytics(models.Model):
 
 
 class Product(models.Model):
-    id = models.UUIDField(primary_key=True)
-    shop = models.ForeignKey('Shop', models.DO_NOTHING, blank=True, null=True)
-    name = models.CharField(max_length=255)
-    description = models.CharField(max_length=255)
-    quantity = models.BigIntegerField()
-    category = models.ForeignKey('ProductCategory', models.DO_NOTHING, blank=True, null=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    discount_price = models.DecimalField(max_digits=10, decimal_places=2)
-    tax = models.DecimalField(max_digits=10, decimal_places=2)
-    admin_status = models.TextField(blank=True, null=True)  # This field type is a guess.
-    is_deleted = models.TextField(blank=True, null=True)  # This field type is a guess.
-    rating = models.ForeignKey('UserProductRating', models.DO_NOTHING, blank=True, null=True)
-    # image = models.ForeignKey('ProductImage', models.DO_NOTHING, blank=True, null=True)
-    is_published = models.BooleanField()
-    currency = models.CharField(max_length=10)
-    createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
-    user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
+    """defines the product models"""
+    ADMIN_STATUS = (
+        ('pending', 'Pending'),
+        ('reviewed', 'Reviewed'),
+        ('approved', 'Approved'),
+        ('suspended', 'Suspended'),
+        ('blacklisted', 'Blacklisted')
+    )
+    PRODUCT_STATUS = (
+        ('active', 'Active'),
+        ('temporary', 'Temporary')
+    )
+    id = models.UUIDField(primary_key=True, default=uuid4, null=False)
+    shop_id = models.ForeignKey('Shop', on_delete=models.CASCADE, null=True)
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
+    name = models.CharField(max_length=255, null=False)
+    description = models.CharField(max_length=255, null=False)
+    quantity = models.BigIntegerField(null=False)
+    category_id = models.ForeignKey('ProductCategory', on_delete=models.CASCADE, null=True)
+    product_category_id = models.ForeignKey('ProductCategory', on_delete=models.CASCADE, null=True)
+    price = models.DecimalField( max_digits=20, decimal_places=2, null=False)
+    discount_price = models.DecimalField( max_digits=20, decimal_places=2, null=False)
+    tax = models.DecimalField( max_digits=20, decimal_places=2, null=False)
+    admin_status = models.CharField(max_length=20, choices=ADMIN_STATUS, default="pending")
+    is_deleted = models.CharField(max_length=20, choices=PRODUCT_STATUS, default="active")
+    image_id = models.ForeignKey('ProductImage', on_delete=models.CASCADE, null=True)
+    rating_id = models.ForeignKey('UserProductRating', on_delete=models.CASCADE, null=True)
+    is_published = models.BooleanField(default=False, null=False)
+    currency = models.CharField(max_length=10, null=False)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
+
 
     class Meta:
-        managed = False
-        db_table = 'product'
+        """defines the metadata for the product model"""
+        db_table = "product"
+        verbose_name_plural = "Products"
 
+    def __str__(self):
+        return self.name
 
 class ProductCategory(models.Model):
-    name = models.CharField(max_length=225, blank=True, null=True)
-    createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
-    # product = models.ForeignKey(Product, models.DO_NOTHING, blank=True, null=True)
+    id = models.AutoField(primary_key=True)
+    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
+    name = models.CharField(max_length=225)
+    createdAt = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        """defines the metadata for the product model"""
+        db_table = "product_category"
         managed = False
-        db_table = 'product_category'
+        verbose_name_plural = "ProductCategories"
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class ProductImage(models.Model):
-    product = models.ForeignKey(Product, models.DO_NOTHING, blank=True, null=True)
-    url = models.CharField(max_length=255)
+    id = models.AutoField(primary_key=True)
+    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
+    url = models.CharField(max_length=255, null=False, blank=False)
 
     class Meta:
+        """defines the metadata for the product model"""
+        db_table = "product_image"
         managed = False
-        db_table = 'product_image'
+        verbose_name_plural = "ProductImages"
 
+    def __str__(self) -> str:
+        return self.url
 
 class ProductLogs(models.Model):
     user = models.ForeignKey('User', models.DO_NOTHING)
@@ -537,14 +576,19 @@ class ProductReview(models.Model):
 
 
 class ProductSubCategory(models.Model):
-    name = models.CharField(max_length=225, blank=True, null=True)
-    parent_category = models.ForeignKey(ProductCategory, models.DO_NOTHING, blank=True, null=True)
-    createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=225)
+    parent_category_id = models.ForeignKey("ProductCategory", on_delete=models.CASCADE)
+    createdAt = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        """defines the metadata for the product model"""
+        db_table = "product_sub_category"
         managed = False
-        db_table = 'product_sub_category'
+        verbose_name_plural = "ProductSubCategories"
 
+    def __str__(self) -> str:
+        return self.name
 
 class Project(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
@@ -632,11 +676,13 @@ class Revenue(models.Model):
 
 
 class Role(models.Model):
-    name = models.CharField(max_length=225, blank=True, null=True)
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=255)
 
     class Meta:
+        db_table = "role"
         managed = False
-        db_table = 'role'
+        verbose_name_plural = "roles"
 
 
 class RolesPermissions(models.Model):
@@ -686,22 +732,42 @@ class Section(models.Model):
 
 
 class Shop(models.Model):
-    id = models.UUIDField(primary_key=True)
-    merchant = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
-    name = models.CharField(max_length=255, blank=True, null=True)
-    policy_confirmation = models.BooleanField(blank=True, null=True)
-    restricted = models.TextField(blank=True, null=True)  # This field type is a guess.
-    admin_status = models.TextField(blank=True, null=True)  # This field type is a guess.
-    is_deleted = models.TextField(blank=True, null=True)  # This field type is a guess.
-    reviewed = models.BooleanField(blank=True, null=True)
-    rating = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
+    """defines the shop model"""
+    SHOP_STATUS = (
+        ('active', 'Active'),
+        ('temporary', 'Temporary')
+    )
+    RESTRICTED = (
+        ('no', 'No'),
+        ('temporary', 'Temporary'),
+        ('permanent', 'Permanent')
+    )
+    ADMIN_STATUS = (
+        ('pending', 'Pending'),
+        ('reviewed', 'Reviewed'),
+        ('approved', 'Approved'),
+        ('suspended', 'Suspended'),
+        ('blacklisted', 'Blacklisted')
+    )
+    id = models.UUIDField(primary_key=True, default=uuid4, null=False)
+    merchant_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
+    name = models.CharField(max_length=255, null=False)
+    policy_confirmation = models.BooleanField(default=False)
+    restricted = models.CharField(max_length=20, choices=RESTRICTED, default="no")
+    admin_status = models.CharField(max_length=20, choices=ADMIN_STATUS, default="pending")
+    is_deleted = models.CharField(max_length=20, choices=SHOP_STATUS, default='active')
+    reviewed = models.BooleanField(default=False)
+    rating = models.DecimalField( max_digits=20, decimal_places=2, default=0.00)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
 
     class Meta:
-        managed = False
-        db_table = 'shop'
+        """defines the metadata for the shop model"""
+        db_table = "shop"
+        verbose_name_plural = "Shops"
 
+    def __str__(self):
+        return self.name
 
 class ShopLogs(models.Model):
     user = models.ForeignKey('User', models.DO_NOTHING)
@@ -810,29 +876,35 @@ class Transaction(models.Model):
 
 
 class User(models.Model):
-    id = models.UUIDField(primary_key=True)
-    username = models.CharField(max_length=255)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    email = models.CharField(max_length=255)
-    token = models.CharField(max_length=255, blank=True, null=True)
-    role = models.ForeignKey(Role, models.DO_NOTHING, blank=True, null=True)
-    section_order = models.TextField(blank=True, null=True)
-    password = models.CharField(max_length=255, blank=True, null=True)
-    provider = models.CharField(max_length=255, blank=True, null=True)
-    phone_number = models.CharField(max_length=255, blank=True, null=True)
-    is_verified = models.BooleanField(blank=True, null=True)
-    two_factor_auth = models.BooleanField(blank=True, null=True)
-    location = models.CharField(max_length=255, blank=True, null=True)
-    country = models.CharField(max_length=255, blank=True, null=True)
-    profile_pic = models.TextField(blank=True, null=True)
-    refresh_token = models.CharField(max_length=255)
-    createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
+    """Identifies the user model based on the schema"""
+    id = models.UUIDField(primary_key=True, default=uuid4, null=False)
+    username = models.CharField(max_length=255, null=False)
+    first_name = models.CharField(max_length=255, null=False)
+    last_name = models.CharField(max_length=255, null=False)
+    email = models.CharField(max_length=255, null=False)
+    role_id = models.ForeignKey('Role', on_delete=models.CASCADE)
+    section_order = models.CharField(max_length=200, null=True)
+    password = models.CharField(max_length=255)
+    provider = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=255)
+    is_verified = models.BooleanField(default=False)
+    two_factor_auth = models.BooleanField(default=False)
+    location = models.CharField(max_length=255)
+    country = models.CharField(max_length=255)
+    profile_pic = models.CharField(max_length=255)
+    profile_cover_photo = models.CharField(max_length=200)
+    refresh_token = models.CharField(max_length=255, null=False)
+    createdAt = models.DateTimeField(auto_now_add=True)
+
 
     class Meta:
+        """defines the metadata for the product model"""
+        db_table = "user"
         managed = False
-        db_table = 'user'
+        verbose_name_plural = "Users"
 
+    def __str__(self) -> str:
+        return self.name
 
 class UserAnalytics(models.Model):
     metric_total_number_users = models.IntegerField(blank=True, null=True)
@@ -881,10 +953,11 @@ class UserPermission(models.Model):
 
 
 class UserProductInteraction(models.Model):
-    user = models.ForeignKey(User, models.DO_NOTHING, blank=True, null=True)
-    product = models.ForeignKey(Product, models.DO_NOTHING, blank=True, null=True)
-    interaction_type = models.CharField(max_length=255, blank=True, null=True)
-    createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
+    id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey("User", on_delete=models.CASCADE)
+    product_id = models.ForeignKey("Product", on_delete=models.CASCADE)
+    interaction_type = models.CharField(max_length=20)  # e.g., "viewed," "purchased"
+    createdAt = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         managed = False
@@ -892,14 +965,18 @@ class UserProductInteraction(models.Model):
 
 
 class UserProductRating(models.Model):
-    user_id = models.UUIDField(blank=True, null=True)
-    product_id = models.UUIDField(blank=True, null=True)
-    rating = models.IntegerField(blank=True, null=True)
+    """This is the user product rating, how the product is rated"""
+    id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
+    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
+    rating = models.IntegerField(null=True)
+
 
     class Meta:
+        """defines the metadata for the product model"""
+        db_table = "user_product_rating"
         managed = False
-        db_table = 'user_product_rating'
-
+        verbose_name_plural = "UserProductRatings"
 
 class UserResponse(models.Model):
     user_assessment = models.ForeignKey(UserAssessment, models.DO_NOTHING, blank=True, null=True)
@@ -922,14 +999,18 @@ class UserTrack(models.Model):
 
 
 class Wishlist(models.Model):
-    user = models.ForeignKey(User, models.DO_NOTHING, blank=True, null=True)
-    product = models.ForeignKey(Product, models.DO_NOTHING, blank=True, null=True)
-    createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
+    id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey('User', on_delete=models.CASCADE, null=True)
+    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
+
 
     class Meta:
+        """defines the metadata for the product model"""
+        db_table = "wishlist"
         managed = False
-        db_table = 'wishlist'
+        verbose_name_plural = "Wishlists"
 
 
 class WorkExperienceDetail(models.Model):
