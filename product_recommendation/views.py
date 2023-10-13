@@ -66,9 +66,9 @@ class SimilarProductRecommendationView(APIView):
 
         similar_products = Product.objects.filter(category=current_product.category).exclude(id=product_id)
 
-        recommendedproducts = similar_products[:4]
+        recommended_products = similar_products[:4]
 
-        serializer = ProductSerializer(recommendedproducts, many=True)
+        serializer = ProductSerializer(recommended_products, many=True)
 
         return Response({'products': serializer.data}, status=status.HTTP_200_OK)
 

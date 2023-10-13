@@ -29,7 +29,7 @@ class WishlistViewSetTest(TestCase):
         
         
         self.product = Product.objects.create(
-            shop_id=Shop.objects.create(
+            shop=Shop.objects.create(
                 name="Sample Shop",
                 policy_confirmation=True,
                 reviewed=True,
@@ -38,18 +38,15 @@ class WishlistViewSetTest(TestCase):
             name="Sample Product 1",
             description="Sample Description 1",
             quantity=10,
-            category_id=ProductCategory.objects.create(
+            category=ProductCategory.objects.create(
                 name="Sample Category 1",
-                parent_category_id=1,
-                status="approved"
             ),
-            image_id=None,
             price=100.00,
             discount_price=90.00,
             tax=10.00,
             is_published=True,
             currency="USD",
-            rating_id=UserProductRating.objects.create(
+            rating=UserProductRating.objects.create(
                 user_id=self.user,
                 rating=5
             )
@@ -69,7 +66,7 @@ class WishlistViewSetTest(TestCase):
     def test_create_wishlist_item_existing(self):
         new_list = Wishlist.objects.create(user_id=self.user, product_id=self.product)
         url = reverse("wishlist_create")
-        data = {"product_id": new_list.product_id.id, "user_id": new_list.user_id.id}
+        data = {"product_id": new_list.product.id, "user_id": new_list.user.id}
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["message"], "Product already in wishlist")
@@ -91,3 +88,7 @@ class WishlistViewSetTest(TestCase):
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data["message"], '"product_id" required in the request data')
+        
+    def tearDown(self):
+        self.user.delete()
+        self.product.delete()
