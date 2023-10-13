@@ -61,9 +61,11 @@ class GetProductsSubCategory(APIView):
 
 
             # Get products belonging to the provided subcategory
-            products = Product.objects.filter(subcategory_id=subcategory_obj).order_by('category_id')
-            products = Product.objects.filter(subcategory_id=subcategory_obj).order_by('category_id')
-            
+            try:
+                products = Product.objects.filter(subcategory_id=subcategory_obj).order_by('category_id')
+            except Exception as e:
+                return Response({"error": "Product does not have a subcategory attribute implemented yet"}, status=status.HTTP_501_NOT_IMPLEMENTED)
+
 
             if not products.exists():
                 return Response({"products": [], "Message": "There are no products in this subCategory"}, status=status.HTTP_200_OK)
