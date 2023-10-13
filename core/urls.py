@@ -50,4 +50,6 @@ urlpatterns = [
     path('api/', include('addrecent.urls')),
     path('api/', include('product_category.urls')),
     path('api/', include('delete_wishlist.urls')),
+    path('api/', include('product_view.urls')),
+
 ]
