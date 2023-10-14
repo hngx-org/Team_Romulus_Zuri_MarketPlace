@@ -6,6 +6,7 @@ class UserSerializer(serializers.ModelSerializer):
      class Meta:
         model = User
         fields = ("id", "username", "email")
+        ref_name = 'user_wishlist'
 
 class WishlistSerializer(serializers.ModelSerializer):
     user =  UserSerializer(many=False, read_only=True)
