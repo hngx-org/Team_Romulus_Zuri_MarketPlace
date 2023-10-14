@@ -1,6 +1,7 @@
 from rest_framework import generics
 from MarketPlace.models import Product
-from limited_offer.serializers import ProductSerializer
+# from limited_offer.serializers import ProductSerializer
+from all_products.serializers import AllProductSerializer as ProductSerializer
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -23,7 +24,7 @@ class LimitedOfferListView(generics.ListAPIView):
         Returns:
         - queryset: A filtered queryset containing products with discounts.
         """
-        queryset = Product.objects.filter(discount_price__isnull=False)
+        queryset = Product.objects.filter(discount_price__isnull=False).exclude(discount_price=0.00)
         return queryset
 
     def list(self, request, *args, **kwargs):

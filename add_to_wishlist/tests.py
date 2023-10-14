@@ -5,7 +5,6 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 from MarketPlace.models import Shop, ProductCategory, Product, Wishlist,  UserProductRating, User
 from django.urls import reverse
-# from django.contrib.auth.models import User
 from django.urls import reverse
 from rest_framework import status
 
@@ -56,7 +55,7 @@ class WishlistViewSetTest(TestCase):
 
     def test_create_wishlist_item(self):
         url = reverse("wishlist_create")
-        data = {"product_id": str(self.product.id)}
+        data = {"product_id": str(self.product.id), "user_id": str(self.user.id)}
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["message"], "Product added to wishlist")

@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from MarketPlace.models import Product, ProductImage, ProductCategory, ProductSubCategory
 from django.core.paginator import Paginator
-from .serializers import ProductSerializer, ImageSerializer, ProductsubCatSerializer
+from .serializers import ProductsubCatSerializer, ProductImageSerializer
+from all_products.serializers import AllProductSerializer as ProductSerializer
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.generics import ListAPIView
 
 # Create your views here.
 
@@ -21,26 +23,36 @@ class GetCategoryNames(APIView):
                 name.append(cat.name)
         return Response({"categories name": name}, status=status.HTTP_200_OK)
 
-class ShowImages(APIView):
-    def get(self, request):
-        try:
-            images = ProductImage.objects.all()
-            serializer = ImageSerializer(images, many=True)
-            return Response({'All images': serializer.data}, status=status_HTTP_200_OK)
-        except Exception as e:
-            return Response({'error': e})
 
-class GetImage(APIView):
-    def get(self, request, productId):
+
+class GetImages(ListAPIView):
+    serializer_class = ProductImageSerializer
+
+    def get_queryset(self):
+        product_id = self.kwargs['productId']
         try:
-            images = ProductImage.objects.get(product=productId)
-            response = {
-                    'message': 'This is the url to where the image is hosted',
-                    'url': images.url
-                }
-            return Response(response, status=status.HTTP_200_OK)
+            return ProductImage.objects.filter(product_id=product_id)
         except ProductImage.DoesNotExist:
-            return Response({"error": "ProductImage does not exist", "reason": "Beans has been cooked"})
+            return Response(
+                {"error": "ProductImage does not exist", "reason": "Beans has been cooked"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+
+
+
+
+# class GetImage(APIView):
+#     def get(self, request, imageId):
+#         try:
+#             images = ProductImage.objects.get(id=imageId)
+#             response = {
+#                     'message': 'This is the url to where the image is hosted',
+#                     'url': images.url
+#                 }
+#             return Response(response, status=status.HTTP_200_OK)
+#         except ProductImage.DoesNotExist:
+#             return Response({"error": "ProductImage does not exist", "reason": "Beans has been cooked"})
 
 class GetProductsSubCategory(APIView):
     def get(self, request, category, subcategory):

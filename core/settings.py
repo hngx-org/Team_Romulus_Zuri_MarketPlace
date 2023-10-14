@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'ProductSubCategory',
     'product_recommendation',
     'product_retrieval',
+    'product_view',
 
     'add_to_wishlist',
     'category_names',
@@ -188,8 +189,8 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer', 
     ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 5
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 5
 }
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
