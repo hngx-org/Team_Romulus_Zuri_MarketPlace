@@ -34,11 +34,15 @@ class GetProductItem(generics.RetrieveAPIView):
         
         user_id = kwargs.get('user_id')
         product_id = kwargs.get('id')
-        qurery_response = addRecentlyViewed(user_id=user_id, product_id=product_id)#this function attempts to create a recently viewed and returns a Response
-        if qurery_response.status_code == status.HTTP_201_CREATED:#this means the product has been added to recently viewed succesfully
+        guest = request.query_params.get('guest')
+        if guest == 'false':#user is signed up hence we update the recently viewed for that user
+            qurery_response = addRecentlyViewed(user_id=user_id, product_id=product_id)#this function attempts to create a recently viewed and returns a Response
+            if qurery_response.status_code == status.HTTP_201_CREATED:#this means the product has been added to recently viewed succesfully
+                return super().retrieve(request, *args, **kwargs)
+            else:
+                return Response(qurery_response.data, status= qurery_response.status_code)
+        else:#this means the person viewing this product is not signed up
             return super().retrieve(request, *args, **kwargs)
-        else:
-            return Response(qurery_response.data, status= qurery_response.status_code)
 
 
 """This function adds updates the users recently viewed and returns a resonse object"""
