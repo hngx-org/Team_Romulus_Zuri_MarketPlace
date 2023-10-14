@@ -11,7 +11,6 @@ class ProductsubCatSerializer(serializers.ModelSerializer):
         model = ProductSubCategory
         fields = '__all__'
 
-
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImage
