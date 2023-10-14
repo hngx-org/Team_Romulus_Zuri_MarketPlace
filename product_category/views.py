@@ -3,7 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from MarketPlace.models import Product, ProductCategory, ProductSubCategory
-from .serializers import ProductSerializer
+# from .serializers import ProductSerializer
+from all_products.serializers import AllProductSerializer as ProductSerializer
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 

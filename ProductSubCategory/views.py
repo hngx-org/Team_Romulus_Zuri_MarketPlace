@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from MarketPlace.models import Product, ProductImage, ProductCategory, ProductSubCategory
 from django.core.paginator import Paginator
-from .serializers import ProductSerializer, ProductsubCatSerializer, ProductImageSerializer
+from .serializers import ProductsubCatSerializer, ProductImageSerializer
+from all_products.serializers import AllProductSerializer as ProductSerializer
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.views import APIView
 from rest_framework import status
