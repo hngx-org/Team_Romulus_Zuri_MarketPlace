@@ -5,7 +5,8 @@ from rest_framework import status
 from django.db.models import F
 #from product_view.models import ProductView, User
 from MarketPlace.models import Product
-from .serializers import ProductSerializer
+# from .serializers import ProductSerializer
+from all_products.serializers import AllProductSerializer as ProductSerializer
 
 # class GetLastViewedProducts(APIView):
 #     @staticmethod

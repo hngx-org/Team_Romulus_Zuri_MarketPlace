@@ -2,10 +2,13 @@ from django.shortcuts import render
 from MarketPlace.models import Product, ProductImage, ProductCategory, ProductSubCategory
 from MarketPlace.serializers import ProductSerializer
 from django.core.paginator import Paginator
+from .serializers import ProductsubCatSerializer, ProductImageSerializer
+from all_products.serializers import AllProductSerializer as ProductSerializer
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.generics import ListAPIView
 
 # Create your views here.
 
@@ -19,22 +22,40 @@ class GetCategoryNames(APIView):
         for cat in categories:
             if cat not in name:
                 name.append(cat.name)
-        if len(name) > 0:
-            return Response({"categories name": name}, status=status.HTTP_200_OK)
-        else:
-            return Response({"Names" : [], "message": "There are no categories in the db."}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"categories name": name}, status=status.HTTP_200_OK)
 
-class GetImage(APIView):
-    def get(self, request, imageId):
-        try:
-            images = ProductImage.objects.get(id=imageId)
-            response = {
-                    'message': 'This is the url to where the image is hosted',
-                    'url': images.url
-                }
-            return Response(response, status=status.HTTP_200_OK)
-        except ProductImage.DoesNotExist:
-            return Response({"error": "ProductImage does not exist", "reason": "Beans has been cooked"})
+
+
+class GetImages(ListAPIView):
+    serializer_class = ProductImageSerializer
+
+    def get_queryset(self):
+        product_id = self.kwargs.get('productId')  # Use get() method to avoid KeyError
+        if product_id:
+            try:
+                return ProductImage.objects.filter(product_id=product_id)
+            except ProductImage.DoesNotExist:
+                return Response(
+                    {"error": "ProductImage does not exist", "reason": "Beans have been cooked"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+        else:
+            # Return all images when productId is not provided in the URL
+            return ProductImage.objects.all()
+
+
+
+# class GetImage(APIView):
+#     def get(self, request, imageId):
+#         try:
+#             images = ProductImage.objects.get(id=imageId)
+#             response = {
+#                     'message': 'This is the url to where the image is hosted',
+#                     'url': images.url
+#                 }
+#             return Response(response, status=status.HTTP_200_OK)
+#         except ProductImage.DoesNotExist:
+#             return Response({"error": "ProductImage does not exist", "reason": "Beans has been cooked"})
 
 class GetProductsSubCategory(APIView):
     def get(self, request, category, subcategory):
@@ -54,28 +75,34 @@ class GetProductsSubCategory(APIView):
                 return Response({"Message": f"There is no product category named {category}"}, status=status.HTTP_404_NOT_FOUND)
 
             try:
-                subcategory_obj = ProductSubCategory.objects.get(name=subcategory, parent_category_id=category_obj)
+                subcategory_obj = ProductSubCategory.objects.filter(name=subcategory, parent_category=category_obj)
             except ProductSubCategory.DoesNotExist:
                 return Response({'error': f'There is no sub category named {subcategory} under {category}'})
+            except Exception as e:
+                return Response({'error': e})
 
 
 
             # Get products belonging to the provided subcategory
             try:
-                products = Product.objects.filter(subcategory_id=subcategory_obj).order_by('category_id')
+                
+                products = ProductSubCategory.objects.filter(parent_category=category_obj, name=subcategory).select_related('parent_category')
+                prod = Product.objects.filter(category=category_obj)
+
             except Exception as e:
-                return Response({"error": "Product does not have a subcategory attribute implemented yet"}, status=status.HTTP_501_NOT_IMPLEMENTED)
+                return Response({"error": e}, status=status.HTTP_501_NOT_IMPLEMENTED)
 
 
             if not products.exists():
                 return Response({"products": [], "Message": "There are no products in this subCategory"}, status=status.HTTP_200_OK)
 
             # pagination
-            pagination = Paginator(products, page_size)
+            pagination = Paginator(prod, page_size)
             page_number = request.GET.get('page')
             products_per_page = pagination.get_page(page_number)
-            serializer = ProductSerializer(products_per_page, many=True)
-            return Response({'products': serializer.data}, status=status.HTTP_200_OK)
+            serializer = ProductsubCatSerializer(products_per_page, many=True)
+            se = ProductSerializer(prod,  many=True)
+            return Response({'products': se.data}, status=status.HTTP_200_OK)
 
         except ProductSubCategory.DoesNotExist:
             return Response({"Message": "Subcategory does not exist"}, status=status.HTTP_404_NOT_FOUND)
