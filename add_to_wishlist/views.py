@@ -57,7 +57,7 @@ class WishlistCreateView(views.APIView):
             user_obj = User.objects.get(id=user_id)
             user = user_obj
         except:
-            user = request.user.id
+            user = request.user
 
         try:
             # Retrieve product details
@@ -67,7 +67,7 @@ class WishlistCreateView(views.APIView):
 
         # Add the product to the user's wishlist
         wishlist_item, created = Wishlist.objects.get_or_create(
-            user_id=user, product_id=product_id)  
+            user_id=user.id, product_id=product_id)  
 
         serializer = self.serializer_class(wishlist_item)
 
