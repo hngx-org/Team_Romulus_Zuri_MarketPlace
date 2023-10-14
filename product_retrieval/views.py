@@ -1,7 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from MarketPlace.models import Product
-from .serializers import ProductSerializer
+# from .serializers import ProductSerializer
+from all_products.serializers import AllProductSerializer as ProductSerializer
 from django.db.models import Q
 
 class ProductSearchView(APIView):

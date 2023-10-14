@@ -12,7 +12,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from MarketPlace.models import Product, ProductImage, User
-from .serializers import ProductSerializer, ProductImageSerializer, UserSerializer
+from .serializers import ProductImageSerializer, UserSerializer
+from all_products.serializers import AllProductSerializer as ProductSerializer
 
 class ProductRecommendationView(APIView):
     def get(self, request):
@@ -51,14 +52,14 @@ class ProductRecommendationView(APIView):
             product_serializer = ProductSerializer(recommended_products, many=True)
             
             # Add product images and user information to each product in the response
-            for product_data in product_serializer.data:
-                product_id = product_data['id']
-                product = Product.objects.get(id=product_id)
-                product_images = ProductImage.objects.filter(product=product)
-                user = User.objects.get(id=product.user_id)
+            # for product_data in product_serializer.data:
+            #     product_id = product_data['id']
+            #     product = Product.objects.get(id=product_id)
+            #     product_images = ProductImage.objects.filter(product=product)
+            #     user = User.objects.get(id=product.user_id)
 
-                product_data['product_images'] = ProductImageSerializer(product_images, many=True).data
-                product_data['user'] = UserSerializer(user).data
+            #     product_data['product_images'] = ProductImageSerializer(product_images, many=True).data
+            #     product_data['user'] = UserSerializer(user).data
 
             return Response(product_serializer.data, status=status.HTTP_200_OK)
 

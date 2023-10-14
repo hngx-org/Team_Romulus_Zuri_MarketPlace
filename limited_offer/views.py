@@ -1,6 +1,7 @@
 from rest_framework import generics
 from MarketPlace.models import Product
-from limited_offer.serializers import ProductSerializer
+# from limited_offer.serializers import ProductSerializer
+from all_products.serializers import AllProductSerializer as ProductSerializer
 from rest_framework.response import Response
 from rest_framework import status
 
