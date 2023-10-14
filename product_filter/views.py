@@ -1,8 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from MarketPlace.models import Product, ProductCategory
-from .serializers import ProductSerializer
+from MarketPlace.models import Product
+from .serializers import AllProductSerializer
 from django.db.models import Q
 from django.http import Http404
 
@@ -46,7 +46,10 @@ class FilterProductView(APIView):
                     Q(price__gte=min_price) & Q(price__lte=max_price)
                 )
 
-            serializer = ProductSerializer(products, many=True)
+            if not products:
+                return Response({"message": "No products to display."}, status=status.HTTP_200_OK)
+
+            serializer = AllProductSerializer(products, many=True)
 
             return Response({"products": serializer.data}, status=status.HTTP_200_OK)
         except Http404:
