@@ -8,10 +8,11 @@ import uuid
 class DeleteWishlistItem(APIView):
     authentication_classes = []  # Requires authentication
     
-    def delete(self, request, product_id):
+    def delete(self, request, product_id, userId):
         try:
             product_id = uuid.UUID(product_id)  # Validate the UUID
-            item = get_object_or_404(Wishlist, product_id=product_id, user_id=request.user.id)
+            # userId = request.session.get['user_id']
+            item = get_object_or_404(Wishlist, product=product_id, user=userId)
             item.delete()
             return Response({'message': 'Product removed from wishlist'}, status=status.HTTP_200_OK)
         except ValueError:
@@ -19,4 +20,4 @@ class DeleteWishlistItem(APIView):
         except Wishlist.DoesNotExist:
             return Response({'error': 'Product not found in wishlist'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return Response({'error': 'Internal Server Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': f'Internal Server Error {e}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
