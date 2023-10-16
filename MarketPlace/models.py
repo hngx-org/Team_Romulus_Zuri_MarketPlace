@@ -502,6 +502,9 @@ class Product(models.Model):
         managed = False
         db_table = 'product'
 
+    def __str__(self):
+        return self.name
+
 
 class ProductCategory(models.Model):
     user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
@@ -511,6 +514,9 @@ class ProductCategory(models.Model):
     class Meta:
         managed = False
         db_table = 'product_category'
+
+    def __str__(self):
+        return self.name
 
 
 class ProductImage(models.Model):
@@ -553,6 +559,9 @@ class ProductSubCategory(models.Model):
     class Meta:
         managed = False
         db_table = 'product_sub_category'
+
+    def __str__(self):
+        return self.name
 
 
 class Project(models.Model):
@@ -711,6 +720,9 @@ class Shop(models.Model):
         managed = False
         db_table = 'shop'
 
+    def __str__(self):
+        return self.name
+
 
 class ShopLogs(models.Model):
     user = models.ForeignKey('User', models.DO_NOTHING)
@@ -841,6 +853,9 @@ class User(models.Model):
     class Meta:
         managed = False
         db_table = 'user'
+
+    def __str__(self):
+        return self.username
 
 
 class UserAnalytics(models.Model):
