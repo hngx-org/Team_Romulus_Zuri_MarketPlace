@@ -1,23 +1,24 @@
 from rest_framework import serializers
 from MarketPlace.models import Product, Shop, UserProductRating, ProductImage, ProductCategory, ProductSubCategory
 
-class AllProductImageSerializer(serializers.ModelSerializer):
 
+class AllProductImageSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = ProductImage
 		fields = ['url']
 
-class AllRatingSerializer(serializers.ModelSerializer):
 
+class AllRatingSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = UserProductRating
 		fields = ['rating']
+		
 
 class AllSubCategorySerializer(serializers.ModelSerializer):
-
-	class Meta:
-		model = ProductSubCategory
-		fields = ['name']
+    class Meta:
+        model = ProductSubCategory
+        fields = ['name']
+		
 
 class AllCategorySerializer(serializers.ModelSerializer):
 	sub_category = AllSubCategorySerializer(many=False, read_only=True)
@@ -26,11 +27,12 @@ class AllCategorySerializer(serializers.ModelSerializer):
 		model = ProductCategory
 		fields = ['id', 'name', 'sub_category']
 
-class AllShopSerializer(serializers.ModelSerializer):
 
+class AllShopSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Shop
 		fields = ['id', 'name']
+
 
 class AllProductSerializer(serializers.ModelSerializer):
 	shop = AllShopSerializer(many=False, read_only=True)
@@ -39,7 +41,6 @@ class AllProductSerializer(serializers.ModelSerializer):
 	images = serializers.SerializerMethodField(read_only=True)
 	category = AllCategorySerializer(many=False, read_only=True)
 	#sub_category = AllSubCategorySerializer(many=False, read_only=True)
-	
 	class Meta:
 		model = Product
 		fields = [

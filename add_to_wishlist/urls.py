@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import WishlistCreateView
+from .views import  WishlistCreateView
 
 
 urlpatterns = [

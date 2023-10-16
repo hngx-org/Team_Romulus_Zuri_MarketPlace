@@ -1,5 +1,4 @@
 class PrimaryRouter:
-
 	def db_for_read(self, model, **hints):
 		return 'primary'
 
@@ -13,7 +12,6 @@ class PrimaryRouter:
 		return False
 
 class DefaultRouter:
-
 	route_app_labels = ['auth', 'contenttypes', 'admin', 'sessions', 'messages', 'staticfiles', 'rest_framework']
 
 	def db_for_read(self, model, **hints):

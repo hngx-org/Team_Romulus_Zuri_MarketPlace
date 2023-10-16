@@ -1,5 +1,7 @@
 from rest_framework import views, status
 from rest_framework.response import Response
+from rest_framework.response import Response
+from rest_framework import status
 from MarketPlace.models import Product, User, Wishlist
 from .serializers import WishlistSerializer
 from django.core.exceptions import ObjectDoesNotExist
