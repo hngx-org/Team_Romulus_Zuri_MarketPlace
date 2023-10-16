@@ -3,21 +3,24 @@ from MarketPlace.models import Product, Shop, UserProductRating, ProductImage, P
 
 
 class AllProductImageSerializer(serializers.ModelSerializer):
+
 	class Meta:
 		model = ProductImage
 		fields = ['url']
 
 
 class AllRatingSerializer(serializers.ModelSerializer):
+
 	class Meta:
 		model = UserProductRating
 		fields = ['rating']
 		
 
 class AllSubCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductSubCategory
-        fields = ['name']
+
+	class Meta:
+		model = ProductSubCategory
+		fields = ['name']
 		
 
 class AllCategorySerializer(serializers.ModelSerializer):
@@ -29,6 +32,7 @@ class AllCategorySerializer(serializers.ModelSerializer):
 
 
 class AllShopSerializer(serializers.ModelSerializer):
+
 	class Meta:
 		model = Shop
 		fields = ['id', 'name']
@@ -41,6 +45,7 @@ class AllProductSerializer(serializers.ModelSerializer):
 	images = serializers.SerializerMethodField(read_only=True)
 	category = AllCategorySerializer(many=False, read_only=True)
 	#sub_category = AllSubCategorySerializer(many=False, read_only=True)
+	
 	class Meta:
 		model = Product
 		fields = [
