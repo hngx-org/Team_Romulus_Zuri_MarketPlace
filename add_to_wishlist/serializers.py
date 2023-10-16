@@ -9,6 +9,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class WishlistSerializer(serializers.ModelSerializer):
     product_details = ProductSerializer(source='product', read_only=True)  # Create a nested ProductSerializer field
+
     class Meta:
         model = Wishlist
         fields = '__all__'

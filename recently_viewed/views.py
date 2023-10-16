@@ -7,7 +7,6 @@ from django.shortcuts import render
 from django.http import Http404, JsonResponse
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
-from rest_framework.views import APIView
 # from rest_framework.response import Response
 # from MarketPlace.models import UserProductInteraction
 # from .serializers import UserProductInteractionSerializer
@@ -30,7 +29,6 @@ from rest_framework.views import APIView
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
 from MarketPlace.models import UserProductInteraction
 from .serializers import UserProductInteractionSerializer
 
