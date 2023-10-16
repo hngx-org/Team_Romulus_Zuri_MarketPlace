@@ -18,14 +18,15 @@ class FilterProductView(APIView):
             keywords = self.request.query_params.get("keywords")
             rating = self.request.query_params.get("rating")
             price = self.request.query_params.get("price")
+            highest_price = self.request.query_params.get('highest_price')
 
             products = Product.objects.all()
 
             if discount:
-                products = products.filter(discount_price__lte=discount)
+                products = products.filter(discount_price=discount)
 
             if category:
-                products = products.filter(category_id__name=category)
+                products = products.filter(category__name=category)
 
             if sub_category:
                 products = products.filter(
@@ -34,7 +35,8 @@ class FilterProductView(APIView):
 
             if keywords:
                 products = products.filter(
-                    Q(name__icontains=keywords) | Q(description__icontains=keywords)
+                    Q(name__icontains=keywords) | Q(description__icontains=keywords) |
+                    Q(category__name__icontains=keywords)
                 )
 
             if rating:
@@ -45,6 +47,12 @@ class FilterProductView(APIView):
                 products = products.filter(
                     Q(price__gte=min_price) & Q(price__lte=max_price)
                 )
+
+            if highest_price:
+                if highest_price == 'true':
+                    products = products.order_by('-price')
+                else:
+                    products = products.order_by('price')
 
             if not products:
                 return Response({"message": "No products to display."}, status=status.HTTP_200_OK)

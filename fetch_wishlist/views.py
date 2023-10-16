@@ -60,6 +60,7 @@ from MarketPlace.models import Wishlist
 
 class WishlistProductsView(ListAPIView):
     serializer_class = WishlistSerializer
+    
     def get_queryset(self):
         user_id = self.kwargs.get("user_id")
         queryset = Wishlist.objects.filter(user_id = user_id)
