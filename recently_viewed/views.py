@@ -28,9 +28,7 @@ from rest_framework.views import APIView
 #         except UserProductInteraction.DoesNotExist:
 #             return Response({'message': 'Recently viewed products not found'}, status=status.HTTP_404_NOT_FOUND)
 
-from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
 from MarketPlace.models import UserProductInteraction
 from .serializers import UserProductInteractionSerializer
 
