@@ -57,6 +57,16 @@ class GetImages(ListAPIView):
 #         except ProductImage.DoesNotExist:
 #             return Response({"error": "ProductImage does not exist", "reason": "Beans has been cooked"})
 
+
+class  subCat(ListAPIView):
+    def get(self, request, category, Subcat):
+        try:
+            catId = ProductCategory.objects.all(name=category)
+            subCat = ProductSubCategory.objects.filter(name=Subcat, parent_category=catId)
+            products = Product.objects.all()
+            selected = SelectedCategories(sub_category=subCat, product_category=catId, product=products)
+        except Exception as e:
+            pass
 class GetProductsSubCategory(APIView):
     def get(self, request, category, subcategory):
         # Get the products related to the categories n sub categories
