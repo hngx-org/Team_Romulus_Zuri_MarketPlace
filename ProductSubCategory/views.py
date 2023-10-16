@@ -6,6 +6,7 @@ from all_products.serializers import AllProductSerializer as ProductSerializer
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.views import APIView
 from rest_framework import status
+from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 
@@ -72,6 +73,8 @@ class GetProductsSubCategory(APIView):
                 category_obj = ProductCategory.objects.get(name=category)
             except ProductCategory.DoesNotExist:
                 return Response({"Message": f"There is no product category named {category}"}, status=status.HTTP_404_NOT_FOUND)
+            except Exception as e:
+                return Response({'error': e})
 
             try:
                 subcategory_obj = ProductSubCategory.objects.filter(name=subcategory, parent_category=category_obj)
@@ -85,14 +88,17 @@ class GetProductsSubCategory(APIView):
             # Get products belonging to the provided subcategory
             try:
                 
-                products = ProductSubCategory.objects.filter(parent_category=category_obj, name=subcategory).select_related('parent_category')
+                productsSub = Q(ProductSubCategory.objects.filter(parent_category=category_obj, name=subcategory).select_related('parent_category'))
+                productsCat = Q(category_obj)
+                condition = productsSub & productsCat
                 prod = Product.objects.filter(category=category_obj)
+                subCatProducts = Product.objects.filter(condition)
 
             except Exception as e:
                 return Response({"error": e}, status=status.HTTP_501_NOT_IMPLEMENTED)
 
 
-            if not products.exists():
+            if not prod.exists():
                 return Response({"products": [], "Message": "There are no products in this subCategory"}, status=status.HTTP_200_OK)
 
             # pagination
@@ -101,7 +107,8 @@ class GetProductsSubCategory(APIView):
             products_per_page = pagination.get_page(page_number)
             serializer = ProductsubCatSerializer(products_per_page, many=True)
             se = ProductSerializer(prod,  many=True)
-            return Response({'products': se.data}, status=status.HTTP_200_OK)
+            # subproducts = ProductSerializer(subCatProducts, many=True).data
+            return Response({'products': se.data, 'subCatProducts': 'subproducts'}, status=status.HTTP_200_OK)
 
         except ProductSubCategory.DoesNotExist:
             return Response({"Message": "Subcategory does not exist"}, status=status.HTTP_404_NOT_FOUND)
