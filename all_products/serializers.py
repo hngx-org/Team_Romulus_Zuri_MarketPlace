@@ -31,6 +31,7 @@ class AllProductSerializer(serializers.ModelSerializer):
 	# image_set = AllProductImageSerializer(many=True, read_only=True)
 	images = serializers.SerializerMethodField(read_only=True)
 	category = AllProductsCategorySerializer(many=False, read_only=True)
+	
 	class Meta:
 		model = Product
 		fields = [
