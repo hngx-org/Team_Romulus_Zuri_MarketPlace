@@ -67,20 +67,21 @@ class subCat(ListAPIView):
         products = Product.objects.filter(is_deleted='active')
         paginator = Paginator(products, items_per_page)
         try:
-            products = paginator.page(page)
-        except PageNotAnInteger:
+            try:
+                products = paginator.page(page)
+            except PageNotAnInteger:
                 products = paginator.page(1)
-        except EmptyPage:
-            products = paginator.page(paginator.num_pages)
+            except EmptyPage:
+                products = paginator.page(paginator.num_pages)
         
-        product_data = []
+            product_data = []
 
-        for product in products:
-            categories = []
-            selected_categories = product.selected_categories.all()
-            for sel_cat in selected_categories:
-                sub_category = sel_cat.sub_category
-                categories.append({
+            for product in products:
+                categories = []
+                selected_categories = product.selected_categories.all()
+                for sel_cat in selected_categories:
+                    sub_category = sel_cat.sub_category
+                    categories.append({
                     'id': sel_cat.product_category.id,
                     'name': sel_cat.product_category.name,
                     'sub_categories': {
