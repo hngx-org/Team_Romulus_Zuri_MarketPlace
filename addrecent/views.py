@@ -33,22 +33,21 @@ class GetProductItem(generics.RetrieveAPIView):
             instance = self.get_object()
         except Http404:
             return Response({'message': 'Product not found.'}, status=status.HTTP_404_NOT_FOUND)
-        
+
         user_id = kwargs.get('user_id')
         product_id = kwargs.get('id')
         guest = request.query_params.get('guest')
-        #user is signed up hence we update the recently viewed for that user
-        if guest == 'false':
-            #this function attempts to create a recently viewed and returns a Response
-            qurery_response = addRecentlyViewed(user_id=user_id, product_id=product_id)
-            #this means the product has been added to recently viewed succesfully
-            if qurery_response.status_code == status.HTTP_201_CREATED:
-                return super().retrieve(request, *args, **kwargs)
-            else:
-                return Response(qurery_response.data, status= qurery_response.status_code)
-        else:
+        if guest != 'false':
             #this means the person viewing this product is not signed up
             return super().retrieve(request, *args, **kwargs)
+        #this function attempts to create a recently viewed and returns a Response
+        qurery_response = addRecentlyViewed(user_id=user_id, product_id=product_id)
+            #this means the product has been added to recently viewed succesfully
+        return (
+            super().retrieve(request, *args, **kwargs)
+            if qurery_response.status_code == status.HTTP_201_CREATED
+            else Response(qurery_response.data, status=qurery_response.status_code)
+        )
 
 
 """This function adds updates the users recently viewed and returns a resonse object"""

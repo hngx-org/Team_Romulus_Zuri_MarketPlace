@@ -30,18 +30,16 @@ class GetImages(ListAPIView):
     serializer_class = ProductImageSerializer
 
     def get_queryset(self):
-        product_id = self.kwargs.get('productId')  # Use get() method to avoid KeyError
-        if product_id:
-            try:
-                return ProductImage.objects.filter(product_id=product_id)
-            except ProductImage.DoesNotExist:
-                return Response(
-                    {"error": "ProductImage does not exist", "reason": "Beans have been cooked"},
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-        else:
+        if not (product_id := self.kwargs.get('productId')):
             # Return all images when productId is not provided in the URL
             return ProductImage.objects.all()
+        try:
+            return ProductImage.objects.filter(product_id=product_id)
+        except ProductImage.DoesNotExist:
+            return Response(
+                {"error": "ProductImage does not exist", "reason": "Beans have been cooked"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
 
 
