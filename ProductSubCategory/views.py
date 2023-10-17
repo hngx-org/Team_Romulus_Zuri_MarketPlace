@@ -110,12 +110,23 @@ class subCat(ListAPIView):
                 'promo': promo_product,
             })
 
-            catId = ProductCategory.objects.filter(name=cat)
-            subCat = ProductSubCategory.objects.filter(name=Subcat, parent_category=catId)
-            products = Product.objects.filter(is_deleted='active')
-            for product in products:
-                selected = SelectedCategories(sub_category=subCat, product_category=catId, product=products)
-            return Response(selected)
+            response_data = {
+                'data': {
+                    'itemsPerPage': int(itens_per_page),
+                    'page': int(page),
+                    'totalPages': paginator.num_pages,
+                    'totalProducts': paginator.count,
+                    'products': product_data,
+
+                }
+            }
+
+            # catId = ProductCategory.objects.filter(name=cat)
+            # subCat = ProductSubCategory.objects.filter(name=Subcat, parent_category=catId)
+            # products = Product.objects.filter(is_deleted='active')
+            # for product in products:
+            #     selected = SelectedCategories(sub_category=subCat, product_category=catId, product=products)
+            return Response(response_data)
 
         except Exception as e:
             return Response({"error": f"Exception raised {e}"})
