@@ -20,7 +20,7 @@ class ProductListByCategoryView(APIView):
             return Response({"error": "Category name must be a string value"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            if not products:
+            if not products.exists():
                 return Response({"products": [], 'message': 'The category exists, but has no products'},
                                 status=status.HTTP_200_OK)
             serializer = ProductSerializer(products, many=True)
