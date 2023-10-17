@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from MarketPlace.models import Product, ProductImage, ProductCategory, ProductSubCategory
-from django.core.paginator import Paginator
+from MarketPlace.models import Product, ProductImage, ProductCategory, ProductSubCategory, SelectedCategories
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .serializers import ProductsubCatSerializer, ProductImageSerializer
 from all_products.serializers import AllProductSerializer as ProductSerializer
 from django.core.exceptions import ObjectDoesNotExist
@@ -58,15 +58,68 @@ class GetImages(ListAPIView):
 #             return Response({"error": "ProductImage does not exist", "reason": "Beans has been cooked"})
 
 
-# class  subCat(ListAPIView):
-#     def get(self, request, category, Subcat):
-#         try:
-#             catId = ProductCategory.objects.all(name=category)
-#             subCat = ProductSubCategory.objects.filter(name=Subcat, parent_category=catId)
-#             products = Product.objects.all()
-#             selected = SelectedCategories(sub_category=subCat, product_category=catId, product=products)
-#         except Exception as e:
-#             pass
+class subCat(ListAPIView):
+    def get(self, request, cat, Subcat):
+        page = request.GET.get('page', 1)
+        items_per_page = request.GET.get('itemsPerPAge', 10)
+        offset = (int(page) - 1) * int(items_per_page)
+
+        products = Product.objects.filter(is_deleted='active')
+        paginator = Paginator(products, items_per_page)
+        try:
+            products = paginator.page(page)
+        except PageNotAnInteger:
+                products = paginator.page(1)
+        except EmptyPage:
+            products = paginator.page(paginator.num_pages)
+        
+        product_data = []
+
+        for product in products:
+            categories = []
+            selected_categories = product.selected_categories.all()
+            for sel_cat in selected_categories:
+                sub_category = sel_cat.sub_category
+                categories.append({
+                    'id': sel_cat.product_category.id,
+                    'name': sel_cat.product_category.name,
+                    'sub_categories': {
+                        'id': sub_category.id,
+                        'name': sub_category.name,
+                        'parent_category_id': sub_category.parent_category,
+                    }
+                })
+            promo_product = product.promo_product
+
+            product_data.append({
+                'id': product.id,
+                'category': product.category,
+                'name': product.name,
+                'decsription': product.name,
+                'quantity': product.quantity,
+                'price': product.price,
+                'discount_price': product.discount_price,
+                'tax': product.tax,
+                'admin_status': product.admin_status,
+                'is_published': product.is_published,
+                'is_deleted': product.is_deleted,
+                'currency': product.currency,
+                'createdat': product.createdat,
+                'updatedat': product.updateat,
+                'category': categories,
+                'promo': promo_product,
+            })
+
+            catId = ProductCategory.objects.filter(name=cat)
+            subCat = ProductSubCategory.objects.filter(name=Subcat, parent_category=catId)
+            products = Product.objects.filter(is_deleted='active')
+            for product in products:
+                selected = SelectedCategories(sub_category=subCat, product_category=catId, product=products)
+            return Response(selected)
+
+        except Exception as e:
+            return Response({"error": f"Exception raised {e}"})
+
 class GetProductsSubCategory(APIView):
     def get(self, request, category, subcategory):
         # Get the products related to the categories n sub categories
