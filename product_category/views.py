@@ -24,7 +24,7 @@ class ProductListByCategoryView(APIView):
                 return Response({"products": [], 'message': 'The category exists, but has no products'},
                                 status=status.HTTP_200_OK)
             serializer = ProductSerializer(products, many=True)
-            return Response({'message': 'success', 'products': serializer.data}, status=status.HTTP_200_OK)
+            return Response({'message': 'Lists of products successfully returned based on a category', 'products': serializer.data}, status=status.HTTP_200_OK)
         except ProductCategory.DoesNotExist:
             return Response({'message': 'Category not found.'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
