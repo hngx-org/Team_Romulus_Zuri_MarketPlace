@@ -75,7 +75,7 @@ class SimilarProductRecommendationView(APIView):
 
         except Product.DoesNotExist:
             response_data = {
-                "status_code": status.HTTP_404_NOT_FOUND,
+                "status_code": 404,
                 "msg": {
                     "text": "Product not found",
                 },
@@ -90,12 +90,12 @@ class SimilarProductRecommendationView(APIView):
         serializer = ProductSerializer(recommended_products, many=True)
 
         response_data = {
-            "status_code": status.HTTP_200_OK,
+            "status_code": 200,
             "msg": {
                 "text": "Here are similar products",
             },
             "data": {
-                "products": serializer.data,
+                "similar_products": serializer.data,
             },
             "status": "success",
         }
