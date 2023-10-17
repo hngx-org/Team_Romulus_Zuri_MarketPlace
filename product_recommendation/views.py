@@ -76,9 +76,8 @@ class SimilarProductRecommendationView(APIView):
         except Product.DoesNotExist:
             response_data = {
                 "status_code": 404,
-                "msg": {
-                    "text": "Product not found",
-                },
+                "message": "Product not found",
+
                 "status": "error",
             }
             return Response(response_data, status=status.HTTP_404_NOT_FOUND)
