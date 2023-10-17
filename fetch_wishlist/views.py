@@ -57,14 +57,31 @@
 from rest_framework.generics import ListAPIView
 from .serializers import WishlistSerializer
 from MarketPlace.models import Wishlist
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.exceptions import NotFound
 
+# class WishlistProductsView(ListAPIView):
+#     serializer_class = WishlistSerializer
+    
+#     def get_queryset(self):
+#         user_id = self.kwargs.get("user_id")
+#         queryset = Wishlist.objects.filter(user_id = user_id)
+#         return queryset
+    
 class WishlistProductsView(ListAPIView):
     serializer_class = WishlistSerializer
+    queryset = Wishlist.objects.all()
     
-    def get_queryset(self):
-        user_id = self.kwargs.get("user_id")
-        queryset = Wishlist.objects.filter(user_id = user_id)
-        return queryset
-
-
-
+    def list(self, request, user_id):
+        try:
+            queryset = Wishlist.objects.filter(user_id=user_id)
+            if not queryset.exists():
+                raise NotFound("Wishlist items not found")
+            
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except NotFound as e:
+            return Response({'detail': str(e)}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
