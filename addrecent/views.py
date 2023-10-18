@@ -43,12 +43,26 @@ class GetProductItem(generics.RetrieveAPIView):
             qurery_response = addRecentlyViewed(user_id=user_id, product_id=product_id)
             #this means the product has been added to recently viewed succesfully
             if qurery_response.status_code == status.HTTP_201_CREATED:
-                return super().retrieve(request, *args, **kwargs)
+                response_data = super().retrieve(request, *args, **kwargs)
+                response_body = {
+                    'message': 'Product retrieved succesfully',
+                    'status': 200,
+                    'success': True,
+                    'data': response_data.data
+                }
+                return Response(response_body, status= status.HTTP_200_OK)
             else:
                 return Response(qurery_response.data, status= qurery_response.status_code)
         else:
             #this means the person viewing this product is not signed up
-            return super().retrieve(request, *args, **kwargs)
+            response_data= super().retrieve(request, *args, **kwargs)
+            response_body = {
+                    'message': 'Product retrieved succesfully',
+                    'status': 200,
+                    'success': True,
+                    'data': response_data.data
+                }
+            return Response(response_body, status= status.HTTP_200_OK)
 
 
 """This function adds updates the users recently viewed and returns a resonse object"""
@@ -95,12 +109,20 @@ def addRecentlyViewed(user_id, product_id):
         serializer.save()
         context = {
             'message': 'History updated successfully',
+            'status': 201,
+            'success': True,
             'data': serializer.data
         }
         return Response(context, status= status.HTTP_201_CREATED)
     else:
         error_message = next(iter(serializer.errors.values()))[0]
-        return Response({'message': error_message}, status=status.HTTP_400_BAD_REQUEST)
+        response_body = {
+            'message': error_message,
+            'success': False,
+            'status': 400,
+            'data': []
+        }
+        return Response(response_body, status=status.HTTP_400_BAD_REQUEST)
 
     
 

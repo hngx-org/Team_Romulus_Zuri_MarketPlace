@@ -45,9 +45,9 @@ class WishlistCreateView(views.APIView):
     def post(self, request):
 
         if not request.data.get("product_id"):
-            return Response({'message': 'product required in the request data'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'product required in the request data', 'status': status.HTTP_400_BAD_REQUEST, 'success': False}, status=status.HTTP_400_BAD_REQUEST)
         if not request.data.get("user_id"):
-            return Response({'message': 'no wishlist for this user'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'user id required in the request data', 'status': status.HTTP_400_BAD_REQUEST, 'success': False}, status=status.HTTP_400_BAD_REQUEST)
         
 
         product_id = request.data.get("product_id")
@@ -72,6 +72,6 @@ class WishlistCreateView(views.APIView):
         serializer = self.serializer_class(wishlist_item)
 
         if created:
-            return Response({'message': 'Product added to wishlist', 'wishlist_item': serializer.data}, status=status.HTTP_201_CREATED)
+            return Response({'message': 'Product added to wishlist', 'data': serializer.data, 'status': status.HTTP_201_CREATED, 'success': True}, status=status.HTTP_201_CREATED)
         else:
-            return Response({'message': 'Product already exists in wishlist', 'wishlist_item': serializer.data}, status=status.HTTP_200_OK)
+            return Response({'message': 'Product already exists in wishlist', 'data': serializer.data, 'status': status.HTTP_200_OK, 'success': True}, status=status.HTTP_200_OK)

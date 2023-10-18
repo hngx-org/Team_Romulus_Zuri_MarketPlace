@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from MarketPlace.models import Product, ProductImage, User
-from .serializers import ProductImageSerializer, UserSerializer
+# from .serializers import ProductImageSerializer, UserSerializer
 from all_products.serializers import AllProductSerializer as ProductSerializer
 
 class ProductRecommendationView(APIView):
@@ -50,6 +50,13 @@ class ProductRecommendationView(APIView):
 
             # Serialize the recommended products
             product_serializer = ProductSerializer(recommended_products, many=True)
+
+            response_data = {
+                'status': 200,
+                'success': True,
+                'message': 'Recommended products',
+                'data': product_serializer.data
+            }
             
             # Add product images and user information to each product in the response
             # for product_data in product_serializer.data:
@@ -61,11 +68,19 @@ class ProductRecommendationView(APIView):
             #     product_data['product_images'] = ProductImageSerializer(product_images, many=True).data
             #     product_data['user'] = UserSerializer(user).data
 
-            return Response(product_serializer.data, status=status.HTTP_200_OK)
+            return Response(response_data, status=status.HTTP_200_OK)
 
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            response_data = {
+                'status': 500,
+                'success': False,
+                'data': [],
+                'error': str(e)
+            }
+            return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+ 
 
 class SimilarProductRecommendationView(APIView):
 

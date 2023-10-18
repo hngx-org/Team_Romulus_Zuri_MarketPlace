@@ -45,8 +45,24 @@ class RecentlyViewedProducts(APIView):
 
             # Serialize the recently viewed interactions
             serializer = self.serializer_class(recently_viewed, many=True)
+            response = {
+                "message": "Request Sucessful",
+                "status_code": 200,
+                "data": serializer.data,
+                "error": None,
+                "success": True
+            }
 
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            # return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(response, status=status.HTTP_200_OK)
 
         except UserProductInteraction.DoesNotExist:
-            return Response({'message': 'Recently viewed products not found'}, status=status.HTTP_404_NOT_FOUND)
+            response = {
+                "message": "Recently viewed products not found",
+                "status_code": 404,
+                "data": {'message': 'Recently viewed products not found'},
+                "error": 'Recently viewed products not found',
+                "success": False
+            }
+            # return Response({'message': 'Recently viewed products not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response(response, status=status.HTTP_404_NOT_FOUND)
