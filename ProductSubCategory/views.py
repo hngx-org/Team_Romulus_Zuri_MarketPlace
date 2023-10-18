@@ -149,7 +149,9 @@ class GetProductsSubCategory(APIView):
                 return Response({'error': e})
 
             try:
-                subcategory_obj = ProductSubCategory.objects.filter(name=subcategory, parent_category=category_obj)
+                ProductSubCategory.objects.filter(name=subcategory, parent_category=category_obj)
+                prod = Product.objects.filter(category=category_obj, is_deleted='active')
+                
             except ProductSubCategory.DoesNotExist:
                 return Response({'error': f'There is no sub category named {subcategory} under {category}'})
             except Exception as e:
@@ -158,12 +160,12 @@ class GetProductsSubCategory(APIView):
 
 
             # Get products belonging to the provided subcategory
-            try:
-                prod = Product.objects.filter(category=category_obj, is_deleted='active')
-                #subCatProducts = Product.objects.filter(condition)
+            # try:
+            #     prod = Product.objects.filter(category=category_obj, is_deleted='active')
+            #     #subCatProducts = Product.objects.filter(condition)
 
-            except Exception as e:
-                return Response({"error": e}, status=status.HTTP_501_NOT_IMPLEMENTED)
+            # except Exception as e:
+            #     return Response({"error": e}, status=status.HTTP_501_NOT_IMPLEMENTED)
 
 
             if not prod.exists():
