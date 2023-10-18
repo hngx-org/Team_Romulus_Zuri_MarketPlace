@@ -14,9 +14,9 @@ class DeleteWishlistItem(APIView):
             user_id = uuid.UUID(user_id)
             product_id = uuid.UUID(product_id)
             user = get_object_or_404(User, id=user_id)
-            if item := Wishlist.objects.filter(
-                user=user, product_id=product_id
-            ).first():
+            item = Wishlist.objects.filter(user=user, product_id=product_id).first()
+
+            if item:
                 item.delete()
                 return Response({'message': 'Product has been removed from your wishlist'}, status=status.HTTP_200_OK)
             else:
@@ -28,7 +28,4 @@ class DeleteWishlistItem(APIView):
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             print(e)
-            return Response({
-                'error': 'Internal Server Error',
-                "status_code": 500,
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': 'Internal Server Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
