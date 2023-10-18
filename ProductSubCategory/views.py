@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from MarketPlace.models import Product, ProductImage, ProductCategory, ProductSubCategory, SelectedCategories
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .serializers import ProductsubCatSerializer, ProductImageSerializer
+from .serializers import ProductsubCatSerializer, ProductImageSerializer, ProductSerializers
 from all_products.serializers import AllProductSerializer as ProductSerializer
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.views import APIView
@@ -183,3 +183,40 @@ class GetProductsSubCategory(APIView):
 
         except Exception as e:
             return Response({'error': f'Server Malfunction {e}, we are fixing it'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+# This endpoint will return categories names and the subcategories under them,
+# with the respective data under each.
+
+class catProducts(APIView):
+    def get(self, request, catName):
+        #get the category,subcat, products object
+        category_obj = ProductCategory.objects.get(name=catName)
+        subCat_obj = ProductSubCategory.objects.filter(parent_category=category_obj)
+        products = Product.objects.filter(category=category_obj, is_deleted='active', admin_status='approved', is_published=True)
+        #products = ProductSerializer(products, many=True).data
+
+        #get the subCats in the cat
+        category = {}
+        for subCat in subCat_obj:
+            subCat = ProductsubCatSerializer(subCat).data
+            subCat_products = []
+            for product in products:
+                product = ProductSerializers(product).data
+                if product.get('category') == category_obj.id:
+                    # the condition should be with respect to subcategory, but the model at this time does not have subcategory
+                    if len(subCat_products) != 4:
+                        #We want to display only four products
+                        subCat_products.append(product)
+            print(subCat)
+            category[subCat.get('name')] = subCat_products
+
+        response = {
+                'status': 200,
+                'success': True,
+                'message': f"Category {catName} and it's products",
+                'data': category
+                }
+        return Response(response, status=status.HTTP_200_OK)
