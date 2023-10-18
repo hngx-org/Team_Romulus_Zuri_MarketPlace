@@ -33,7 +33,7 @@ class GetProductItem(generics.RetrieveAPIView):
             instance = self.get_object()
         except Http404:
             return Response({'message': 'Product not found.'}, status=status.HTTP_404_NOT_FOUND)
-        
+
         user_id = kwargs.get('user_id')
         product_id = kwargs.get('id')
         guest = request.query_params.get('guest')
@@ -41,28 +41,16 @@ class GetProductItem(generics.RetrieveAPIView):
         if guest == 'false':
             #this function attempts to create a recently viewed and returns a Response
             qurery_response = addRecentlyViewed(user_id=user_id, product_id=product_id)
-            #this means the product has been added to recently viewed succesfully
-            if qurery_response.status_code == status.HTTP_201_CREATED:
-                response_data = super().retrieve(request, *args, **kwargs)
-                response_body = {
-                    'message': 'Product retrieved succesfully',
-                    'status': 200,
-                    'success': True,
-                    'data': response_data.data
-                }
-                return Response(response_body, status= status.HTTP_200_OK)
-            else:
+            if qurery_response.status_code != status.HTTP_201_CREATED:
                 return Response(qurery_response.data, status= qurery_response.status_code)
-        else:
-            #this means the person viewing this product is not signed up
-            response_data= super().retrieve(request, *args, **kwargs)
-            response_body = {
-                    'message': 'Product retrieved succesfully',
-                    'status': 200,
-                    'success': True,
-                    'data': response_data.data
-                }
-            return Response(response_body, status= status.HTTP_200_OK)
+        response_data = super().retrieve(request, *args, **kwargs)
+        response_body = {
+            'message': 'Product retrieved succesfully',
+            'status': 200,
+            'success': True,
+            'data': response_data.data
+        }
+        return Response(response_body, status= status.HTTP_200_OK)
 
 
 """This function adds updates the users recently viewed and returns a resonse object"""
