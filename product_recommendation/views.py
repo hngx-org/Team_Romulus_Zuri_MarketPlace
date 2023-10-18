@@ -90,9 +90,8 @@ class SimilarProductRecommendationView(APIView):
 
         response_data = {
             "status_code": 200,
-            "msg": {
-                "text": "Here are similar products",
-            },
+
+            "message": "Here are similar products",
             "data": {
                 "similar_products": serializer.data,
             },
