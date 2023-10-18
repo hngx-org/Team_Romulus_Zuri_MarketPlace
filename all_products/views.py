@@ -6,7 +6,6 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
-
 class ProductListAPIView(ListAPIView):
 	queryset = Product.objects.all().order_by('-updatedat')
 	serializer_class = AllProductSerializer
