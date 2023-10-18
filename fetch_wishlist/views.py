@@ -57,14 +57,49 @@
 from rest_framework.generics import ListAPIView
 from .serializers import WishlistSerializer
 from MarketPlace.models import Wishlist
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.exceptions import NotFound
 
+# class WishlistProductsView(ListAPIView):
+#     serializer_class = WishlistSerializer
+    
+#     def get_queryset(self):
+#         user_id = self.kwargs.get("user_id")
+#         queryset = Wishlist.objects.filter(user_id = user_id)
+#         return queryset
+    
 class WishlistProductsView(ListAPIView):
     serializer_class = WishlistSerializer
+    queryset = Wishlist.objects.all()
     
-    def get_queryset(self):
-        user_id = self.kwargs.get("user_id")
-        queryset = Wishlist.objects.filter(user_id = user_id)
-        return queryset
-
-
-
+    def list(self, request, user_id):
+        try:
+            queryset = Wishlist.objects.filter(user_id=user_id)
+            if not queryset.exists():
+                raise NotFound("Wishlist items not found")
+            
+            serializer = self.get_serializer(queryset, many=True)
+            response = {
+                "message": "successfully fetched wishlist",
+                "status_code": 200,
+                "data": serializer.data
+            }
+            #return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(response, status=status.HTTP_200_OK)
+        except NotFound as e:
+            #return Response({'detail': str(e)}, status=status.HTTP_404_NOT_FOUND)
+            response = {
+                "message": "wishlist not found",
+                "status_code": 404,
+                "data": {'detail': str(e)},
+            }
+            return Response(response, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            response = {
+                "message": "internal server error",
+                "status_code": 500,
+                "data": {'detail': str(e)},
+            }
+            return Response(response, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            # return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

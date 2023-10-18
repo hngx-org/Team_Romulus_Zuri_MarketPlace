@@ -12,17 +12,17 @@ from rest_framework.generics import ListAPIView
 
 # Create your views here.
 
-class GetCategoryNames(APIView):
-    '''This class will return the names of all the categories in the database'''
+# class GetCategoryNames(APIView):
+#     '''This class will return the names of all the categories in the database'''
 
-    def get(self, request):
-        '''Return the categories'''
-        categories = ProductCategory.objects.all()
-        name = []
-        for cat in categories:
-            if cat not in name:
-                name.append(cat.name)
-        return Response({"categories name": name}, status=status.HTTP_200_OK)
+#     def get(self, request):
+#         '''Return the categories'''
+#         categories = ProductCategory.objects.all()
+#         name = []
+#         for cat in categories:
+#             if cat not in name:
+#                 name.append(cat.name)
+#         return Response({"categories name": name}, status=status.HTTP_200_OK)
 
 
 
@@ -36,7 +36,7 @@ class GetImages(ListAPIView):
                 return ProductImage.objects.filter(product_id=product_id)
             except ProductImage.DoesNotExist:
                 return Response(
-                    {"error": "ProductImage does not exist", "reason": "Beans have been cooked"},
+                    {"error": "ProductImage does not exist"},
                     status=status.HTTP_404_NOT_FOUND,
                 )
         else:
@@ -46,101 +46,95 @@ class GetImages(ListAPIView):
 
 
 # class GetImage(APIView):
-#     def get(self, request, imageId):
+#     def get(self, request, productId):
 #         try:
-#             images = ProductImage.objects.get(id=imageId)
+#             images = ProductImage.objects.get(product=productId)
 #             response = {
 #                     'message': 'This is the url to where the image is hosted',
 #                     'url': images.url
 #                 }
 #             return Response(response, status=status.HTTP_200_OK)
 #         except ProductImage.DoesNotExist:
-#             return Response({"error": "ProductImage does not exist", "reason": "Beans has been cooked"})
+#             return Response({"error": "ProductImage does not exist"})
 
 
-class subCat(ListAPIView):
-    def get(self, request, cat, Subcat):
-        page = request.GET.get('page', 1)
-        items_per_page = request.GET.get('itemsPerPAge', 10)
-        offset = (int(page) - 1) * int(items_per_page)
-        catObj = ProductCategory.objects.get(name=cat)
+# class subCat(ListAPIView):
+#     def get(self, request, cat, Subcat):
+#         page = request.GET.get('page', 1)
+#         items_per_page = request.GET.get('itemsPerPAge', 10)
+#         offset = (int(page) - 1) * int(items_per_page)
 
-        products = Product.objects.filter(is_deleted='active', category=catObj)
-        paginator = Paginator(products, items_per_page)
-        try:
-            try:
-                products = paginator.page(page)
-            except PageNotAnInteger:
-                products = paginator.page(1)
-            except EmptyPage:
-                products = paginator.page(paginator.num_pages)
+#         products = Product.objects.filter(is_deleted='active')
+#         paginator = Paginator(products, items_per_page)
+#         try:
+#             try:
+#                 products = paginator.page(page)
+#             except PageNotAnInteger:
+#                 products = paginator.page(1)
+#             except EmptyPage:
+#                 products = paginator.page(paginator.num_pages)
         
-            product_data = []
+#             product_data = []
 
-            for product in products:
-                print('here')
-                categories = []
-                selected_categories = SelectedCategories.objects.all()
-                print(selected_categories)
-                for sel_cat in selected_categories:
-                    sub_category = sel_cat.sub_category
-                    categories.append({
-                        'message': 'subcat of each cat',
-                        'id': sel_cat.product_category.id,
-                        'name': sel_cat.product_category.name,
-                        'sub_categories': {
-                            'id': sub_category.id,
-                            'name': sub_category.name,
-                            'parent_category_id': sub_category.parent_category,
-                        }
-                    })
-                # promo_product = product.promo_product
+#             for product in products:
+#                 categories = []
+#                 selected_categories = product.selected_categories.all()
+#                 for sel_cat in selected_categories:
+#                     sub_category = sel_cat.sub_category
+#                     categories.append({
+#                     'id': sel_cat.product_category.id,
+#                     'name': sel_cat.product_category.name,
+#                     'sub_categories': {
+#                         'id': sub_category.id,
+#                         'name': sub_category.name,
+#                         'parent_category_id': sub_category.parent_category,
+#                     }
+#                 })
+#             promo_product = product.promo_product
 
-                product_data.append({
-                    'id': product.id,
-                    'category': product.category,
-                    'name': product.name,
-                    'decsription': product.name,
-                    'quantity': product.quantity,
-                    'price': product.price,
-                    'discount_price': product.discount_price,
-                    'tax': product.tax,
-                    'admin_status': product.admin_status,
-                    'is_published': product.is_published,
-                    'is_deleted': product.is_deleted,
-                    'currency': product.currency,
-                    'createdat': product.createdat,
-                    'updatedat': product.updatedat,
-                    'category': categories,
-                    # 'promo': promo_product,
-                })
+#             product_data.append({
+#                 'id': product.id,
+#                 'category': product.category,
+#                 'name': product.name,
+#                 'decsription': product.name,
+#                 'quantity': product.quantity,
+#                 'price': product.price,
+#                 'discount_price': product.discount_price,
+#                 'tax': product.tax,
+#                 'admin_status': product.admin_status,
+#                 'is_published': product.is_published,
+#                 'is_deleted': product.is_deleted,
+#                 'currency': product.currency,
+#                 'createdat': product.createdat,
+#                 'updatedat': product.updateat,
+#                 'category': categories,
+#                 'promo': promo_product,
+#             })
 
-            response_data = {
-                'data': {
-                        'itemsPerPage': int(items_per_page),
-                        'page': int(page),
-                        'totalPages': paginator.num_pages,
-                        'totalProducts': paginator.count,
-                        'products': product_data,
+#             response_data = {
+#                 'data': {
+#                     'itemsPerPage': int(itens_per_page),
+#                     'page': int(page),
+#                     'totalPages': paginator.num_pages,
+#                     'totalProducts': paginator.count,
+#                     'products': product_data,
 
-                    }
-                }
+#                 }
+#             }
 
-            # catId = ProductCategory.objects.filter(name=cat)
-            # subCat = ProductSubCategory.objects.filter(name=Subcat, parent_category=catId)
-            # products = Product.objects.filter(is_deleted='active')
-            # for product in products:
-            #     selected = SelectedCategories(sub_category=subCat, product_category=catId, product=products)
-            return Response(response_data)
 
-        except Exception as e:
-            return Response({"error": f"Exception raised {e}"})
+#             # catId = ProductCategory.objects.filter(name=cat)
+#             # subCat = ProductSubCategory.objects.filter(name=Subcat, parent_category=catId)
+#             # products = Product.objects.filter(is_deleted='active')
+#             # for product in products:
+#             #     selected = SelectedCategories(sub_category=subCat, product_category=catId, product=products)
+#             return Response(response_data)
+
+#         except Exception as e:
+#             return Response({"error": f"Exception raised {e}"})
 
 class GetProductsSubCategory(APIView):
     def get(self, request, category, subcategory):
-        # Get the products related to the categories n sub categories
-        # set the number of items to return per pages
-        page_size = request.GET.get('page_size', 3)
 
         if not isinstance(category, str):
             return Response({"error": "Category name must be string"}, status=status.HTTP_400_BAD_REQUEST)
@@ -156,7 +150,9 @@ class GetProductsSubCategory(APIView):
                 return Response({'error': e})
 
             try:
-                subcategory_obj = ProductSubCategory.objects.filter(name=subcategory, parent_category=category_obj)
+                ProductSubCategory.objects.filter(name=subcategory, parent_category=category_obj)
+                prod = Product.objects.filter(category=category_obj, is_deleted='active')
+                
             except ProductSubCategory.DoesNotExist:
                 return Response({'error': f'There is no sub category named {subcategory} under {category}'})
             except Exception as e:
@@ -165,30 +161,25 @@ class GetProductsSubCategory(APIView):
 
 
             # Get products belonging to the provided subcategory
-            try:
-                
-                productsSub = Q(ProductSubCategory.objects.filter(parent_category=category_obj, name=subcategory).select_related('parent_category'))
-                productsCat = Q(category_obj)
-                condition = productsSub & productsCat
-                prod = Product.objects.filter(category=category_obj)
-                #subCatProducts = Product.objects.filter(condition)
+            # try:
+            #     prod = Product.objects.filter(category=category_obj, is_deleted='active')
+            #     #subCatProducts = Product.objects.filter(condition)
 
-            except Exception as e:
-                return Response({"error": e}, status=status.HTTP_501_NOT_IMPLEMENTED)
+            # except Exception as e:
+            #     return Response({"error": e}, status=status.HTTP_501_NOT_IMPLEMENTED)
 
 
             if not prod.exists():
                 return Response({"products": [], "Message": "There are no products in this subCategory"}, status=status.HTTP_200_OK)
 
-            # pagination
-            pagination = Paginator(prod, page_size)
-            page_number = request.GET.get('page')
-            products_per_page = pagination.get_page(page_number)
-            serializer = ProductsubCatSerializer(products_per_page, many=True)
-            se = ProductSerializer(prod,  many=True)
-            # subproducts = ProductSerializer(subCatProducts, many=True).data
-            return Response({'products': se.data, 'subCatProducts': 'subproducts'}, status=status.HTTP_200_OK)
+            serialized = ProductSerializer(prod,  many=True).data
+            response = {
+                "status": 200,
+                "success": True,
+                "message": f"Products of {subcategory} returned",
+                "data": serialized
+            }
+            return Response(response, status=status.HTTP_200_OK)
 
-        except ProductSubCategory.DoesNotExist:
-            return Response({"Message": "Subcategory does not exist"}, status=status.HTTP_404_NOT_FOUND)
-        return Response({'error': 'Server Malfunction, we are fixing it', 'Note': 'Akjesus would not be proud'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({'error': f'Server Malfunction {e}, we are fixing it'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
