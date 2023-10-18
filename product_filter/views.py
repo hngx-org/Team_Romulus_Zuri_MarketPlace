@@ -58,9 +58,9 @@ class FilterProductView(APIView):
                 response_data = {
                     "success": True,
                     "status": 200,
-                    "data": {"products": []},
                     "error": None,
-                    "message": "No products to display."
+                    "message": "No products to display.",
+                    "data": {"products": []}
                 }
                 return Response(response_data, status=status.HTTP_200_OK)
 
@@ -69,26 +69,28 @@ class FilterProductView(APIView):
             response_data = {
                 "success": True,
                 "status": 200,
-                "data": {"products": serializer.data},
                 "error": None,
-                "message": "Filtered Products"
+                "message": "Filtered Products",
+                "data": {"products": serializer.data}
+
             }
             return Response(response_data, status=status.HTTP_200_OK)
         except Http404:
             response_data = {
                 "success": False,
                 "status": 404,
-                "data": None,
                 "error": "Not Found",
-                "message": None
+                "message": None,
+                "data": None
+
             }
             return Response(response_data, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             response_data = {
                 "success": False,
                 "status": 400,
-                "data": None,
                 "error": str(e),
-                "message": None
+                "message": None,
+                "data": None
             }
             return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
