@@ -21,12 +21,16 @@ class ProductListByCategoryView(APIView):
 
         try:
             if not products.exists():
-                return Response({"products": [], 'message': 'The Category exists, but has no products'},
+                return Response({"data": [], 'message': 'The Category exists, but has no products'},
                                 status=status.HTTP_200_OK)
             serializer = ProductSerializer(products, many=True)
-            return Response({'message': 'Products successfully returned based on a given category', 'products': serializer.data}, status=status.HTTP_200_OK)
+
+            return Response({'message': 'Products successfully returned based on a given category',
+                             'data': serializer.data},
+                            status=status.HTTP_200_OK)
         except ProductCategory.DoesNotExist:
             return Response({'message': 'Category not found.'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return Response({'error': e})
+            return Response({'error': e, "message": f"An unexpected error occurred: {str(e)}"},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
