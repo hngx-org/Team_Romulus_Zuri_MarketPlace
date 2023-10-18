@@ -12,17 +12,17 @@ from rest_framework.generics import ListAPIView
 
 # Create your views here.
 
-class GetCategoryNames(APIView):
-    '''This class will return the names of all the categories in the database'''
+# class GetCategoryNames(APIView):
+#     '''This class will return the names of all the categories in the database'''
 
-    def get(self, request):
-        '''Return the categories'''
-        categories = ProductCategory.objects.all()
-        name = []
-        for cat in categories:
-            if cat not in name:
-                name.append(cat.name)
-        return Response({"categories name": name}, status=status.HTTP_200_OK)
+#     def get(self, request):
+#         '''Return the categories'''
+#         categories = ProductCategory.objects.all()
+#         name = []
+#         for cat in categories:
+#             if cat not in name:
+#                 name.append(cat.name)
+#         return Response({"categories name": name}, status=status.HTTP_200_OK)
 
 
 
@@ -36,7 +36,7 @@ class GetImages(ListAPIView):
                 return ProductImage.objects.filter(product_id=product_id)
             except ProductImage.DoesNotExist:
                 return Response(
-                    {"error": "ProductImage does not exist", "reason": "Beans have been cooked"},
+                    {"error": "ProductImage does not exist"},
                     status=status.HTTP_404_NOT_FOUND,
                 )
         else:
@@ -134,9 +134,6 @@ class GetImages(ListAPIView):
 
 class GetProductsSubCategory(APIView):
     def get(self, request, category, subcategory):
-        # Get the products related to the categories n sub categories
-        # set the number of items to return per pages
-        page_size = request.GET.get('page_size', 3)
 
         if not isinstance(category, str):
             return Response({"error": "Category name must be string"}, status=status.HTTP_400_BAD_REQUEST)
@@ -162,10 +159,6 @@ class GetProductsSubCategory(APIView):
 
             # Get products belonging to the provided subcategory
             try:
-                
-                productsSub = Q(ProductSubCategory.objects.filter(parent_category=category_obj, name=subcategory).select_related('parent_category'))
-                productsCat = Q(category_obj)
-                condition = productsSub & productsCat
                 prod = Product.objects.filter(category=category_obj)
                 #subCatProducts = Product.objects.filter(condition)
 
@@ -176,20 +169,14 @@ class GetProductsSubCategory(APIView):
             if not prod.exists():
                 return Response({"products": [], "Message": "There are no products in this subCategory"}, status=status.HTTP_200_OK)
 
-            # pagination
-            pagination = Paginator(prod, page_size)
-            page_number = request.GET.get('page')
-            products_per_page = pagination.get_page(page_number)
-            # serializer = ProductsubCatSerializer(products_per_page, many=True)
-            se = ProductSerializer(prod,  many=True)
+            serialized = ProductSerializer(prod,  many=True).data
             response = {
                 "status": 200,
                 "success": True,
                 "message": f"Products of {subcategory} returned",
-                "data": se.data
+                "data": serialized
             }
             return Response(response, status=status.HTTP_200_OK)
 
-        except ProductSubCategory.DoesNotExist:
-            return Response({"Message": "Subcategory does not exist"}, status=status.HTTP_404_NOT_FOUND)
-        return Response({'error': 'Server Malfunction, we are fixing it', 'Note': 'Akjesus would not be proud'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({'error': f'Server Malfunction {e}, we are fixing it'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
