@@ -7,6 +7,7 @@ from MarketPlace.models import Product, ProductCategory, ProductSubCategory
 from all_products.serializers import AllProductSerializer as ProductSerializer
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator
 
 
 class ProductListByCategoryView(APIView):
@@ -14,11 +15,18 @@ class ProductListByCategoryView(APIView):
         # sort_by = request.query_params.get('sort_by', 'name')
         product_category = ProductCategory.objects.get(name=category)
         products = Product.objects.filter(category=product_category)
+
+        if not isinstance(category, str):
+            return Response({"error": "Category name must be a string value"}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
-            if not products:
-                return Response({'message': 'The category exists, but has no products'}, status=status.HTTP_200_OK)
+            if not products.exists():
+                return Response({"products": [], 'message': 'The Category exists, but has no products'},
+                                status=status.HTTP_200_OK)
             serializer = ProductSerializer(products, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except category.DoesNotExist:
+            return Response({'message': 'Products successfully returned based on a given category', 'products': serializer.data}, status=status.HTTP_200_OK)
+        except ProductCategory.DoesNotExist:
             return Response({'message': 'Category not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': e})
 
