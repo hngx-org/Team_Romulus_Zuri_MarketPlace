@@ -80,8 +80,26 @@ class WishlistProductsView(ListAPIView):
                 raise NotFound("Wishlist items not found")
             
             serializer = self.get_serializer(queryset, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            response = {
+                "message": "successfully fetched wishlist",
+                "status_code": 200,
+                "data": serializer.data
+            }
+            #return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(response, status=status.HTTP_200_OK)
         except NotFound as e:
-            return Response({'detail': str(e)}, status=status.HTTP_404_NOT_FOUND)
+            #return Response({'detail': str(e)}, status=status.HTTP_404_NOT_FOUND)
+            response = {
+                "message": "wishlist not found",
+                "status_code": 404,
+                "data": {'detail': str(e)},
+            }
+            return Response(response, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            response = {
+                "message": "internal server error",
+                "status_code": 500,
+                "data": {'detail': str(e)},
+            }
+            return Response(response, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            # return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
