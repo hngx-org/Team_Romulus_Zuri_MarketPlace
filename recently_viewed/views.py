@@ -61,7 +61,7 @@ class RecentlyViewedProducts(APIView):
                 "message": "Recently viewed products not found",
                 "status_code": 404,
                 "data": {'message': 'Recently viewed products not found'},
-                "error": True,
+                "error": 'Recently viewed products not found',
                 "success": False
             }
             # return Response({'message': 'Recently viewed products not found'}, status=status.HTTP_404_NOT_FOUND)
