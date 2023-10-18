@@ -55,10 +55,10 @@ class GetImages(ListAPIView):
 #                 }
 #             return Response(response, status=status.HTTP_200_OK)
 #         except ProductImage.DoesNotExist:
-#             return Response({"error": "ProductImage does not exist", "reason": "Beans has been cooked"})
+#             return Response({"error": "ProductImage does not exist"})
 
 
-class subCat(ListAPIView):
+# class subCat(ListAPIView):
     def get(self, request, cat, Subcat):
         page = request.GET.get('page', 1)
         items_per_page = request.GET.get('itemsPerPAge', 10)
@@ -180,10 +180,15 @@ class GetProductsSubCategory(APIView):
             pagination = Paginator(prod, page_size)
             page_number = request.GET.get('page')
             products_per_page = pagination.get_page(page_number)
-            serializer = ProductsubCatSerializer(products_per_page, many=True)
+            # serializer = ProductsubCatSerializer(products_per_page, many=True)
             se = ProductSerializer(prod,  many=True)
-            # subproducts = ProductSerializer(subCatProducts, many=True).data
-            return Response({'products': se.data, 'subCatProducts': 'subproducts'}, status=status.HTTP_200_OK)
+            response = {
+                "status": 200,
+                "success": True,
+                "message": f"Products of {subcategory} returned",
+                "data": se.data
+            }
+            return Response(response, status=status.HTTP_200_OK)
 
         except ProductSubCategory.DoesNotExist:
             return Response({"Message": "Subcategory does not exist"}, status=status.HTTP_404_NOT_FOUND)
