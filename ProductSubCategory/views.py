@@ -63,63 +63,68 @@ class subCat(ListAPIView):
         page = request.GET.get('page', 1)
         items_per_page = request.GET.get('itemsPerPAge', 10)
         offset = (int(page) - 1) * int(items_per_page)
+        catObj = ProductCategory.objects.get(name=cat)
 
-        products = Product.objects.filter(is_deleted='active')
+        products = Product.objects.filter(is_deleted='active', category=catObj)
         paginator = Paginator(products, items_per_page)
         try:
-            products = paginator.page(page)
-        except PageNotAnInteger:
+            try:
+                products = paginator.page(page)
+            except PageNotAnInteger:
                 products = paginator.page(1)
-        except EmptyPage:
-            products = paginator.page(paginator.num_pages)
+            except EmptyPage:
+                products = paginator.page(paginator.num_pages)
         
-        product_data = []
+            product_data = []
 
-        for product in products:
-            categories = []
-            selected_categories = product.selected_categories.all()
-            for sel_cat in selected_categories:
-                sub_category = sel_cat.sub_category
-                categories.append({
-                    'id': sel_cat.product_category.id,
-                    'name': sel_cat.product_category.name,
-                    'sub_categories': {
-                        'id': sub_category.id,
-                        'name': sub_category.name,
-                        'parent_category_id': sub_category.parent_category,
-                    }
+            for product in products:
+                print('here')
+                categories = []
+                selected_categories = SelectedCategories.objects.all()
+                print(selected_categories)
+                for sel_cat in selected_categories:
+                    sub_category = sel_cat.sub_category
+                    categories.append({
+                        'message': 'subcat of each cat',
+                        'id': sel_cat.product_category.id,
+                        'name': sel_cat.product_category.name,
+                        'sub_categories': {
+                            'id': sub_category.id,
+                            'name': sub_category.name,
+                            'parent_category_id': sub_category.parent_category,
+                        }
+                    })
+                # promo_product = product.promo_product
+
+                product_data.append({
+                    'id': product.id,
+                    'category': product.category,
+                    'name': product.name,
+                    'decsription': product.name,
+                    'quantity': product.quantity,
+                    'price': product.price,
+                    'discount_price': product.discount_price,
+                    'tax': product.tax,
+                    'admin_status': product.admin_status,
+                    'is_published': product.is_published,
+                    'is_deleted': product.is_deleted,
+                    'currency': product.currency,
+                    'createdat': product.createdat,
+                    'updatedat': product.updatedat,
+                    'category': categories,
+                    # 'promo': promo_product,
                 })
-            promo_product = product.promo_product
-
-            product_data.append({
-                'id': product.id,
-                'category': product.category,
-                'name': product.name,
-                'decsription': product.name,
-                'quantity': product.quantity,
-                'price': product.price,
-                'discount_price': product.discount_price,
-                'tax': product.tax,
-                'admin_status': product.admin_status,
-                'is_published': product.is_published,
-                'is_deleted': product.is_deleted,
-                'currency': product.currency,
-                'createdat': product.createdat,
-                'updatedat': product.updateat,
-                'category': categories,
-                'promo': promo_product,
-            })
 
             response_data = {
                 'data': {
-                    'itemsPerPage': int(itens_per_page),
-                    'page': int(page),
-                    'totalPages': paginator.num_pages,
-                    'totalProducts': paginator.count,
-                    'products': product_data,
+                        'itemsPerPage': int(items_per_page),
+                        'page': int(page),
+                        'totalPages': paginator.num_pages,
+                        'totalProducts': paginator.count,
+                        'products': product_data,
 
+                    }
                 }
-            }
 
             # catId = ProductCategory.objects.filter(name=cat)
             # subCat = ProductSubCategory.objects.filter(name=Subcat, parent_category=catId)
