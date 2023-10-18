@@ -20,27 +20,32 @@ class DeleteWishlistItem(APIView):
                 item.delete()
                 return Response({
                     'message': 'Product has been removed from this user\'s wishlist',
-                    'status_code': 200
+                    'status_code': 200,
+                    'success': True
                     }, status=status.HTTP_200_OK)
             else:
                 return Response({
                     'message': 'Product not found in this user\'s wishlist',
-                    'status_code': 404
+                    'status_code': 404,
+                    'success': True
                     }, status=status.HTTP_404_NOT_FOUND)
 
         except ValueError:
             return Response({
                 'error': 'Not a valid UUID format',
+                'success': True,
                 'status_code': 400
                 }, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
             return Response({
                 'error': 'User not found',
+                'success': True,
                 'status_code': 404
                 }, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             print(e)
             return Response({
                 'error': 'Internal Server Error',
+                'success': True,
                 'status_code': 500
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
