@@ -14,18 +14,38 @@ class DeleteWishlistItem(APIView):
             user_id = uuid.UUID(user_id)
             product_id = uuid.UUID(product_id)
             user = get_object_or_404(User, id=user_id)
-            item = Wishlist.objects.filter(user=user, product_id=product_id).first()
 
-            if item:
+            if item:= Wishlist.objects.filter(
+                user=user, product_id=product_id
+                ).first():
                 item.delete()
-                return Response({'message': 'Product has been removed from your wishlist'}, status=status.HTTP_200_OK)
+                return Response({
+                    'message': 'Product has been removed from this user\'s wishlist',
+                    "status_code": 200,
+                    }, status=status.HTTP_200_OK)
             else:
-                return Response({'message': 'Product not found in user\'s wishlist'}, status=status.HTTP_404_NOT_FOUND)
+                return Response({
+                    'message': 'Product not found in this user\'s wishlist',
+                    "status_code": 200,
+                    }, status=status.HTTP_404_NOT_FOUND)
 
         except ValueError:
-            return Response({'error': 'Not a valid UUID format'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({
+                'error': 'Not a valid UUID format',
+                "status_code": 400,
+                }, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
-            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({
+                'error': 'User not found',
+                "status_code": 404,
+                }, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             print(e)
-            return Response({'error': 'Internal Server Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({
+                'error': 'Internal Server Error',
+                "status_code": 500,
+<<<<<<< HEAD
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+=======
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+>>>>>>> 323fd724972fa1274df1e3978180095b6deded58
