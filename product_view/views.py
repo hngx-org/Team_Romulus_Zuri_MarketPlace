@@ -69,10 +69,10 @@ class SortProducts(APIView):
 
         # Construct the final response
         response_data = {
-            'success': True,
-            'statusCode': 200,
-            'message': f'{len(products)} products retrieved successfully',
-            'products': serializer.data
+            'status': 200,
+            'success' : True,
+            'message': 'Carts added',
+            'data': serializer.data
         }
 
         return Response(response_data)
