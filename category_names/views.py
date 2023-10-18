@@ -24,8 +24,15 @@ class CategoryNameView(APIView):
                 category_serializer['subcategories'] = subcategory_data
 
                 category_data.append(category_serializer)
-
-            return Response({'message': 'Category names returned successfully', 'status': status.HTTP_200_OK, 'data': category_data})
+                
+            response = {
+                'status': status.HTTP_200_OK,
+                'success': True,
+                'message': 'Category names returned successfully',
+                'data': category_data
+            }
+            
+            return Response(response, status=status.HTTP_200_OK)
         except Exception as e:
             
             return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
