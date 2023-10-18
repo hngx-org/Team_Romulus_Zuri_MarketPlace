@@ -55,12 +55,40 @@ class FilterProductView(APIView):
                     products = products.order_by('price')
 
             if not products:
-                return Response({"message": "No products to display."}, status=status.HTTP_200_OK)
+                response_data = {
+                    "success": True,
+                    "status": 200,
+                    "data": {"products": []},
+                    "error": None,
+                    "message": "No products to display."
+                }
+                return Response(response_data, status=status.HTTP_200_OK)
 
             serializer = AllProductSerializer(products, many=True)
 
-            return Response({"products": serializer.data}, status=status.HTTP_200_OK)
+            response_data = {
+                "success": True,
+                "status": 200,
+                "data": {"products": serializer.data},
+                "error": None,
+                "message": "Filtered Products"
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
         except Http404:
-            return Response({"error": "Not Found"}, status=status.HTTP_404_NOT_FOUND)
+            response_data = {
+                "success": False,
+                "status": 404,
+                "data": None,
+                "error": "Not Found",
+                "message": None
+            }
+            return Response(response_data, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            response_data = {
+                "success": False,
+                "status": 400,
+                "data": None,
+                "error": str(e),
+                "message": None
+            }
+            return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
