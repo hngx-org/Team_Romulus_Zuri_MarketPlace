@@ -44,8 +44,4 @@ class DeleteWishlistItem(APIView):
             return Response({
                 'error': 'Internal Server Error',
                 "status_code": 500,
-<<<<<<< HEAD
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-=======
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
->>>>>>> 323fd724972fa1274df1e3978180095b6deded58
