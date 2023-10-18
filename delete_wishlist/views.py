@@ -14,9 +14,10 @@ class DeleteWishlistItem(APIView):
             user_id = uuid.UUID(user_id)
             product_id = uuid.UUID(product_id)
             user = get_object_or_404(User, id=user_id)
-            item = Wishlist.objects.filter(user=user, product_id=product_id).first()
 
-            if item:
+            if item:= Wishlist.objects.filter(
+                user=user, product_id=product_id
+                ).first():
                 item.delete()
                 return Response({'message': 'Product has been removed from your wishlist'}, status=status.HTTP_200_OK)
             else:
