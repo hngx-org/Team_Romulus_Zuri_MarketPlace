@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from MarketPlace.models import Product, ProductImage, ProductCategory, ProductSubCategory, SelectedCategories
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .serializers import ProductsubCatSerializer, ProductImageSerializer
+from .serializers import ProductsubCatSerializer, ProductImageSerializer, ProductSerializers
 from all_products.serializers import AllProductSerializer as ProductSerializer
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.views import APIView
@@ -11,19 +11,6 @@ from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 
 # Create your views here.
-
-# class GetCategoryNames(APIView):
-#     '''This class will return the names of all the categories in the database'''
-
-#     def get(self, request):
-#         '''Return the categories'''
-#         categories = ProductCategory.objects.all()
-#         name = []
-#         for cat in categories:
-#             if cat not in name:
-#                 name.append(cat.name)
-#         return Response({"categories name": name}, status=status.HTTP_200_OK)
-
 
 
 class GetImages(ListAPIView):
@@ -44,93 +31,6 @@ class GetImages(ListAPIView):
             return ProductImage.objects.all()
 
 
-
-# class GetImage(APIView):
-#     def get(self, request, productId):
-#         try:
-#             images = ProductImage.objects.get(product=productId)
-#             response = {
-#                     'message': 'This is the url to where the image is hosted',
-#                     'url': images.url
-#                 }
-#             return Response(response, status=status.HTTP_200_OK)
-#         except ProductImage.DoesNotExist:
-#             return Response({"error": "ProductImage does not exist"})
-
-
-# class subCat(ListAPIView):
-#     def get(self, request, cat, Subcat):
-#         page = request.GET.get('page', 1)
-#         items_per_page = request.GET.get('itemsPerPAge', 10)
-#         offset = (int(page) - 1) * int(items_per_page)
-
-#         products = Product.objects.filter(is_deleted='active')
-#         paginator = Paginator(products, items_per_page)
-#         try:
-#             try:
-#                 products = paginator.page(page)
-#             except PageNotAnInteger:
-#                 products = paginator.page(1)
-#             except EmptyPage:
-#                 products = paginator.page(paginator.num_pages)
-        
-#             product_data = []
-
-#             for product in products:
-#                 categories = []
-#                 selected_categories = product.selected_categories.all()
-#                 for sel_cat in selected_categories:
-#                     sub_category = sel_cat.sub_category
-#                     categories.append({
-#                     'id': sel_cat.product_category.id,
-#                     'name': sel_cat.product_category.name,
-#                     'sub_categories': {
-#                         'id': sub_category.id,
-#                         'name': sub_category.name,
-#                         'parent_category_id': sub_category.parent_category,
-#                     }
-#                 })
-#             promo_product = product.promo_product
-
-#             product_data.append({
-#                 'id': product.id,
-#                 'category': product.category,
-#                 'name': product.name,
-#                 'decsription': product.name,
-#                 'quantity': product.quantity,
-#                 'price': product.price,
-#                 'discount_price': product.discount_price,
-#                 'tax': product.tax,
-#                 'admin_status': product.admin_status,
-#                 'is_published': product.is_published,
-#                 'is_deleted': product.is_deleted,
-#                 'currency': product.currency,
-#                 'createdat': product.createdat,
-#                 'updatedat': product.updateat,
-#                 'category': categories,
-#                 'promo': promo_product,
-#             })
-
-#             response_data = {
-#                 'data': {
-#                     'itemsPerPage': int(itens_per_page),
-#                     'page': int(page),
-#                     'totalPages': paginator.num_pages,
-#                     'totalProducts': paginator.count,
-#                     'products': product_data,
-
-#                 }
-#             }
-
-#             # catId = ProductCategory.objects.filter(name=cat)
-#             # subCat = ProductSubCategory.objects.filter(name=Subcat, parent_category=catId)
-#             # products = Product.objects.filter(is_deleted='active')
-#             # for product in products:
-#             #     selected = SelectedCategories(sub_category=subCat, product_category=catId, product=products)
-#             return Response(response_data)
-
-#         except Exception as e:
-#             return Response({"error": f"Exception raised {e}"})
 
 class GetProductsSubCategory(APIView):
     def get(self, request, category, subcategory):
@@ -182,3 +82,53 @@ class GetProductsSubCategory(APIView):
 
         except Exception as e:
             return Response({'error': f'Server Malfunction {e}, we are fixing it'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+# This endpoint will return categories names and the subcategories under them,
+# with the respective data under each.
+
+class catProducts(APIView):
+    def get(self, request, categoryName):
+        #get the category,subcat, products object
+        try:
+            category_obj = ProductCategory.objects.get(name=categoryName)
+            subCat_obj = ProductSubCategory.objects.filter(parent_category=category_obj)
+            products = Product.objects.filter(category=category_obj, is_deleted='active', admin_status='approved', is_published=True)
+        except ProductCategory.DoesNotExist:
+            return Response({
+                'status': 404,
+                'success': False,
+                'message': f'The category {categoryName} does not exist',
+                'data': None
+                },
+                            status=status.HTTP_404_NOT_FOUND
+                )
+
+        #get the subCats in the cat
+        
+        categoryResponse = []
+        for subCat in subCat_obj:
+            subCat = ProductsubCatSerializer(subCat).data
+            subCat_products = []
+            subcategoryData = {}
+            for product in products:
+                product = ProductSerializers(product).data
+                if product.get('category') == category_obj.id:
+                    # the condition should be with respect to subcategory, but the model at this time does not have subcategory
+                    if len(subCat_products) != 4:
+                        #We want to display only four products
+                        subCat_products.append(product)
+            
+            subcategoryData['name'] = subCat.get('name')
+            subcategoryData['products'] = subCat_products
+            categoryResponse.append(subcategoryData)
+
+        response = {
+                'status': 200,
+                'success': True,
+                'message': f"Category {categoryName} and it's products",
+                'data': categoryResponse
+                }
+        return Response(response, status=status.HTTP_200_OK)
