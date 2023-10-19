@@ -5,7 +5,7 @@ from MarketPlace.models import Product, ProductCategory
 from MarketPlace.serializers import ProductSerializer
 from rest_framework.test import APIClient
 from django.test import TestCase
-
+import uuid
 
 class ProductRecommendationViewTest(APITestCase):
     def setUp(self):
@@ -77,22 +77,26 @@ class TestSimilarProductView(TestCase):
         self.category2 = ProductCategory.objects.create(name='Online_Tutoring')
 
         # To create sample products
-        self.product1 = Product.objects.create(name='product1',
+        self.product1 = Product.objects.create(id=uuid.uuid4(), name='product1',
                                                description='Product1 description', quantity=10,
                                                category=self.category1, price=1000.00, discount_price=900.00,
-                                               tax=50.00, is_published=True, currency='Naira')
-        self.product2 = Product.objects.create(name='product2',
+                                               tax=50.00, is_published=True, currency='Naira',
+                                               is_deleted='active', admin_status='approved')
+        self.product2 = Product.objects.create(id=uuid.uuid4(), name='product2',
                                                description='Product2 description device', quantity=15,
                                                category=self.category1, price=1500.00, discount_price=1350.00,
-                                               tax=75.00, is_published=True, currency='Naira')
-        self.product3 = Product.objects.create(name='product3',
+                                               tax=75.00, is_published=True, currency='Naira',
+                                               is_deleted='active', admin_status='approved')
+        self.product3 = Product.objects.create(id=uuid.uuid4(), name='product3',
                                                description='Product3 description', quantity=25,
                                                category=self.category1, price=1300.00, discount_price=1250.00,
-                                               tax=65.00, is_published=True, currency='Naira')
-        self.product4 = Product.objects.create(name='product4',
+                                               tax=65.00, is_published=True, currency='Naira',
+                                               is_deleted='active', admin_status='approved')
+        self.product4 = Product.objects.create(id=uuid.uuid4(), name='product4',
                                                description='Product4 description', quantity=45,
                                                category=self.category2, price=1300.00, discount_price=1250.00,
-                                               tax=65.00, is_published=True, currency='Naira')
+                                               tax=65.00, is_published=True, currency='Naira',
+                                               is_deleted='active', admin_status='approved')
 
     def test_get_similar_products(self):
         # GET request to SimilarProductView endpoint
@@ -101,15 +105,26 @@ class TestSimilarProductView(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)  # print(response.data)
 
         # To confirm that the products returned are similar products
-        self.assertEqual(len(response.data['products']), 2)
+        self.assertEqual(len(response.data['response_data']["data"]["similar_products"]), 2)
 
         # To confirm that the 'un-similar' product is not among the returned products
         json_response = response.json()
         product4 = ProductSerializer(self.product4)
-        self.assertNotEqual(json_response['products'][-1], product4.data)
-        print(json_response['products'])  # print(json_response['products'][-1])
+        self.assertNotEqual(json_response['response_data']["data"]["similar_products"][-1], product4.data)
+        print(json_response['response_data']["data"])  # print(json_response['products'][-1])
 
         # To confirm the products returned have the same category
-        for product in response.data['products']:
+        # for product in response.data['products']:
+        for product in response.data['response_data']["data"]["similar_products"]:
             self.assertEqual(product['category_id'], self.category1.id)
         # self.assertTrue(response['products'][:], self.category1.id)
+
+    def tearDown(self):
+        self.category1.delete()
+        self.category2.delete()
+        self.product1.delete()
+        self.product2.delete()
+        self.product3.delete()
+        self.product4.delete()
+
+
