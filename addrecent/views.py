@@ -6,7 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from django.utils import timezone
 from django.http import Http404
-from .serializers import UserProductInteractionSerializer, ProductItemSerializer
+from .serializers import UserProductInteractionSerializer, ProductItemSerializer, ShopSerializer
 import uuid
 
 # Create your views here.
@@ -37,33 +37,24 @@ class GetProductItem(generics.RetrieveAPIView):
         user_id = kwargs.get('user_id')
         product_id = kwargs.get('id')
         guest = request.query_params.get('guest')
-        #user is signed up hence we update the recently viewed for that user
-        if guest == 'false':
-            #this function attempts to create a recently viewed and returns a Response
-            qurery_response = addRecentlyViewed(user_id=user_id, product_id=product_id)
-            #this means the product has been added to recently viewed succesfully
-            if qurery_response.status_code == status.HTTP_201_CREATED:
-                response_data = super().retrieve(request, *args, **kwargs)
-                response_body = {
-                    'message': 'Product retrieved succesfully',
-                    'status': 200,
-                    'success': True,
-                    'data': response_data.data
-                }
-                return Response(response_body, status= status.HTTP_200_OK)
-            else:
-                return Response(qurery_response.data, status= qurery_response.status_code)
-        else:
-            #this means the person viewing this product is not signed up
-            response_data= super().retrieve(request, *args, **kwargs)
-            response_body = {
-                    'message': 'Product retrieved succesfully',
-                    'status': 200,
-                    'success': True,
-                    'data': response_data.data
-                }
-            return Response(response_body, status= status.HTTP_200_OK)
+    
+        response_data = super().retrieve(request, *args, **kwargs)
 
+
+        if guest == 'false':#user is logged in hence we update the recently viewed for that user
+            qurery_response = addRecentlyViewed(user_id=user_id, product_id=product_id)#this function attempts to create a recently viewed and returns a Response
+            if qurery_response.status_code != status.HTTP_201_CREATED:#this means there was a problem adding the product to recently viewed
+                return Response(qurery_response.data, status= qurery_response.status_code)
+            
+        response_body = {
+                'message': 'Product retrieved succesfully',
+                'status': 200,
+                'success': True,
+                'data': response_data.data
+            }
+        return Response(response_body, status= status.HTTP_200_OK)
+
+  
 
 """This function adds updates the users recently viewed and returns a resonse object"""
 def addRecentlyViewed(user_id, product_id):
@@ -120,11 +111,12 @@ def addRecentlyViewed(user_id, product_id):
             'message': error_message,
             'success': False,
             'status': 400,
-            'data': []
+            'data': {}
         }
         return Response(response_body, status=status.HTTP_400_BAD_REQUEST)
 
     
+
 
     
     
