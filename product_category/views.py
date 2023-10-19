@@ -14,7 +14,7 @@ class ProductListByCategoryView(APIView):
     def get(self, request, category):
         # sort_by = request.query_params.get('sort_by', 'name')
         product_category = ProductCategory.objects.get(name=category)
-        products = Product.objects.filter(category=product_category)
+        products = Product.objects.filter(category=product_category, is_deleted='active', admin_status='approved')
 
         if not isinstance(category, str):
             return Response({"error": "Category name must be a string value"}, status=status.HTTP_400_BAD_REQUEST)
