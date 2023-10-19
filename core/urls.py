@@ -34,22 +34,22 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('recently_viewed.urls')),
-    path('api/', include('all_products.urls')),
-    path('api/', include('ProductSubCategory.urls')),
-    path('api/', include('category_names.urls')),
+    path('api/marketplace/', include('recently_viewed.urls')),
+    path('api/marketplace/', include('all_products.urls')),
+    path('api/marketplace/', include('ProductSubCategory.urls')),
+    path('api/marketplace/', include('category_names.urls')),
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('api/', include('product_filter.urls')),
-    path('api/', include('limited_offer.urls')),
-    path('api/', include('product_recommendation.urls')),
+    path('api/marketplace/', include('product_filter.urls')),
+    path('api/marketplace/', include('limited_offer.urls')),
+    path('api/marketplace/', include('product_recommendation.urls')),
 
-    path('api/', include('product_retrieval.urls')),
+    path('api/marketplace/', include('product_retrieval.urls')),
 
-    path('api/', include('fetch_wishlist.urls')),
-    path('api/', include('add_to_wishlist.urls')),
-    path('api/', include('addrecent.urls')),
-    path('api/', include('product_category.urls')),
-    path('api/', include('delete_wishlist.urls')),
-    path('api/', include('product_view.urls')),
+    path('api/marketplace/', include('fetch_wishlist.urls')),
+    path('api/marketplace/', include('add_to_wishlist.urls')),
+    path('api/marketplace/', include('addrecent.urls')),
+    path('api/marketplace/', include('product_category.urls')),
+    path('api/marketplace/', include('delete_wishlist.urls')),
+    path('api/marketplace/', include('product_view.urls')),
 
 ]
