@@ -23,7 +23,7 @@ class ProductSearchView(APIView):
 
             serializer = ProductSerializer(products, many=True)
             return Response({
-                "status": "200",
+                "status": 200,
                 "message": f"Found {len(serializer.data)} products matching the search term.",
                 "data": serializer.data,
             })
