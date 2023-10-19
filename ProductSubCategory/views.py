@@ -17,18 +17,16 @@ class GetImages(ListAPIView):
     serializer_class = ProductImageSerializer
 
     def get_queryset(self):
-        product_id = self.kwargs.get('productId')  # Use get() method to avoid KeyError
-        if product_id:
-            try:
-                return ProductImage.objects.filter(product_id=product_id)
-            except ProductImage.DoesNotExist:
-                return Response(
-                    {"error": "ProductImage does not exist"},
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-        else:
+        if not (product_id := self.kwargs.get('productId')):
             # Return all images when productId is not provided in the URL
             return ProductImage.objects.all()
+        try:
+            return ProductImage.objects.filter(product_id=product_id)
+        except ProductImage.DoesNotExist:
+            return Response(
+                {"error": "ProductImage does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
 
 
@@ -107,12 +105,11 @@ class catProducts(APIView):
                 )
 
         #get the subCats in the cat
-        
+
         categoryResponse = []
         for subCat in subCat_obj:
             subCat = ProductsubCatSerializer(subCat).data
             subCat_products = []
-            subcategoryData = {}
             for product in products:
                 product = ProductSerializers(product).data
                 if product.get('category') == category_obj.id:
@@ -120,9 +117,8 @@ class catProducts(APIView):
                     if len(subCat_products) != 4:
                         #We want to display only four products
                         subCat_products.append(product)
-            
-            subcategoryData['name'] = subCat.get('name')
-            subcategoryData['products'] = subCat_products
+
+            subcategoryData = {'name': subCat.get('name'), 'products': subCat_products}
             categoryResponse.append(subcategoryData)
 
         response = {
