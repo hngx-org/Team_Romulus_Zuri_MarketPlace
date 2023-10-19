@@ -24,7 +24,11 @@ class LimitedOfferListView(generics.ListAPIView):
         Returns:
         - queryset: A filtered queryset containing products with discounts.
         """
-        queryset = Product.objects.filter(discount_price__isnull=False).exclude(discount_price=0.00)
+        queryset = Product.objects.filter(
+            discount_price__isnull=False,
+            is_deleted='active',
+            admin_status='approved'
+        ).exclude(discount_price=0.00)
         return queryset
 
     def list(self, request, *args, **kwargs):
@@ -44,16 +48,27 @@ class LimitedOfferListView(generics.ListAPIView):
         queryset = self.get_queryset()
         
         if not queryset.exists():
-            return Response({'message': 'No discounts found.'}, status=status.HTTP_200_OK)
+            return Response({
+                'status': 200,
+                'success': True,
+                'message': 'No discounts found.'
+                }, status=status.HTTP_200_OK)
         
         try:
             serializer = self.get_serializer(queryset, many=True)
             response_data = {
+                'status': 200,
+                'success': True,
+                'message': 'List of limited offers',
                 'count': queryset.count(),
                 'results': serializer.data
             }
             return Response(response_data, status=status.HTTP_200_OK)
         except Exception as e:
             error_message = str(e)
-            return Response({'error': error_message}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({
+                'error': error_message,
+                'success': True,
+                'status_code': 400
+                }, status=status.HTTP_400_BAD_REQUEST)
 

@@ -1,29 +1,16 @@
 from django.shortcuts import render
-from MarketPlace.models import Product, ProductImage, ProductCategory, ProductSubCategory
-from MarketPlace.serializers import ProductSerializer
-from django.core.paginator import Paginator
-from .serializers import ProductsubCatSerializer, ProductImageSerializer
+from MarketPlace.models import Product, ProductImage, ProductCategory, ProductSubCategory, SelectedCategories
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from .serializers import ProductsubCatSerializer, ProductImageSerializer, ProductSerializers
 from all_products.serializers import AllProductSerializer as ProductSerializer
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.views import APIView
 from rest_framework import status
+from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 
 # Create your views here.
-
-class GetCategoryNames(APIView):
-    '''This class will return the names of all the categories in the database'''
-
-    def get(self, request):
-        '''Return the names of all categories'''
-        categories = ProductCategory.objects.all()
-        name = []
-        for cat in categories:
-            if cat not in name:
-                name.append(cat.name)
-        return Response({"categories name": name}, status=status.HTTP_200_OK)
-
 
 
 class GetImages(ListAPIView):
@@ -36,7 +23,7 @@ class GetImages(ListAPIView):
                 return ProductImage.objects.filter(product_id=product_id)
             except ProductImage.DoesNotExist:
                 return Response(
-                    {"error": "ProductImage does not exist", "reason": "Beans have been cooked"},
+                    {"error": "ProductImage does not exist"},
                     status=status.HTTP_404_NOT_FOUND,
                 )
         else:
@@ -45,23 +32,8 @@ class GetImages(ListAPIView):
 
 
 
-# class GetImage(APIView):
-#     def get(self, request, imageId):
-#         try:
-#             images = ProductImage.objects.get(id=imageId)
-#             response = {
-#                     'message': 'This is the url to where the image is hosted',
-#                     'url': images.url
-#                 }
-#             return Response(response, status=status.HTTP_200_OK)
-#         except ProductImage.DoesNotExist:
-#             return Response({"error": "ProductImage does not exist", "reason": "Beans has been cooked"})
-
 class GetProductsSubCategory(APIView):
     def get(self, request, category, subcategory):
-        # Get the products related to the categories n sub categories
-        # set the number of items to return per pages
-        page_size = request.GET.get('page_size', 3)
 
         if not isinstance(category, str):
             return Response({"error": "Category name must be string"}, status=status.HTTP_400_BAD_REQUEST)
@@ -73,9 +45,13 @@ class GetProductsSubCategory(APIView):
                 category_obj = ProductCategory.objects.get(name=category)
             except ProductCategory.DoesNotExist:
                 return Response({"Message": f"There is no product category named {category}"}, status=status.HTTP_404_NOT_FOUND)
+            except Exception as e:
+                return Response({'error': e})
 
             try:
-                subcategory_obj = ProductSubCategory.objects.filter(name=subcategory, parent_category=category_obj)
+                ProductSubCategory.objects.filter(name=subcategory, parent_category=category_obj)
+                prod = Product.objects.filter(category=category_obj, is_deleted='active')
+                
             except ProductSubCategory.DoesNotExist:
                 return Response({'error': f'There is no sub category named {subcategory} under {category}'})
             except Exception as e:
@@ -84,26 +60,75 @@ class GetProductsSubCategory(APIView):
 
 
             # Get products belonging to the provided subcategory
-            try:
-                
-                products = ProductSubCategory.objects.filter(parent_category=category_obj, name=subcategory).select_related('parent_category')
-                prod = Product.objects.filter(category=category_obj)
+            # try:
+            #     prod = Product.objects.filter(category=category_obj, is_deleted='active')
+            #     #subCatProducts = Product.objects.filter(condition)
 
-            except Exception as e:
-                return Response({"error": e}, status=status.HTTP_501_NOT_IMPLEMENTED)
+            # except Exception as e:
+            #     return Response({"error": e}, status=status.HTTP_501_NOT_IMPLEMENTED)
 
 
-            if not products.exists():
+            if not prod.exists():
                 return Response({"products": [], "Message": "There are no products in this subCategory"}, status=status.HTTP_200_OK)
 
-            # pagination
-            pagination = Paginator(prod, page_size)
-            page_number = request.GET.get('page')
-            products_per_page = pagination.get_page(page_number)
-            serializer = ProductsubCatSerializer(products_per_page, many=True)
-            se = ProductSerializer(prod,  many=True)
-            return Response({'products': se.data}, status=status.HTTP_200_OK)
+            serialized = ProductSerializer(prod,  many=True).data
+            response = {
+                "status": 200,
+                "success": True,
+                "message": f"Products of {subcategory} returned",
+                "data": serialized
+            }
+            return Response(response, status=status.HTTP_200_OK)
 
-        except ProductSubCategory.DoesNotExist:
-            return Response({"Message": "Subcategory does not exist"}, status=status.HTTP_404_NOT_FOUND)
-        return Response({'error': 'Server Malfunction, we are fixing it', 'Note': 'Akjesus would not be proud'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({'error': f'Server Malfunction {e}, we are fixing it'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+# This endpoint will return categories names and the subcategories under them,
+# with the respective data under each.
+
+class catProducts(APIView):
+    def get(self, request, categoryName):
+        #get the category,subcat, products object
+        try:
+            category_obj = ProductCategory.objects.get(name=categoryName)
+            subCat_obj = ProductSubCategory.objects.filter(parent_category=category_obj)
+            products = Product.objects.filter(category=category_obj, is_deleted='active', admin_status='approved', is_published=True)
+        except ProductCategory.DoesNotExist:
+            return Response({
+                'status': 404,
+                'success': False,
+                'message': f'The category {categoryName} does not exist',
+                'data': None
+                },
+                            status=status.HTTP_404_NOT_FOUND
+                )
+
+        #get the subCats in the cat
+        
+        categoryResponse = []
+        for subCat in subCat_obj:
+            subCat = ProductsubCatSerializer(subCat).data
+            subCat_products = []
+            subcategoryData = {}
+            for product in products:
+                product = ProductSerializers(product).data
+                if product.get('category') == category_obj.id:
+                    # the condition should be with respect to subcategory, but the model at this time does not have subcategory
+                    if len(subCat_products) != 4:
+                        #We want to display only four products
+                        subCat_products.append(product)
+            
+            subcategoryData['name'] = subCat.get('name')
+            subcategoryData['products'] = subCat_products
+            categoryResponse.append(subcategoryData)
+
+        response = {
+                'status': 200,
+                'success': True,
+                'message': f"Category {categoryName} and it's products",
+                'data': categoryResponse
+                }
+        return Response(response, status=status.HTTP_200_OK)
