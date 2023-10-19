@@ -30,18 +30,17 @@ class GetImages(ListAPIView):
     serializer_class = ProductImageSerializer
 
     def get_queryset(self):
-        product_id = self.kwargs.get('productId')  # Use get() method to avoid KeyError
-        if product_id:
-            try:
-                return ProductImage.objects.filter(product_id=product_id)
-            except ProductImage.DoesNotExist:
-                return Response(
-                    {"error": "ProductImage does not exist"},
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-        else:
-            # Return all images when productId is not provided in the URL
+        if not (product_id := self.kwargs.get('productId')):
+            # Use get() method to avoid KeyError
             return ProductImage.objects.all()
+        try:
+            return ProductImage.objects.filter(product_id=product_id)
+        except ProductImage.DoesNotExist:
+            return Response(
+                {"error": "ProductImage does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        
 
 
 
@@ -113,7 +112,7 @@ class GetImages(ListAPIView):
 
 #             response_data = {
 #                 'data': {
-#                     'itemsPerPage': int(itens_per_page),
+#                     'itemsPerPage': int(items_per_page),
 #                     'page': int(page),
 #                     'totalPages': paginator.num_pages,
 #                     'totalProducts': paginator.count,
@@ -150,7 +149,7 @@ class GetProductsSubCategory(APIView):
 
             try:
                 ProductSubCategory.objects.filter(name=subcategory, parent_category=category_obj)
-                prod = Product.objects.filter(category=category_obj, is_deleted='active')
+                prod = Product.objects.filter(category=category_obj, is_deleted='active', admin_status='approved', is_published=True)
                 
             except ProductSubCategory.DoesNotExist:
                 return Response({'error': f'There is no sub category named {subcategory} under {category}'})
@@ -158,24 +157,36 @@ class GetProductsSubCategory(APIView):
                 return Response({'error': e})
 
 
-
-            # Get products belonging to the provided subcategory
-            # try:
-            #     prod = Product.objects.filter(category=category_obj, is_deleted='active')
-            #     #subCatProducts = Product.objects.filter(condition)
-
-            # except Exception as e:
-            #     return Response({"error": e}, status=status.HTTP_501_NOT_IMPLEMENTED)
-
-
             if not prod.exists():
+                response = {
+                    "status": 200,
+                    "message": "There are no products in this subcategory",
+                    "data": []
+                }
                 return Response({"products": [], "Message": "There are no products in this subCategory"}, status=status.HTTP_200_OK)
 
-            serialized = ProductSerializer(prod,  many=True).data
+            page = request.GET.get('page', 1)
+            items_per_page = request.GET.get('itemsPerPage', 5)
+            offset = (int(page) - 1) * int(items_per_page)
+
+            paginator = Paginator(prod, items_per_page)
+            try:
+                products = paginator.page(page)
+            except PageNotAnInteger:
+                products = paginator.page(1)
+            except EmptyPage:
+                products = paginator.page(paginator.num_pages)
+
+            serialized = ProductSerializer(products,  many=True).data
+            
             response = {
                 "status": 200,
                 "success": True,
                 "message": f"Products of {subcategory} returned",
+                "page_number": int(page),
+                "items_per_page": int(items_per_page),
+                "total_products": paginator.count,
+                "total_pages": paginator.num_pages,
                 "data": serialized
             }
             return Response(response, status=status.HTTP_200_OK)
