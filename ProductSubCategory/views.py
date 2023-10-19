@@ -199,10 +199,12 @@ class catProducts(APIView):
         #products = ProductSerializer(products, many=True).data
 
         #get the subCats in the cat
-        category = {}
+        
+        cat = []
         for subCat in subCat_obj:
             subCat = ProductsubCatSerializer(subCat).data
             subCat_products = []
+            catego = {}
             for product in products:
                 product = ProductSerializers(product).data
                 if product.get('category') == category_obj.id:
@@ -211,12 +213,14 @@ class catProducts(APIView):
                         #We want to display only four products
                         subCat_products.append(product)
             print(subCat)
-            category[subCat.get('name')] = subCat_products
+            catego['name'] = subCat.get('name')
+            catego['data'] = subCat_products
+            cat.append(catego)
 
         response = {
                 'status': 200,
                 'success': True,
                 'message': f"Category {catName} and it's products",
-                'data': category
+                'data': cat
                 }
         return Response(response, status=status.HTTP_200_OK)
