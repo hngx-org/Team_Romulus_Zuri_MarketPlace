@@ -23,19 +23,18 @@ def GetProductByIdList(request, *args, **kwargs):
     """
     #product_ids = request.data['product_ids']
     try:
-        product_ids = request.data.get('product_ids', None)
-        if product_ids:
+        if product_ids := request.data.get('product_ids', None):
             products = Product.objects.filter(id__in=product_ids)
             numberOfProducts = products.count()
             serializer = ProductItemSerializer(products, many=True)
-            
+
             return Response({
                 'status': status.HTTP_200_OK,
                 'success': True,
                 'message': 'Request succesfull',
                 'count': numberOfProducts,
                 'data': serializer.data
-            })        
+            })
         return Response({
             'status': status.HTTP_400_BAD_REQUEST,
             'success': False,
