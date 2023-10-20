@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -104,14 +105,14 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASE_ROUTERS = ['core.db_routers.DefaultRouter', 'core.db_routers.PrimaryRouter']
 
 DATABASES = {
-        # 'primary': {
-        #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        #     'NAME': os.environ.get('DB_NAME'),
-        #     'HOST': os.environ.get('DB_HOST'),
-        #     'PORT': os.environ.get('DB_PORT'),
-        #     'USER': os.environ.get('DB_USER'),
-        #     'PASSWORD': os.environ.get('DB_PASSWORD'),
-        # },
+         'primary': {
+             'ENGINE': 'django.db.backends.postgresql_psycopg2',
+             'NAME': config('DB_NAME'),
+             'HOST': config('DB_HOST'),
+             'PORT': config('DB_PORT'),
+             'USER': config('DB_USER'),
+             'PASSWORD': config('DB_PASSWORD'),
+         },
         "default": {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': 'railway',
@@ -128,6 +129,7 @@ DATABASES = {
         #     'USER': 'postgres',
         #     'PASSWORD': 'y3zGd6gD3DVzkRTbZCOH',
         # },
+        '''
         "primary": {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': 'hngxdev',
@@ -136,6 +138,7 @@ DATABASES = {
             'USER': 'hngx',
             'PASSWORD': 'hngx#dev',
         },
+        '''
 }
 
 # DATABASES = {
