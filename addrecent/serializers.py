@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from MarketPlace.models import UserProductInteraction
-from MarketPlace.models import Product,ProductImage, User
+from MarketPlace.models import Product,ProductImage, User, Shop
 from .currencies import currency_data
+from rest_framework.response import Response
 from all_products.serializers import AllProductImageSerializer
 
 class UserProductInteractionSerializer(serializers.ModelSerializer):
@@ -14,10 +15,20 @@ class UserSerializer(serializers.ModelSerializer):
         model=User
         fields = '__all__'
 
+class ShopSerializer(serializers.ModelSerializer):
+   
+    class Meta:
+        model = Shop
+        fields = '__all__'
+    
+   
+
 class ProductItemSerializer(serializers.ModelSerializer):
     currency_symbol = serializers.SerializerMethodField(read_only=True)
     images = serializers.SerializerMethodField(read_only=True)
     user = UserSerializer()
+    shop = ShopSerializer()
+    
     
     class Meta:
         model = Product
@@ -35,4 +46,6 @@ class ProductItemSerializer(serializers.ModelSerializer):
     def get_images(self, obj):
         qs = ProductImage.objects.filter(product=obj)
         return AllProductImageSerializer(qs, many=True, context=self.context).data
+    
+    
 

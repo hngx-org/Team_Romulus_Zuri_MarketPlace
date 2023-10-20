@@ -36,6 +36,9 @@ class RecentlyViewedProducts(APIView):
     serializer_class = UserProductInteractionSerializer
 
     def get(self, request, user_id):
+        """
+        Fetch recently viewed products for a specific user
+        """
         try:
             # Fetch recently viewed products for a specific user
             recently_viewed = UserProductInteraction.objects.filter(

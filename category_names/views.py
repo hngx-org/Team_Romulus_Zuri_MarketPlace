@@ -10,6 +10,9 @@ from .serializers import ProductCategorySerializer, ProductSubCategorySerializer
 
 
 class CategoryNameView(APIView):
+    """
+    List Category Names
+    """
     def get(self, request):
         try:
             categories = ProductCategory.objects.all()
@@ -34,5 +37,11 @@ class CategoryNameView(APIView):
             
             return Response(response, status=status.HTTP_200_OK)
         except Exception as e:
+            response = {
+                'status': status.HTTP_500_INTERNAL_SERVER_ERROR,
+                'error': True,
+                'message': str(e),
+                'data': {'error': 'An unexpected error occurred'}
+            }
             
-            return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(response, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
