@@ -79,45 +79,36 @@ class GetProductItem(generics.RetrieveAPIView):
             instance = self.get_object()
         except Http404:
             return Response({'message': 'Product not found.'}, status=status.HTTP_404_NOT_FOUND)
-
+        
         user_id = kwargs.get('user_id')
         product_id = kwargs.get('id')
         guest = request.query_params.get('guest')
-        response_data = super().retrieve(request, *args, **kwargs)
-
-        if instance.is_deleted == 'active' and instance.admin_status == 'approved':
-            response_body = {
-                'message': 'Product retrieved successfully',
-                'status': 200,
-                'success': True,
-                'data': response_data.data
-            }
-            return Response(response_body, status=status.HTTP_200_OK)
-
-        if instance.is_deleted != 'active' or instance.admin_status != 'approved':
+        
+        if instance.is_deleted != 'active':#this means product is not active, return
             return Response({
-                'message': 'This product is currently not available',
+                'message': 'This product is not available',
                 'success': False,
                 'status': status.HTTP_503_SERVICE_UNAVAILABLE,
                 'data': {}
-            }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
-
-        # if instance.admin_status != 'approved':
-        #     return Response({
-        #         'message': 'This product is pending approval',
-        #         'success': False,
-        #         'status': status.HTTP_503_SERVICE_UNAVAILABLE,
-        #         'data': {}
-        #     }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
-
-        if instance.shop.restricted != 'no':
+                }, status= status.HTTP_503_SERVICE_UNAVAILABLE)
+        
+        if instance.admin_status != 'approved':#this means product is not approved, return
             return Response({
+                'message': 'This product is pending approval',
+                'success': False,
+                'status': status.HTTP_503_SERVICE_UNAVAILABLE,
+                'data': {}
+                }, status= status.HTTP_503_SERVICE_UNAVAILABLE)
+        
+        if instance.shop.restricted != 'no':#this means shop is restricted, return
+           return Response({
                 'message': 'Shop is under restriction',
                 'success': False,
                 'status': status.HTTP_451_UNAVAILABLE_FOR_LEGAL_REASONS,
                 'data': {}
-            }, status=status.HTTP_451_UNAVAILABLE_FOR_LEGAL_REASONS)
+                }, status= status.HTTP_451_UNAVAILABLE_FOR_LEGAL_REASONS)
 
+        response_data = super().retrieve(request, *args, **kwargs)
         #user is logged in hence we update the recently viewed for that user
         if guest == 'false':
             #this function attempts to create a recently viewed and returns a Response
@@ -125,14 +116,14 @@ class GetProductItem(generics.RetrieveAPIView):
             #this means there was a problem adding the product to recently viewed
             if qurery_response.status_code != status.HTTP_201_CREATED:
                 return Response(qurery_response.data, status= qurery_response.status_code)
-
-        # response_body = {
-        #     'message': 'Product retrieved successfully',
-        #     'status': 200,
-        #     'success': True,
-        #     'data': response_data.data
-        # }
-        # return Response(response_body, status=status.HTTP_200_OK)
+            
+        response_body = {
+                'message': 'Product retrieved succesfully',
+                'status': 200,
+                'success': True,
+                'data': response_data.data
+            }
+        return Response(response_body, status= status.HTTP_200_OK)
 
 
 def addRecentlyViewed(user_id, product_id):
