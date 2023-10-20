@@ -5,10 +5,15 @@ from MarketPlace.models import Product
 from .serializers import AllProductSerializer
 from django.db.models import Q
 from django.http import Http404
+from rest_framework.pagination import PageNumberPagination
 
 
 # Create your views here.
 class FilterProductView(APIView):
+
+    pagination_class = PageNumberPagination
+    page_size = 10
+    
     def get(self, request):
         """
         Filter products by category, sub category, discount, keywords, rating, price, and highest price.
@@ -61,9 +66,9 @@ class FilterProductView(APIView):
                 response_data = {
                     "success": True,
                     "status": 200,
-                    "data": {"products": []},
                     "error": None,
-                    "message": "No products to display."
+                    "message": "No products to display.",
+                    "data": {"products": []}
                 }
                 return Response(response_data, status=status.HTTP_200_OK)
 
@@ -72,26 +77,35 @@ class FilterProductView(APIView):
             response_data = {
                 "success": True,
                 "status": 200,
-                "data": {"products": serializer.data},
                 "error": None,
-                "message": "Filtered Products"
+                "message": "Filtered Products",
+                "data": {
+                    "products": serializer.data,
+                    "page_info": {
+                        "count": self.page.paginator.count,
+                        "next": self.get_next_link(),
+                        "previous": self.get_previous_link(),
+                    }
+                }
             }
-            return Response(response_data, status=status.HTTP_200_OK)
+            return self.get_paginated_response(response_data, status=status.HTTP_200_OK)
+        
         except Http404:
             response_data = {
                 "success": False,
                 "status": 404,
-                "data": None,
                 "error": "Not Found",
-                "message": None
+                "message": None,
+                "data": None
+
             }
             return Response(response_data, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             response_data = {
                 "success": False,
                 "status": 400,
-                "data": None,
                 "error": str(e),
-                "message": None
+                "message": None,
+                "data": None
             }
             return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
