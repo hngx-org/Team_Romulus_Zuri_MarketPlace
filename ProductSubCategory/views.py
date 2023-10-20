@@ -20,22 +20,20 @@ class GetImages(ListAPIView):
     serializer_class = ProductImageSerializer
 
     def get_queryset(self):
-        product_id = self.kwargs.get('productId')  # Use get() method to avoid KeyError
-        if product_id:
-            try:
-                return ProductImage.objects.filter(product_id=product_id)
-            except ProductImage.DoesNotExist:
-                return Response(
-                    {
-                        "status_code": 404,
-                        "error": True,
-                        "message": "ProductImage does not exist"
-                        },
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-        else:
+        if not (product_id := self.kwargs.get('productId')):
             # Return all images when productId is not provided in the URL
             return ProductImage.objects.all()
+        try:
+            return ProductImage.objects.filter(product_id=product_id)
+        except ProductImage.DoesNotExist:
+            return Response(
+                {
+                    "status_code": 404,
+                    "error": True,
+                    "message": "ProductImage does not exist"
+                    },
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
 
 
@@ -159,11 +157,6 @@ class catProducts(APIView):
 
             # Loop through subcategories
             for subcategory in subCat_serializer:
-                subcategoryData = {
-                    'name': subcategory['name'],
-                    'products': []
-                }
-
                 # Filter products based on the category, will need to change ths to subcategory, once it is in the model
                 products = Product.objects.filter(
                     category=category_obj,
@@ -176,7 +169,10 @@ class catProducts(APIView):
                 # Serialize the filtered products
                 products_serializer = ProductSerializer(products, many=True).data
 
-                subcategoryData['products'] = products_serializer
+                subcategoryData = {
+                    'name': subcategory['name'],
+                    'products': products_serializer,
+                }
                 categoryResponse.append(subcategoryData)
 
             response = {
