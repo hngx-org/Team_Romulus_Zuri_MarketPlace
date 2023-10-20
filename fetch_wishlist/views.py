@@ -77,7 +77,12 @@ class WishlistProductsView(ListAPIView):
         try:
             queryset = Wishlist.objects.filter(user_id=user_id)
             if not queryset.exists():
-                raise NotFound("Wishlist items not found")
+                response = {
+                    "message": "Wishlist is empty",
+                    "status_code": 200,
+                    "data": [],
+                }
+                return Response(response, status=status.HTTP_200_OK)
             
             serializer = self.get_serializer(queryset, many=True)
             response = {
@@ -87,14 +92,7 @@ class WishlistProductsView(ListAPIView):
             }
             #return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(response, status=status.HTTP_200_OK)
-        except NotFound as e:
-            #return Response({'detail': str(e)}, status=status.HTTP_404_NOT_FOUND)
-            response = {
-                "message": "wishlist not found",
-                "status_code": 404,
-                "data": {'detail': str(e)},
-            }
-            return Response(response, status=status.HTTP_404_NOT_FOUND)
+        
         except Exception as e:
             response = {
                 "message": "internal server error",
