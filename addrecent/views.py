@@ -27,7 +27,7 @@ def GetProductByIdList(request, *args, **kwargs):
             numberOfProducts = products.count()
             serializer = ProductItemSerializer(products, many=True)
             
-            return Response ({
+            return Response({
                 'status': status.HTTP_200_OK,
                 'success': True,
                 'message': 'Request succesfull',
@@ -77,9 +77,12 @@ class GetProductItem(generics.RetrieveAPIView):
         guest = request.query_params.get('guest')
     
         response_data = super().retrieve(request, *args, **kwargs)
-        if guest == 'false':#user is logged in hence we update the recently viewed for that user
-            qurery_response = addRecentlyViewed(user_id=user_id, product_id=product_id)#this function attempts to create a recently viewed and returns a Response
-            if qurery_response.status_code != status.HTTP_201_CREATED:#this means there was a problem adding the product to recently viewed
+        #user is logged in hence we update the recently viewed for that user
+        if guest == 'false':
+            #this function attempts to create a recently viewed and returns a Response
+            qurery_response = addRecentlyViewed(user_id=user_id, product_id=product_id)
+            #this means there was a problem adding the product to recently viewed
+            if qurery_response.status_code != status.HTTP_201_CREATED:
                 return Response(qurery_response.data, status= qurery_response.status_code)
             
         response_body = {
@@ -127,15 +130,21 @@ def addRecentlyViewed(user_id, product_id):
         last_viewed_object = LastViewedProduct.objects.create(user=user,product=product, viewed_at =current_time)
         last_viewed_object.save()
 
-        recently_viewed = UserProductInteraction.objects.filter(user=user, product=product, interaction_type="viewed").order_by('-createdat')#getting the objects this user has recently viewed and sorting by date created in descending order
-        if recently_viewed.exists():#user has previously viewed this same product so just update the timestamp to the current time
-            if recently_viewed.count() > 1:#if for some reason user has more than one recently viewed item which is not supposed to be tho :]
-                items_to_delete = recently_viewed[1:] #getting all the recently viewed starting from the second one
-                items_to_delete.delete()#deleting the recent views with thesame user and thesame product because user cant recently view one product twice :)
+        #getting the objects this user has recently viewed and sorting by date created in descending order
+        recently_viewed = UserProductInteraction.objects.filter(user=user, product=product, interaction_type="viewed").order_by('-createdat')
+        #user has previously viewed this same product so just update the timestamp to the current time
+        if recently_viewed.exists():
+            #if for some reason user has more than one recently viewed item which is not supposed to be tho :]
+            if recently_viewed.count() > 1:
+                #getting all the recently viewed starting from the second one
+                items_to_delete = recently_viewed[1:]
+                #deleting the recent views with thesame user and thesame product because user cant recently view one product twice :)
+                items_to_delete.delete()
             interaction = recently_viewed.first()
             interaction.createdat = current_time
-            interaction.save()           
-        else:#user doesnt have a recently viewed so we create one 
+            interaction.save()   
+        #user doesnt have a recently viewed so we create one         
+        else:
             serializer.save()
 
         context = {

@@ -10,8 +10,7 @@ product_by_list_body =openapi.Schema(
                 items=openapi.Schema(
                     type=openapi.TYPE_STRING,
                     format=openapi.FORMAT_UUID,
-                description= "A list of product ids, all of which MUST be a valid uuid"
-                )
+                description="A list of product ids, all of which MUST be a valid uuid")
             )
         }
     )
