@@ -9,8 +9,8 @@ class ProductSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProductsubCatSerializer(serializers.ModelSerializer):
-    products = ProductSerializers(many=True, read_only=True)
-    
+    products = ProductSerializers(many=True, read_only=True
+
     class Meta:
         model = ProductSubCategory
         fields = '__all__'
