@@ -143,49 +143,58 @@ class catProducts(APIView):
         # Get the category object
 
         try:
-            category_obj = ProductCategory.objects.get(name=categoryName)
-        except ProductCategory.DoesNotExist:
-            return Response({
-                'status': 404,
-                'success': False,
-                'message': f'The category {categoryName} does not exist',
-                'data': None
-            }, status=status.HTTP_404_NOT_FOUND)
+            try:
+                category_obj = ProductCategory.objects.get(name=categoryName)
+            except ProductCategory.DoesNotExist:
+                return Response({
+                    'status': 404,
+                    'success': False,
+                    'message': f'The category {categoryName} does not exist',
+                    'data': None
+                }, status=status.HTTP_404_NOT_FOUND)
 
-        # Get subcategories related to the category
-        subCat_obj = ProductSubCategory.objects.filter(parent_category=category_obj)
-        subCat_serializer = ProductsubCatSerializer(subCat_obj, many=True).data
+            # Get su   bcategories related to the category
+            subCat_obj = ProductSubCategory.objects.filter(parent_category=category_obj)
+            subCat_serializer = ProductsubCatSerializer(subCat_obj, many=True).data
 
-        # Loop through subcategories
-        for subcategory in subCat_serializer:
-            subcategoryData = {
-                'name': subcategory['name'],
-                'products': []
+            # Loop through subcategories
+            for subcategory in subCat_serializer:
+                subcategoryData = {
+                    'name': subcategory['name'],
+                    'products': []
+                }
+
+                # Filter products based on the category, will need to change ths to subcategory, once it is in the model
+                products = Product.objects.filter(
+                    category=category_obj,
+                    #subcategory=subcategory['id'],  # Adjust this filter once you have subcategory support
+                    is_deleted='active',
+                    admin_status='approved',
+                    is_published=True
+                )[:4]  # Limit to four products
+
+                # Serialize the filtered products
+                products_serializer = ProductSerializer(products, many=True).data
+
+                subcategoryData['products'] = products_serializer
+                categoryResponse.append(subcategoryData)
+
+            response = {
+                'status': 200,
+                'success': True,
+                'message': f"Category {categoryName} and its products",
+                'data': categoryResponse
             }
 
-            # Filter products based on the category, will need to change ths to subcategory, once it is in the model
-            products = Product.objects.filter(
-                category=category_obj,
-                #subcategory=subcategory['id'],  # Adjust this filter once you have subcategory support
-                is_deleted='active',
-                admin_status='approved',
-                is_published=True
-            )[:4]  # Limit to four products
-
-            # Serialize the filtered products
-            products_serializer = ProductSerializer(products, many=True).data
-
-            subcategoryData['products'] = products_serializer
-            categoryResponse.append(subcategoryData)
-
-        response = {
-            'status': 200,
-            'success': True,
-            'message': f"Category {categoryName} and its products",
-            'data': categoryResponse
-        }
-
-        return Response(response, status=status.HTTP_200_OK)
+            return Response(response, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(
+                {
+                'status': 500,
+                'success': True,
+                'message': f"An error occured {e}"
+            }
+            )
 
 
 
