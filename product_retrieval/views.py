@@ -4,6 +4,13 @@ from rest_framework.pagination import PageNumberPagination
 from MarketPlace.models import Product
 from all_products.serializers import AllProductSerializer as ProductSerializer
 from django.db.models import Q
+from rest_framework.throttling import UserRateThrottle
+
+class ProductSearchRateThrottle(UserRateThrottle):
+    rate = '50/hour'
+
+class ProductSearchView(APIView):
+    throttle_classes = [ProductSearchRateThrottle]
 
 class ProductSearchView(APIView):
 
