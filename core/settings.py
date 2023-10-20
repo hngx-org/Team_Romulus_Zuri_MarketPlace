@@ -11,8 +11,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-from decouple import config
+from dotenv import load_dotenv
 import os
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -107,12 +109,23 @@ DATABASE_ROUTERS = ['core.db_routers.DefaultRouter', 'core.db_routers.PrimaryRou
 DATABASES = {
          'primary': {
              'ENGINE': 'django.db.backends.postgresql_psycopg2',
-             'NAME': config('DB_NAME'),
-             'HOST': config('DB_HOST'),
-             'PORT': config('DB_PORT'),
-             'USER': config('DB_USER'),
-             'PASSWORD': config('DB_PASSWORD'),
+             'NAME': os.environ.get('DB_NAME'),
+             'HOST': os.environ.get('DB_HOST'),
+             'PORT': os.environ.get('DB_PORT'),
+             'USER': os.environ.get('DB_USER'),
+             'PASSWORD': os.environ.get('DB_PASSWORD'),
          },
+         'default': {
+             'ENGINE': 'django.db.backends.postgresql_psycopg2',
+             'NAME': os.environ.get('DB_NAME'),
+             'HOST': os.environ.get('DB_HOST'),
+             'PORT': os.environ.get('DB_PORT'),
+             'USER': os.environ.get('DB_USER'),
+             'PASSWORD': os.environ.get('DB_PASSWORD'),
+             }
+}
+
+'''
         "default": {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': 'railway',
@@ -121,25 +134,8 @@ DATABASES = {
             'USER': 'postgres',
             'PASSWORD': '6ohmepstiEAAfsHRtc1E',
         },
-        # "primary": {
-        #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        #     'NAME': 'railway',
-        #     'HOST': 'containers-us-west-126.railway.app',
-        #     'PORT': 6537,
-        #     'USER': 'postgres',
-        #     'PASSWORD': 'y3zGd6gD3DVzkRTbZCOH',
-        # },
-        '''
-        "primary": {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'hngxdev',
-            'HOST': '104.248.143.148',
-            'PORT': 5432,
-            'USER': 'hngx',
-            'PASSWORD': 'hngx#dev',
-        },
-        '''
-}
+'''
+
 
 # DATABASES = {
 #     'default': {
