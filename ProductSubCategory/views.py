@@ -58,7 +58,7 @@ class GetProductsSubCategory(APIView):
             except ProductCategory.DoesNotExist:
                 return Response({
                     "status": 404,
-                    "success" False,
+                    "success": False,
                     "message": f"There is no product category named {category}"
                     }, status=status.HTTP_404_NOT_FOUND)
             except Exception as e:
@@ -180,60 +180,3 @@ class catProducts(APIView):
 
 
 
-"""
-
-
-class catProducts(APIView):
-    def get(self, request, categoryName):
-        #get the category,subcat, products object
-        try:
-            category_obj = ProductCategory.objects.get(name=categoryName)
-            subCat_obj = ProductSubCategory.objects.filter(parent_category=category_obj)
-            products = Product.objects.filter(category=category_obj, is_deleted='active', admin_status='approved', is_published=True)
-        except ProductCategory.DoesNotExist:
-            return Response({
-                'status': 404,
-                'success': False,
-                'message': f'The category {categoryName} does not exist',
-                'data': None
-                },
-                            status=status.HTTP_404_NOT_FOUND
-                )
-
-        #get the subCats in the cat
-        products = ProductSerializers(products, many=True).data
-        
-        categoryResponse = []
-        for subCat in subCat_obj:
-            subCat = ProductsubCatSerializer(subCat).data
-            subCat_products = []
-            subcategoryData = {}
-            for product in products:
-                #product = ProductSerializer(product, many=True).data
-                print(product)
-                #print(category_obj)
-                #print(category_obj.id)
-                if product.category == category_obj:
-                    # the condition should be with respect to subcategory, but the model at this time does not have subcategory
-                    print('hereeee')
-                    if len(subCat_products) != 4:
-                        #We want to display only four products
-                        #product = ProductSerializers(product).data
-                        print('here')
-                        subCat_products.append(product)
-            print(subCat)
-
-            subcategoryData['name'] = subCat.get('name')
-            subcategoryData['products'] = subCat_products
-            print(subcategoryData)
-            categoryResponse.append(subcategoryData)
-
-        response = {
-                'status': 200,
-                'success': True,
-                'message': f"Category {categoryName} and it's products",
-                'data': categoryResponse
-                }
-        return Response(response, status=status.HTTP_200_OK)
-
-"""
