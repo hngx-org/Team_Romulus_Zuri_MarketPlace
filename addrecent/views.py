@@ -118,13 +118,13 @@ class GetProductItem(generics.RetrieveAPIView):
                 'data': {}
             }, status=status.HTTP_451_UNAVAILABLE_FOR_LEGAL_REASONS)
 
-        # user is logged in hence we update the recently viewed for that user
-        if not guest:
-            query_response = addRecentlyViewed(user_id=user_id, product_id=product_id)
-
-            # this means there was a problem adding the product to recently viewed
-            if query_response.status_code != status.HTTP_201_CREATED:
-                return Response(query_response.data, status=query_response.status_code)
+        #user is logged in hence we update the recently viewed for that user
+        if guest == 'false':
+            #this function attempts to create a recently viewed and returns a Response
+            qurery_response = addRecentlyViewed(user_id=user_id, product_id=product_id)
+            #this means there was a problem adding the product to recently viewed
+            if qurery_response.status_code != status.HTTP_201_CREATED:
+                return Response(qurery_response.data, status= qurery_response.status_code)
 
         # response_body = {
         #     'message': 'Product retrieved successfully',
