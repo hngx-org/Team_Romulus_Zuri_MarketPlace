@@ -10,6 +10,9 @@ from drf_yasg import openapi
 
 
 class WishlistCreateView(views.APIView):
+    """
+    Add product to wishlist
+    """
 
     serializer_class = WishlistSerializer
 
@@ -43,6 +46,9 @@ class WishlistCreateView(views.APIView):
             )),
         })
     def post(self, request):
+        """
+        Display user wishlist
+        """
 
         if not request.data.get("product_id"):
             return Response({'message': 'product required in the request data', 'status': status.HTTP_400_BAD_REQUEST, 'success': False}, status=status.HTTP_400_BAD_REQUEST)

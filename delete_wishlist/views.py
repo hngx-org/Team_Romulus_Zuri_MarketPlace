@@ -9,6 +9,9 @@ class DeleteWishlistItem(APIView):
     authentication_classes = []  # Requires authentication
     
     def delete(self, request, user_id, product_id):
+        """
+        Delete Wishlist
+        """
         try:
             # Validate the user_id and product_id as UUIDs
             user_id = uuid.UUID(user_id)
