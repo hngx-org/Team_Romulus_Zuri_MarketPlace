@@ -7,6 +7,8 @@ from .serializers import WishlistSerializer
 from django.core.exceptions import ObjectDoesNotExist
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from datetime import datetime
+
 
 
 class WishlistCreateView(views.APIView):
@@ -74,6 +76,13 @@ class WishlistCreateView(views.APIView):
         # Add the product to the user's wishlist
         wishlist_item, created = Wishlist.objects.get_or_create(
             user_id=user.id, product=product)  
+        
+        #set createdat and updated at to current time
+        now = datetime.now()
+        wishlist_item.createdat = now
+        wishlist_item.updatedat = now
+        wishlist_item.save()
+
 
         serializer = self.serializer_class(wishlist_item)
 
