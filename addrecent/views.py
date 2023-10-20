@@ -23,19 +23,18 @@ def GetProductByIdList(request, *args, **kwargs):
     """
     #product_ids = request.data['product_ids']
     try:
-        product_ids = request.data.get('product_ids', None)
-        if product_ids:
+        if product_ids := request.data.get('product_ids', None):
             products = Product.objects.filter(id__in=product_ids)
             numberOfProducts = products.count()
             serializer = ProductItemSerializer(products, many=True)
-            
+
             return Response({
                 'status': status.HTTP_200_OK,
                 'success': True,
                 'message': 'Request succesfull',
                 'count': numberOfProducts,
                 'data': serializer.data
-            })        
+            })
         return Response({
             'status': status.HTTP_400_BAD_REQUEST,
             'success': False,
@@ -94,37 +93,12 @@ class GetProductItem(generics.RetrieveAPIView):
             }
             return Response(response_body, status=status.HTTP_200_OK)
 
-        if instance.is_deleted != 'active' or instance.admin_status != 'approved':
-            return Response({
-                'message': 'This product is currently not available',
-                'success': False,
-                'status': status.HTTP_503_SERVICE_UNAVAILABLE,
-                'data': {}
-            }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
-
-        # if instance.admin_status != 'approved':
-        #     return Response({
-        #         'message': 'This product is pending approval',
-        #         'success': False,
-        #         'status': status.HTTP_503_SERVICE_UNAVAILABLE,
-        #         'data': {}
-        #     }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
-
-        if instance.shop.restricted != 'no':
-            return Response({
-                'message': 'Shop is under restriction',
-                'success': False,
-                'status': status.HTTP_451_UNAVAILABLE_FOR_LEGAL_REASONS,
-                'data': {}
-            }, status=status.HTTP_451_UNAVAILABLE_FOR_LEGAL_REASONS)
-
-        #user is logged in hence we update the recently viewed for that user
-        if guest == 'false':
-            #this function attempts to create a recently viewed and returns a Response
-            qurery_response = addRecentlyViewed(user_id=user_id, product_id=product_id)
-            #this means there was a problem adding the product to recently viewed
-            if qurery_response.status_code != status.HTTP_201_CREATED:
-                return Response(qurery_response.data, status= qurery_response.status_code)
+        return Response({
+            'message': 'This product is currently not available',
+            'success': False,
+            'status': status.HTTP_503_SERVICE_UNAVAILABLE,
+            'data': {}
+        }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
         # response_body = {
         #     'message': 'Product retrieved successfully',
