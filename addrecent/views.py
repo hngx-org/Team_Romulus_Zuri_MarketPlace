@@ -9,7 +9,6 @@ from django.http import Http404
 from .serializers import UserProductInteractionSerializer, ProductItemSerializer, ShopSerializer
 import uuid
 from rest_framework.decorators import api_view
-
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view
@@ -75,7 +74,31 @@ class GetProductItem(generics.RetrieveAPIView):
         user_id = kwargs.get('user_id')
         product_id = kwargs.get('id')
         guest = request.query_params.get('guest')
-    
+        
+        if instance.is_deleted != 'active':
+            return Response({
+                'message': 'This product is not available',
+                'success': False,
+                'status': status.HTTP_503_SERVICE_UNAVAILABLE,
+                'data': {}
+                }, status= status.HTTP_503_SERVICE_UNAVAILABLE)
+        
+        if instance.admin_status != 'approved':
+            return Response({
+                'message': 'This product is pending approval',
+                'success': False,
+                'status': status.HTTP_503_SERVICE_UNAVAILABLE,
+                'data': {}
+                }, status= status.HTTP_503_SERVICE_UNAVAILABLE)
+        
+        if instance.shop.restricted != 'no':
+           return Response({
+                'message': 'Shop is under restriction',
+                'success': False,
+                'status': status.HTTP_451_UNAVAILABLE_FOR_LEGAL_REASONS,
+                'data': {}
+                }, status= status.HTTP_451_UNAVAILABLE_FOR_LEGAL_REASONS)
+
         response_data = super().retrieve(request, *args, **kwargs)
         if guest == 'false':#user is logged in hence we update the recently viewed for that user
             qurery_response = addRecentlyViewed(user_id=user_id, product_id=product_id)#this function attempts to create a recently viewed and returns a Response
