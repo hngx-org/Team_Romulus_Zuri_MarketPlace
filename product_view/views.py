@@ -40,6 +40,9 @@ from all_products.serializers import AllProductSerializer as ProductSerializer
 
 class SortProducts(APIView):
     def get(self, request, sorting_option):
+        """
+        Sort for products
+        """
         # Validate the sorting option
         valid_sorting_options = [
             'name_asc', 'name_desc',

@@ -12,6 +12,9 @@ from django.core.paginator import Paginator
 
 class ProductListByCategoryView(APIView):
     def get(self, request, category):
+        """
+        List Product by Category
+        """
         # sort_by = request.query_params.get('sort_by', 'name')
         if not isinstance(category, str):
             return Response({"error": "Category name must be a string value"}, status=status.HTTP_400_BAD_REQUEST)

@@ -74,6 +74,9 @@ class WishlistProductsView(ListAPIView):
     queryset = Wishlist.objects.all()
     
     def list(self, request, user_id):
+        """
+        List Wishlist
+        """
         try:
             queryset = Wishlist.objects.filter(user_id=user_id)
             if not queryset.exists():

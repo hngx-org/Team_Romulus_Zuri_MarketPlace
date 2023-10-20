@@ -17,6 +17,9 @@ from all_products.serializers import AllProductSerializer as ProductSerializer
 
 class ProductRecommendationView(APIView):
     def get(self, request):
+        """
+        List recommended products
+        """
         try:
             # Retrieve products with the highest quantity
             highest_quantity_products = Product.objects.filter(admin_status='approved', is_deleted='active', shop__restricted='no').order_by('-quantity')[:20]
@@ -85,6 +88,9 @@ class ProductRecommendationView(APIView):
 class SimilarProductRecommendationView(APIView):
 
     def get(self, request, product_id):
+        """
+        List similar products
+        """
         try:
             current_product = Product.objects.get(id=product_id)
 
