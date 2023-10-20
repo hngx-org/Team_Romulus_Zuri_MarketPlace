@@ -67,13 +67,13 @@ class WishlistCreateView(views.APIView):
 
         try:
             # Retrieve product details
-            Product.objects.get(id=product_id)
+            product = Product.objects.get(id=product_id)
         except ObjectDoesNotExist:
             return Response({"message": "Product not found."}, status=status.HTTP_404_NOT_FOUND)
 
         # Add the product to the user's wishlist
         wishlist_item, created = Wishlist.objects.get_or_create(
-            user_id=user.id, product_id=product_id)  
+            user_id=user.id, product=product)  
 
         serializer = self.serializer_class(wishlist_item)
 
