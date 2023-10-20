@@ -38,7 +38,7 @@ urlpatterns = [
     path('api/marketplace/', include('all_products.urls')),
     path('api/marketplace/', include('ProductSubCategory.urls')),
     path('api/marketplace/', include('category_names.urls')),
-    path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('api/marketplace/docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('api/marketplace/', include('product_filter.urls')),
     path('api/marketplace/', include('limited_offer.urls')),
     path('api/marketplace/', include('product_recommendation.urls')),
