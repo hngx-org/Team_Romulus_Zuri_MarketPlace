@@ -91,6 +91,62 @@ class GetProductsSubCategory(APIView):
 
 class catProducts(APIView):
     def get(self, request, categoryName):
+        # Initialize the category response list
+        categoryResponse = []
+
+        # Get the category object
+        try:
+            category_obj = ProductCategory.objects.get(name=categoryName)
+        except ProductCategory.DoesNotExist:
+            return Response({
+                'status': 404,
+                'success': False,
+                'message': f'The category {categoryName} does not exist',
+                'data': None
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        # Get subcategories related to the category
+        subCat_obj = ProductSubCategory.objects.filter(parent_category=category_obj)
+        subCat_serializer = ProductsubCatSerializer(subCat_obj, many=True).data
+
+        # Loop through subcategories
+        for subcategory in subCat_serializer:
+            subcategoryData = {
+                'name': subcategory['name'],
+                'products': []
+            }
+
+            # Filter products based on the category
+            products = Product.objects.filter(
+                category=category_obj,
+                #subcategory=subcategory['id'],  # Adjust this filter once you have subcategory support
+                is_deleted='active',
+                admin_status='approved',
+                is_published=True
+            )[:4]  # Limit to four products
+
+            # Serialize the filtered products
+            products_serializer = ProductSerializer(products, many=True).data
+
+            subcategoryData['products'] = products_serializer
+            categoryResponse.append(subcategoryData)
+
+        response = {
+            'status': 200,
+            'success': True,
+            'message': f"Category {categoryName} and its products",
+            'data': categoryResponse
+        }
+
+        return Response(response, status=status.HTTP_200_OK)
+
+
+
+"""
+
+
+class catProducts(APIView):
+    def get(self, request, categoryName):
         #get the category,subcat, products object
         try:
             category_obj = ProductCategory.objects.get(name=categoryName)
@@ -107,6 +163,7 @@ class catProducts(APIView):
                 )
 
         #get the subCats in the cat
+        products = ProductSerializers(products, many=True).data
         
         categoryResponse = []
         for subCat in subCat_obj:
@@ -114,15 +171,23 @@ class catProducts(APIView):
             subCat_products = []
             subcategoryData = {}
             for product in products:
-                product = ProductSerializers(product).data
-                if product.get('category') == category_obj.id:
+                #product = ProductSerializer(product, many=True).data
+                print(product)
+                #print(category_obj)
+                #print(category_obj.id)
+                if product.category == category_obj:
                     # the condition should be with respect to subcategory, but the model at this time does not have subcategory
+                    print('hereeee')
                     if len(subCat_products) != 4:
                         #We want to display only four products
+                        #product = ProductSerializers(product).data
+                        print('here')
                         subCat_products.append(product)
-            
+            print(subCat)
+
             subcategoryData['name'] = subCat.get('name')
             subcategoryData['products'] = subCat_products
+            print(subcategoryData)
             categoryResponse.append(subcategoryData)
 
         response = {
@@ -132,3 +197,5 @@ class catProducts(APIView):
                 'data': categoryResponse
                 }
         return Response(response, status=status.HTTP_200_OK)
+
+"""
