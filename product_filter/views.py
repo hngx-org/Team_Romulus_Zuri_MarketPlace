@@ -10,6 +10,9 @@ from django.http import Http404
 # Create your views here.
 class FilterProductView(APIView):
     def get(self, request):
+        """
+        Filter products by category, sub category, discount, keywords, rating, price, and highest price.
+        """
         try:
             # Parameters from request
             category = self.request.query_params.get("category")

@@ -10,6 +10,9 @@ from .serializers import ProductCategorySerializer, ProductSubCategorySerializer
 
 
 class CategoryNameView(APIView):
+    """
+    List Category Names
+    """
     def get(self, request):
         try:
             categories = ProductCategory.objects.all()
