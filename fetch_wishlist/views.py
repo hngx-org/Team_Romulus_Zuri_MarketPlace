@@ -90,9 +90,9 @@ class WishlistProductsView(ListAPIView):
         except NotFound as e:
             #return Response({'detail': str(e)}, status=status.HTTP_404_NOT_FOUND)
             response = {
-                "message": "wishlist not found",
+                "message": str(e),
                 "status_code": 404,
-                "data": {'detail': str(e)},
+                "data": [],
             }
             return Response(response, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
