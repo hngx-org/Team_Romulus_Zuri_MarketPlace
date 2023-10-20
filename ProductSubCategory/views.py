@@ -14,6 +14,9 @@ from rest_framework.generics import ListAPIView
 
 
 class GetImages(ListAPIView):
+    """
+    Get product image
+    """
     serializer_class = ProductImageSerializer
 
     def get_queryset(self):
@@ -38,6 +41,9 @@ class GetImages(ListAPIView):
 
 class GetProductsSubCategory(APIView):
     def get(self, request, category, subcategory):
+        """
+        Get products by sub category
+        """
 
         if not isinstance(category, str):
             return Response({
@@ -123,11 +129,14 @@ class GetProductsSubCategory(APIView):
 
 
 
-# This endpoint will return categories names and the subcategories under them,
-# with the respective data under each.
+
 
 class catProducts(APIView):
     def get(self, request, categoryName):
+        """
+        This endpoint will return categories names and the subcategories under them,
+        with the respective data under each.
+        """
         # Initialize the category response list
         categoryResponse = []
 

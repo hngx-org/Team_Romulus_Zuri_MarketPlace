@@ -19,6 +19,9 @@ from . import docs
 @swagger_auto_schema(methods=['post'],request_body= docs.product_by_list_body, responses=docs.product_by_list_resonses)
 @api_view(['POST'])
 def GetProductByIdList(request, *args, **kwargs):
+    """
+    Get product by id
+    """
     #product_ids = request.data['product_ids']
     try:
         product_ids = request.data.get('product_ids', None)
@@ -54,6 +57,9 @@ class CreateRecentlyViewd(generics.GenericAPIView):
     serializer_class = UserProductInteractionSerializer
 
     def post(self, request, *args, **kwargs):
+        """
+        Create a recently viewed product
+        """
         user_id = kwargs.get('user_id')
         product_id = kwargs.get('product_id')
         #this function attempts to create a recently viewed and returns a Response 
@@ -67,6 +73,9 @@ class GetProductItem(generics.RetrieveAPIView):
     lookup_field = 'id'
 
     def retrieve(self, request, *args, **kwargs):
+        """
+        Get recently viewed products
+        """
         try:
             instance = self.get_object()
         except Http404:
@@ -95,8 +104,11 @@ class GetProductItem(generics.RetrieveAPIView):
 
   
 
-"""This function adds/updates the users recently viewed and returns a resonse object"""
+
 def addRecentlyViewed(user_id, product_id):
+    """
+    This function adds/updates the users recently viewed and returns a resonse object.
+    """
     #getting the current time
     current_time = timezone.now()
     #constructing a data for the serializer

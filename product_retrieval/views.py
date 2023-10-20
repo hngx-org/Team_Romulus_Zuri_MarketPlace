@@ -7,6 +7,9 @@ from django.db.models import Q
 class ProductSearchView(APIView):
 
     def get(self, request):
+        """
+        Search for a product
+        """
         query = request.query_params.get('search', None)
         if not query:
             return Response({"status": "error", "message": "A search term must be provided."}, status=400)
