@@ -1,5 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from MarketPlace.models import Product
 from all_products.serializers import AllProductSerializer as ProductSerializer
 from django.db.models import Q
@@ -20,12 +21,13 @@ class ProductSearchView(APIView):
                 Q(description__icontains=query)
             )
 
-            # If no products found, return an appropriate message
-            # if not products.exists():
-            #     return Response({"status": "error", "message": "No products found matching the search term."}, status=404)
-
-            serializer = ProductSerializer(products, many=True)
-            return Response({
+            # Pagination
+            paginator = PageNumberPagination()
+            paginated_products = paginator.paginate_queryset(products, request)
+            
+            serializer = ProductSerializer(paginated_products, many=True)
+            
+            return paginator.get_paginated_response({
                 "status": 200,
                 "message": f"Found {len(serializer.data)} products matching the search term.",
                 "data": serializer.data,
