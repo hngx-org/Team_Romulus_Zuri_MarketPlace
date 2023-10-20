@@ -7,6 +7,9 @@ from rest_framework import status
 
 
 class ProductListAPIView(ListAPIView):
+	"""
+	List All Products
+	"""
 	queryset = Product.objects.all().order_by('-updatedat')
 	serializer_class = AllProductSerializer
 	permission_classes = [AllowAny]
