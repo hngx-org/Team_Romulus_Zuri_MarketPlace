@@ -5,10 +5,15 @@ from MarketPlace.models import Product
 from .serializers import AllProductSerializer
 from django.db.models import Q
 from django.http import Http404
+from rest_framework.pagination import PageNumberPagination
 
 
 # Create your views here.
 class FilterProductView(APIView):
+
+    pagination_class = PageNumberPagination
+    page_size = 10
+    
     def get(self, request):
         """
         Filter products by category, sub category, discount, keywords, rating, price, and highest price.
@@ -74,10 +79,17 @@ class FilterProductView(APIView):
                 "status": 200,
                 "error": None,
                 "message": "Filtered Products",
-                "data": {"products": serializer.data}
-
+                "data": {
+                    "products": serializer.data,
+                    "page_info": {
+                        "count": self.page.paginator.count,
+                        "next": self.get_next_link(),
+                        "previous": self.get_previous_link(),
+                    }
+                }
             }
-            return Response(response_data, status=status.HTTP_200_OK)
+            return self.get_paginated_response(response_data, status=status.HTTP_200_OK)
+        
         except Http404:
             response_data = {
                 "success": False,
