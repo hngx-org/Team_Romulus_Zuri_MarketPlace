@@ -23,7 +23,11 @@ class GetImages(ListAPIView):
                 return ProductImage.objects.filter(product_id=product_id)
             except ProductImage.DoesNotExist:
                 return Response(
-                    {"error": "ProductImage does not exist"},
+                    {
+                        "status_code": 404,
+                        "error": True,
+                        "message": "ProductImage does not exist"
+                        },
                     status=status.HTTP_404_NOT_FOUND,
                 )
         else:
@@ -36,26 +40,50 @@ class GetProductsSubCategory(APIView):
     def get(self, request, category, subcategory):
 
         if not isinstance(category, str):
-            return Response({"error": "Category name must be string"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({
+                "status": 400,
+                "success": False,
+                "message": "Category name must be string"
+                }, status=status.HTTP_400_BAD_REQUEST)
         if not isinstance(subcategory, str):
-            return Response({"error": "Sub category name must be string"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({
+                "status": 400,
+                "success": False,
+                "message": "Sub category name must be string"
+                }, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             try:
                 category_obj = ProductCategory.objects.get(name=category)
             except ProductCategory.DoesNotExist:
-                return Response({"Message": f"There is no product category named {category}"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({
+                    "status": 404,
+                    "success" False,
+                    "message": f"There is no product category named {category}"
+                    }, status=status.HTTP_404_NOT_FOUND)
             except Exception as e:
-                return Response({'error': e})
+                return Response({
+                    "status": 500,
+                    "success": False,
+                    "message": e
+                    })
 
             try:
                 ProductSubCategory.objects.filter(name=subcategory, parent_category=category_obj)
                 prod = Product.objects.filter(category=category_obj, is_deleted='active')
                 
             except ProductSubCategory.DoesNotExist:
-                return Response({'error': f'There is no sub category named {subcategory} under {category}'})
+                return Response({
+                    "status": 404,
+                    "success": False,
+                    "message": f'There is no sub category named {subcategory} under {category}'
+                    }, status=status.HTTP_404_OT_FOUND)
             except Exception as e:
-                return Response({'error': e})
+                return Response({
+                    "status": 500,
+                    "success": False,
+                    "message": e
+                    })
 
 
 
@@ -69,7 +97,12 @@ class GetProductsSubCategory(APIView):
 
 
             if not prod.exists():
-                return Response({"products": [], "Message": "There are no products in this subCategory"}, status=status.HTTP_200_OK)
+                return Response({
+                    "status": 200,
+                    "success": True,
+                    "message": "There are no products in this subCategory",
+                    "data": []
+                    }, status=status.HTTP_200_OK)
 
             serialized = ProductSerializer(prod,  many=True).data
             response = {
@@ -81,7 +114,11 @@ class GetProductsSubCategory(APIView):
             return Response(response, status=status.HTTP_200_OK)
 
         except Exception as e:
-            return Response({'error': f'Server Malfunction {e}, we are fixing it'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({
+                "status": 500,
+                "success": False,
+                "message": f'Server Malfunction: {e}'
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
@@ -95,6 +132,7 @@ class catProducts(APIView):
         categoryResponse = []
 
         # Get the category object
+
         try:
             category_obj = ProductCategory.objects.get(name=categoryName)
         except ProductCategory.DoesNotExist:
@@ -116,7 +154,7 @@ class catProducts(APIView):
                 'products': []
             }
 
-            # Filter products based on the category
+            # Filter products based on the category, will need to change ths to subcategory, once it is in the model
             products = Product.objects.filter(
                 category=category_obj,
                 #subcategory=subcategory['id'],  # Adjust this filter once you have subcategory support
