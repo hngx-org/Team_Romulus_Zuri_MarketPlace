@@ -117,24 +117,22 @@ DATABASES = {
          },
          'default': {
              'ENGINE': 'django.db.backends.postgresql_psycopg2',
-             'NAME': os.environ.get('DB_NAME'),
-             'HOST': os.environ.get('DB_HOST'),
-             'PORT': os.environ.get('DB_PORT'),
-             'USER': os.environ.get('DB_USER'),
-             'PASSWORD': os.environ.get('DB_PASSWORD'),
+             'NAME': os.environ.get('DB_NAME_2'),
+             'HOST': os.environ.get('DB_HOST_2'),
+             'PORT': os.environ.get('DB_PORT_2'),
+             'USER': os.environ.get('DB_USER_2'),
+             'PASSWORD': os.environ.get('DB_PASSWORD_2'),
              }
 }
 
-'''
-        "default": {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'railway',
-            'HOST': 'containers-us-west-179.railway.app',
-            'PORT': 6985,
-            'USER': 'postgres',
-            'PASSWORD': '6ohmepstiEAAfsHRtc1E',
-        },
-'''
+        # "default": {
+        #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        #     'NAME': 'railway',
+        #     'HOST': 'containers-us-west-179.railway.app',
+        #     'PORT': 6985,
+        #     'USER': 'postgres',
+        #     'PASSWORD': '6ohmepstiEAAfsHRtc1E',
+        # },
 
 
 # DATABASES = {
