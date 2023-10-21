@@ -43,40 +43,61 @@ class SortProducts(APIView):
         """
         Sort for products
         """
-        # Validate the sorting option
-        valid_sorting_options = [
-            'name_asc', 'name_desc',
-            'date_created_asc', 'date_created_desc',
-            'price_asc', 'price_desc'
-        ]
+        try:
+            # Validate the sorting option
+            valid_sorting_options = [
+                'name_asc', 'name_desc',
+                'date_created_asc', 'date_created_desc',
+                'price_asc', 'price_desc'
+            ]
 
-        if sorting_option not in valid_sorting_options:
-            return Response({'success': False, 'statusCode': 400, 'message': 'Invalid sorting option'}, status=status.HTTP_400_BAD_REQUEST)
+            if sorting_option not in valid_sorting_options:
+                return Response({'success': False, 'statusCode': 400, 'message': 'Invalid sorting option'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Map the sorting option to the corresponding field and order
-        sorting_mapping = {
-            'name_asc': 'name',
-            'name_desc': '-name',
-            'date_created_asc': 'createdat',
-            'date_created_desc': '-createdat',
-            'price_asc': 'price',
-            'price_desc': '-price'
-        }
+            # Map the sorting option to the corresponding field and order
+            sorting_mapping = {
+                'name_asc': 'name',
+                'name_desc': '-name',
+                'date_created_asc': 'createdat',
+                'date_created_desc': '-createdat',
+                'price_asc': 'price',
+                'price_desc': '-price'
+            }
 
-        sorting_field = sorting_mapping[sorting_option]
+            sorting_field = sorting_mapping[sorting_option]
 
-        # Retrieve and sort the products based on the selected sorting option
-        products = Product.objects.all().order_by(sorting_field)
+            # Retrieve and sort the products based on the selected sorting option
+            products = Product.objects.all().order_by(sorting_field)
 
-        # Serialize the sorted products
-        serializer = ProductSerializer(products, many=True)
+            # Serialize the sorted products
+            serializer = ProductSerializer(products, many=True)
 
-        # Construct the final response
-        response_data = {
-            'status': 200,
-            'success' : True,
-            'message': 'Carts added',
-            'data': serializer.data
-        }
+            # Construct the final response
+            response_data = {
+                'status': status.HTTP_200_OK,
+                'success': True,
+                'message': 'Products successfully sorted',
+                'data': serializer.data
+            }
 
-        return Response(response_data)
+            return Response(response_data, status=status.HTTP_200_OK)
+
+        except KeyError:
+            response_data = {
+                'status': status.HTTP_400_BAD_REQUEST,
+                'success': False,
+                'message': 'Bad Request',
+                'data': {'error': 'Invalid sorting option'}
+            }
+            
+            return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
+        
+        except Exception as e:
+            response_data = {
+                'status': status.HTTP_500_INTERNAL_SERVER_ERROR,
+                'success': False,
+                'message': str(e),
+                'data': {'error': 'An unexpected error occurred'}
+            }
+            
+            return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
