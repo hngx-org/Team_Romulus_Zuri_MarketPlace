@@ -36,14 +36,12 @@ class RatingFilter:
     
 class HighestPriceFilter:
     def filter(self, queryset, highest_price: str):
-        if highest_price:
-            if highest_price == 'true':
-                # Implement logic to order by highest price
-                return queryset.order_by('-price')
-            else:
-                # Implement logic to order by lowest price
-                return queryset.order_by('price')
-        return queryset
+        if highest_price == 'true':
+            return queryset.order_by('-price')
+        elif highest_price == 'false':
+            return queryset.order_by('price')
+        else:
+            return queryset
     
 # Custom Exceptions: Define custom exception classes for different error scenarios.
 class InvalidFilterParams(Exception):
