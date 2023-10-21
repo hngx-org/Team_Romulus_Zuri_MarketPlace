@@ -85,21 +85,28 @@ class SimilarProductRecommendationView(APIView):
                 "status": "error",
             }
             return Response(response_data, status=status.HTTP_404_NOT_FOUND)
+        try:
+            similar_products = Product.objects.filter(category=current_product.category).exclude(id=product_id)
 
-        similar_products = Product.objects.filter(category=current_product.category).exclude(id=product_id)
+            recommended_products = similar_products[:4]
 
-        recommended_products = similar_products[:4]
+            serializer = ProductSerializer(recommended_products, many=True)
 
-        serializer = ProductSerializer(recommended_products, many=True)
+            response_data = {
+                "status_code": 200,
+                "message": "Here are similar products",
+                "data": {
+                    "similar_products": serializer.data,
+                },
+                "status": "success",
+            }
 
-        response_data = {
-            "status_code": 200,
-            "message": "Here are similar products",
-            "data": {
-                "similar_products": serializer.data,
-            },
-            "status": "success",
-        }
+            return Response(response_data, status=status.HTTP_200_OK)
 
-        return Response(response_data, status=status.HTTP_200_OK)
-    
+        except Exception as e:
+            response_data = {
+                "status_code": 500,
+                "message": f"An error occurred while retrieving similar product recommendations: {str(e)}",
+                "status": "error",
+            }
+            return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
