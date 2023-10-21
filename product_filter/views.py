@@ -16,33 +16,23 @@ class KeywordFilter:
 
 class CategoryFilter:
     def filter(self, queryset, category):
-        if category:
-            return queryset.filter(category__name=category)
-        return queryset
+        return queryset.filter(category__name=category) if category else queryset
 
 class SubCategoryFilter:
     def filter(self, queryset, sub_category):
-        if sub_category:
-            return queryset.filter(category__productsubcategory__name=sub_category)
-        return queryset
+        return queryset.filter(category__productsubcategory__name=sub_category) if sub_category else queryset
     
 class DiscountFilter:
     def filter(self, queryset, discount):
-        if discount:
-            return queryset.filter(discount_price=discount)
-        return queryset
+        return queryset.filter(discount_price=discount) if discount else queryset
     
 class PriceFilter:
     def filter(self, queryset, min_price, max_price):
-        if min_price and max_price:
-            return queryset.filter(Q(price__gte=min_price) & Q(price__lte=max_price))
-        return queryset
+        return queryset.filter(Q(price__gte=min_price) & Q(price__lte=max_price)) if min_price and max_price else queryset
 
 class RatingFilter:
     def filter(self, queryset, rating):
-        if rating:
-            return queryset.filter(rating_id__rating__gte=rating)
-        return queryset
+        return queryset.filter(rating_id__rating__gte=rating) if rating else queryset
     
 class HighestPriceFilter:
     def filter(self, queryset, highest_price):
