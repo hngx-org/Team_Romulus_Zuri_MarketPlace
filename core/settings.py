@@ -106,22 +106,41 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASE_ROUTERS = ['core.db_routers.DefaultRouter', 'core.db_routers.PrimaryRouter']
 
+# DATABASES = {
+#          'primary': {
+#              'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#              'NAME': os.environ.get('DB_NAME'),
+#              'HOST': os.environ.get('DB_HOST'),
+#              'PORT': os.environ.get('DB_PORT'),
+#              'USER': os.environ.get('DB_USER'),
+#              'PASSWORD': os.environ.get('DB_PASSWORD'),
+#          },
+#          'default': {
+#              'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#              'NAME': os.environ.get('DB_NAME'),
+#              'HOST': os.environ.get('DB_HOST'),
+#              'PORT': os.environ.get('DB_PORT'),
+#              'USER': os.environ.get('DB_USER'),
+#              'PASSWORD': os.environ.get('DB_PASSWORD'),
+#              }
+# }
+
 DATABASES = {
          'primary': {
              'ENGINE': 'django.db.backends.postgresql_psycopg2',
-             'NAME': os.environ.get('DB_NAME'),
-             'HOST': os.environ.get('DB_HOST'),
-             'PORT': os.environ.get('DB_PORT'),
-             'USER': os.environ.get('DB_USER'),
-             'PASSWORD': os.environ.get('DB_PASSWORD'),
+             'NAME': 'hngxdev',
+             'HOST': '104.248.143.148',
+             'PORT': 5432,
+             'USER': 'hngx',
+             'PASSWORD': 'hngx#dev',
          },
          'default': {
              'ENGINE': 'django.db.backends.postgresql_psycopg2',
-             'NAME': os.environ.get('DB_NAME'),
-             'HOST': os.environ.get('DB_HOST'),
-             'PORT': os.environ.get('DB_PORT'),
-             'USER': os.environ.get('DB_USER'),
-             'PASSWORD': os.environ.get('DB_PASSWORD'),
+             'NAME': 'railway',
+             'HOST': 'containers-us-west-179.railway.app',
+             'PORT': 6985,
+             'USER': 'postgres',
+             'PASSWORD': '6ohmepstiEAAfsHRtc1E',
              }
 }
 
@@ -214,3 +233,4 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_ALL_ORIGINS = True
+
