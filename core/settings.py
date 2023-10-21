@@ -14,7 +14,6 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
 
 
 load_dotenv()
