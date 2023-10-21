@@ -32,6 +32,7 @@ schema_view = get_schema_view(
         permission_classes=(permissions.AllowAny,),
 )
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/marketplace/', include('recently_viewed.urls')),
@@ -51,5 +52,6 @@ urlpatterns = [
     path('api/marketplace/', include('product_category.urls')),
     path('api/marketplace/', include('delete_wishlist.urls')),
     path('api/marketplace/', include('product_view.urls')),
+
 
 ]

@@ -123,7 +123,7 @@ DATABASES = {
              'USER': os.environ.get('DB_USER'),
              'PASSWORD': os.environ.get('DB_PASSWORD'),
              }
-}
+ }
 
 '''
         "default": {
@@ -209,6 +209,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Add your frontend origin here
 ]
+
 
 # Allow cookies to be sent with the request
 CORS_ALLOW_CREDENTIALS = True
