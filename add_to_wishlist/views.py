@@ -49,7 +49,7 @@ class WishlistCreateView(views.APIView):
         })
     def post(self, request):
         """
-        Display user wishlist
+        Display the user wishlist
         """
 
         if not request.data.get("product_id"):
