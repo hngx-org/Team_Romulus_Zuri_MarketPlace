@@ -9,13 +9,13 @@ from rest_framework.pagination import PageNumberPagination
 
 # Custom Filters: Custom filtering classes.
 class KeywordFilter:
-    def filter(self, queryset, keywords):
+    def filter(self, queryset, keywords: str):
         if keywords:
             return queryset.filter(Q(name__icontains=keywords) | Q(description__icontains=keywords) | Q(category__name__icontains=keywords))
         return queryset
 
 class CategoryFilter:
-    def filter(self, queryset, category):
+    def filter(self, queryset, category: str):
         return queryset.filter(category__name=category) if category else queryset
 
 class SubCategoryFilter:
@@ -23,19 +23,19 @@ class SubCategoryFilter:
         return queryset.filter(category__productsubcategory__name=sub_category) if sub_category else queryset
     
 class DiscountFilter:
-    def filter(self, queryset, discount):
+    def filter(self, queryset, discount: float):
         return queryset.filter(discount_price=discount) if discount else queryset
     
 class PriceFilter:
-    def filter(self, queryset, min_price, max_price):
+    def filter(self, queryset, min_price: str, max_price: str):
         return queryset.filter(Q(price__gte=min_price) & Q(price__lte=max_price)) if min_price and max_price else queryset
 
 class RatingFilter:
-    def filter(self, queryset, rating):
+    def filter(self, queryset, rating: int):
         return queryset.filter(rating_id__rating__gte=rating) if rating else queryset
     
 class HighestPriceFilter:
-    def filter(self, queryset, highest_price):
+    def filter(self, queryset, highest_price: str):
         if highest_price:
             if highest_price == 'true':
                 # Implement logic to order by highest price
