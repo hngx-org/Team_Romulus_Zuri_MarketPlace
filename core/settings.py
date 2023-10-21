@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
-import sentry_sdk
+# import sentry_sdk
 
 
 load_dotenv()
