@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.http import Http404
 from rest_framework.pagination import PageNumberPagination
 
+# Custom Filters: Custom filtering classes.
 class KeywordFilter:
     def filter(self, queryset, keywords):
         if keywords:
@@ -53,6 +54,12 @@ class HighestPriceFilter:
                 # Implement logic to order by lowest price
                 return queryset.order_by('price')
         return queryset
+    
+# Custom Exceptions: Define custom exception classes for different error scenarios.
+class InvalidFilterParams(Exception):
+    def __init__(self, message="Invalid filter parameters"):
+        self.message = message
+        super().__init__(self.message)
     
 # Create your views here.
 class FilterProductView(APIView):
@@ -129,7 +136,15 @@ class FilterProductView(APIView):
                 }
             }
             return Response(response_data, status=status.HTTP_200_OK)
-        
+        except InvalidFilterParams as e:
+            response_data = {
+                "success": False,
+                "status": 400,
+                "error": str(e),
+                "message": None,
+                "data": None
+            }
+            return Response(response_data, status=status.HTTP_400_BAD_REQUEST)               
         except Http404:
             response_data = {
                 "success": False,
