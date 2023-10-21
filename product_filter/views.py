@@ -11,8 +11,8 @@ from rest_framework.pagination import PageNumberPagination
 # Create your views here.
 class FilterProductView(APIView):
 
-    pagination_class = PageNumberPagination
-    page_size = 10
+    # pagination_class = PageNumberPagination
+    # page_size = 10
     
     def get(self, request):
         """
@@ -71,8 +71,13 @@ class FilterProductView(APIView):
                     "data": {"products": []}
                 }
                 return Response(response_data, status=status.HTTP_200_OK)
+            
+            paginator = PageNumberPagination()
+            paginator.page_size = 10
 
-            serializer = AllProductSerializer(products, many=True)
+            result_page = paginator.paginate_queryset(products, request)
+
+            serializer = AllProductSerializer(result_page, many=True)
 
             response_data = {
                 "success": True,
@@ -82,13 +87,13 @@ class FilterProductView(APIView):
                 "data": {
                     "products": serializer.data,
                     "page_info": {
-                        "count": self.page.paginator.count,
-                        "next": self.get_next_link(),
-                        "previous": self.get_previous_link(),
+                        "count": paginator.page.paginator.count,
+                        "next": paginator.get_next_link(),
+                        "previous": paginator.get_previous_link(),
                     }
                 }
             }
-            return self.get_paginated_response(response_data, status=status.HTTP_200_OK)
+            return Response(response_data, status=status.HTTP_200_OK)
         
         except Http404:
             response_data = {

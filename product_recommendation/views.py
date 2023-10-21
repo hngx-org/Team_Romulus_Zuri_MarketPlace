@@ -15,6 +15,7 @@ from MarketPlace.models import Product, ProductImage, User
 # from .serializers import ProductImageSerializer, UserSerializer, ProductSerializer
 from all_products.serializers import AllProductSerializer as ProductSerializer
 
+
 class ProductRecommendationView(APIView):
     def get(self, request):
         """
@@ -54,12 +55,30 @@ class ProductRecommendationView(APIView):
             # Serialize the recommended products
             product_serializer = ProductSerializer(recommended_products, many=True)
 
-            response_data = {
-                'status': 200,
-                'success': True,
-                'message': 'Recommended products',
-                'data': product_serializer.data
-            }
+            # Check if the data is valid
+            if product_serializer.is_valid():
+                # Access the validated data
+                serialized_data = product_serializer.validated_data
+                response_data = {
+                    'status': 200,
+                    'success': True,
+                    'message': 'Recommended products',
+                    'data': serialized_data  # Use the validated data
+                }
+            else:
+                # Handle validation errors
+                response_data = {
+                    'status': 400,
+                    'success': False,
+                    'errors': product_serializer.errors
+                }
+
+            # response_data = {
+            #     'status': 200,
+            #     'success': True,
+            #     'message': 'Recommended products',
+            #     'data': product_serializer.data
+            # }
             
             # Add product images and user information to each product in the response
             # for product_data in product_serializer.data:
