@@ -2,14 +2,14 @@
 # from django.views import View
 # from MarketPlace.models import Wishlist
 # from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-# from django.core.exceptions import ObjectDoesNotExist 
+# from django.core.exceptions import ObjectDoesNotExist
 
 # class WishlistProductsView(View):
 #     def get(self, request, user_id):
 #         try:
 #             # Get all wishlist items for the user
 #             wishlist_items = Wishlist.objects.filter(user_id=user_id).order_by('-createdat')
-            
+        
 #             items_per_page = 5
 
 #             # Initialize Paginator with the wishlist_items and items_per_page
