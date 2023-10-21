@@ -54,16 +54,14 @@ class ProductRecommendationView(APIView):
         highest_rated_products = self.get_products_by_highest_rating()
         lowest_tax_products = self.get_products_by_lowest_tax()
 
-        recommended_products = list(
+        return list(
             set(
-                highest_quantity_products |
-                highest_discount_products |
-                highest_rated_products |
-                lowest_tax_products
+                highest_quantity_products
+                | highest_discount_products
+                | highest_rated_products
+                | lowest_tax_products
             )
         )[:20]
-
-        return recommended_products
 
     def get_products_by_highest_quantity(self):
         return Product.objects.filter(
