@@ -21,7 +21,7 @@ class ProductListByCategoryView(APIView):
         
         try:
             product_category = ProductCategory.objects.get(name=category)
-            products = Product.objects.filter(category=product_category, is_deleted='active', admin_status='approved')
+            products = Product.objects.filter(category=product_category, is_deleted='active', admin_status='approved', shop__restricted='no')
 
             if not products.exists():
                 return Response({"status": 200, "success": True, "data": [],

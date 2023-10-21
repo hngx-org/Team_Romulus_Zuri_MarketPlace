@@ -3,5 +3,5 @@ from .views import WishlistCreateView
 
 
 urlpatterns = [
-    path('wishlist/', WishlistCreateView.as_view(), name='wishlist-create')
+    path('user-wishlist/', WishlistCreateView.as_view(), name='wishlist-create')
 ]

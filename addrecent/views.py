@@ -84,6 +84,7 @@ class GetProductItem(generics.RetrieveAPIView):
         product_id = kwargs.get('id')
         guest = request.query_params.get('guest')
         
+        #this means product is not active, return
         if instance.is_deleted != 'active':
             return Response({
                 'message': 'This product is not available',
@@ -92,6 +93,7 @@ class GetProductItem(generics.RetrieveAPIView):
                 'data': {}
                 }, status= status.HTTP_503_SERVICE_UNAVAILABLE)
         
+        #this means product is not approved, return
         if instance.admin_status != 'approved':
             return Response({
                 'message': 'This product is pending approval',
@@ -100,6 +102,7 @@ class GetProductItem(generics.RetrieveAPIView):
                 'data': {}
                 }, status= status.HTTP_503_SERVICE_UNAVAILABLE)
         
+        #this means shop is restricted, return
         if instance.shop.restricted != 'no':
            return Response({
                 'message': 'Shop is under restriction',
@@ -124,8 +127,6 @@ class GetProductItem(generics.RetrieveAPIView):
                 'data': response_data.data
             }
         return Response(response_body, status= status.HTTP_200_OK)
-
-  
 
 
 def addRecentlyViewed(user_id, product_id):
@@ -199,8 +200,4 @@ def addRecentlyViewed(user_id, product_id):
         }
         return Response(response_body, status=status.HTTP_400_BAD_REQUEST)
 
-    
-
-
-    
     

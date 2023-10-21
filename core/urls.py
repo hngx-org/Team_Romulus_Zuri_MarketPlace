@@ -33,12 +33,8 @@ schema_view = get_schema_view(
 )
 
 
-def trigger_error(request):
-    division_by_zero = 1 / 0
-
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('sentry-debug/', trigger_error),
     path('api/marketplace/v1/', include('recently_viewed.urls')),
     path('api/marketplace/v1/', include('all_products.urls')),
     path('api/marketplace/v1/', include('ProductSubCategory.urls')),
@@ -59,5 +55,6 @@ urlpatterns = [
     path('api/marketplace/v1/', include('product_category.urls')),
     path('api/marketplace/v1/', include('delete_wishlist.urls')),
     path('api/marketplace/v1/', include('product_view.urls')),
+
 
 ]
