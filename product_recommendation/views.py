@@ -88,7 +88,8 @@ class SimilarProductRecommendationView(APIView):
 
         similar_products = Product.objects.filter(
             category=current_product.category,
-            shop__is_deleted=False
+            shop__is_deleted=False,
+            shop__is_active=True
         ).exclude(id=product_id)
 
         recommended_products = similar_products[:4]
