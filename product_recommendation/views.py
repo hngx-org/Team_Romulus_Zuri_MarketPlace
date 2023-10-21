@@ -56,40 +56,22 @@ class ProductRecommendationView(APIView):
             product_serializer = ProductSerializer(recommended_products, many=True)
 
             # Check if the data is valid
-            if product_serializer.is_valid():
-                # Access the validated data
-                serialized_data = product_serializer.validated_data
-                response_data = {
-                    'status': 200,
-                    'success': True,
-                    'message': 'Recommended products',
-                    'data': serialized_data  # Use the validated data
-                }
-            else:
+            if not product_serializer.is_valid():
                 # Handle validation errors
                 response_data = {
                     'status': 400,
                     'success': False,
                     'errors': product_serializer.errors
                 }
-
-            # response_data = {
-            #     'status': 200,
-            #     'success': True,
-            #     'message': 'Recommended products',
-            #     'data': product_serializer.data
-            # }
-            
-            # Add product images and user information to each product in the response
-            # for product_data in product_serializer.data:
-            #     product_id = product_data['id']
-            #     product = Product.objects.get(id=product_id)
-            #     product_images = ProductImage.objects.filter(product=product)
-            #     user = User.objects.get(id=product.user_id)
-
-            #     product_data['product_images'] = ProductImageSerializer(product_images, many=True).data
-            #     product_data['user'] = UserSerializer(user).data
-
+                return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
+            # Access the validated data
+            serialized_data = product_serializer.validated_data
+            response_data = {
+                'status': 200,
+                'success': True,
+                'message': 'Recommended products',
+                'data': serialized_data  # Use the validated data
+            }
             return Response(response_data, status=status.HTTP_200_OK)
 
         except Exception as e:
