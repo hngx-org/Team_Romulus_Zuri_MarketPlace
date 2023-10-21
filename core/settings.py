@@ -126,7 +126,9 @@ DATABASES = {
              'USER': os.environ.get('DB_USER'),
              'PASSWORD': os.environ.get('DB_PASSWORD'),
              }
- }
+}
+
+
 
 '''
         "default": {
@@ -232,5 +234,3 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_ALL_ORIGINS = True
-
-
