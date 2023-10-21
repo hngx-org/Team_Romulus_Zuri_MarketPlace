@@ -16,7 +16,7 @@ class WishlistProductsView(ListAPIView):
         List Wishlist
         """
         try:
-            queryset = Wishlist.objects.filter(user_id=user_id, product__id_is_deleted="active")
+            queryset = Wishlist.objects.filter(user_id=user_id, product__is_deleted="active")
             if not queryset.exists():
                 response = {
                     "message": "Wishlist is empty",
