@@ -27,7 +27,6 @@ class ProductRecommendationView(APIView):
         operation_description="This endpoint returns a list of recommended products based on various criteria such as highest quantity, highest discount, highest rating, and lowest tax. The response includes product details.",
     )
     
-
     def get(self, request):
         try:
             recommended_products = self.get_recommended_products()
