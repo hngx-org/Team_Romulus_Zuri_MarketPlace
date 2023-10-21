@@ -3,8 +3,7 @@ from .views import WishlistProductsView
 
 
 urlpatterns = [
-    path('user-wishlist/<int:user_id>/', WishlistProductsView.as_view(),
-         name='get_user_wishlist')
+    path('user-wishlist/<uuid:user_id>/', WishlistProductsView.as_view(), name='get_user_wishlist')
 
 
 ]
