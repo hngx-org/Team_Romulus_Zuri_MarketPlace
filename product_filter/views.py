@@ -7,7 +7,53 @@ from django.db.models import Q
 from django.http import Http404
 from rest_framework.pagination import PageNumberPagination
 
+class KeywordFilter:
+    def filter(self, queryset, keywords):
+        if keywords:
+            return queryset.filter(Q(name__icontains=keywords) | Q(description__icontains=keywords) | Q(category__name__icontains=keywords))
+        return queryset
 
+class CategoryFilter:
+    def filter(self, queryset, category):
+        if category:
+            return queryset.filter(category__name=category)
+        return queryset
+
+class SubCategoryFilter:
+    def filter(self, queryset, sub_category):
+        if sub_category:
+            return queryset.filter(category__productsubcategory__name=sub_category)
+        return queryset
+    
+class DiscountFilter:
+    def filter(self, queryset, discount):
+        if discount:
+            return queryset.filter(discount_price=discount)
+        return queryset
+    
+class PriceFilter:
+    def filter(self, queryset, min_price, max_price):
+        if min_price and max_price:
+            return queryset.filter(Q(price__gte=min_price) & Q(price__lte=max_price))
+        return queryset
+
+class RatingFilter:
+    def filter(self, queryset, rating):
+        if rating:
+            return queryset.filter(rating_id__rating__gte=rating)
+        return queryset
+    
+class HighestPriceFilter:
+    def filter(self, queryset, highest_price):
+        if highest_price:
+            if highest_price == 'true':
+                # Implement logic to order by highest price
+                return queryset.order_by('-price')
+            else:
+                # Implement logic to order by lowest price
+                return queryset.order_by('price')
+        return queryset
+    
 # Create your views here.
 class FilterProductView(APIView):
 
@@ -18,7 +64,17 @@ class FilterProductView(APIView):
         """
         Filter products by category, sub category, discount, keywords, rating, price, and highest price.
         """
+        keyword_filter = KeywordFilter()
+        category_filter = CategoryFilter()
+        sub_category_filter = SubCategoryFilter()
+        discount_filter = DiscountFilter()
+        price_filter = PriceFilter()
+        rating_filter = RatingFilter()
+        highest_price_filter = HighestPriceFilter()
+
         try:
+            products = Product.objects.all()
+
             # Parameters from request
             category = self.request.query_params.get("category")
             sub_category = self.request.query_params.get("sub_category")
@@ -28,39 +84,18 @@ class FilterProductView(APIView):
             price = self.request.query_params.get("price")
             highest_price = self.request.query_params.get('highest_price')
 
-            products = Product.objects.all()
-
-            if discount:
-                products = products.filter(discount_price=discount)
-
-            if category:
-                products = products.filter(category__name=category)
-
-            if sub_category:
-                products = products.filter(
-                    category__productsubcategory__name=sub_category
-                )
-
-            if keywords:
-                products = products.filter(
-                    Q(name__icontains=keywords) | Q(description__icontains=keywords) |
-                    Q(category__name__icontains=keywords)
-                )
-
-            if rating:
-                products = products.filter(rating_id__rating__gte=rating)
+       
+            products = keyword_filter.filter(products, keywords)  
+            products = category_filter.filter(products, category)
+            products = sub_category_filter.filter(products, sub_category)   
+            products = discount_filter.filter(products, discount)
+            products = rating_filter.filter(products, rating)
 
             if price:
                 min_price, max_price = price.split(",")
-                products = products.filter(
-                    Q(price__gte=min_price) & Q(price__lte=max_price)
-                )
+                products = price_filter.filter(products, min_price, max_price)
 
-            if highest_price:
-                if highest_price == 'true':
-                    products = products.order_by('-price')
-                else:
-                    products = products.order_by('price')
+            products = highest_price_filter.filter(products, highest_price)
 
             if not products:
                 response_data = {
