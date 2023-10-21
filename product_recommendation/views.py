@@ -86,7 +86,9 @@ class SimilarProductRecommendationView(APIView):
             }
             return Response(response_data, status=status.HTTP_404_NOT_FOUND)
 
-        similar_products = Product.objects.filter(category=current_product.category).exclude(id=product_id)
+        similar_products = Product.objects.filter(
+            category=current_product.category, admin_status='approved',
+        ).exclude(id=product_id)
 
         recommended_products = similar_products[:4]
 
