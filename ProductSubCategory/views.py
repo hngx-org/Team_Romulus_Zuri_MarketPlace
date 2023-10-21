@@ -72,7 +72,7 @@ class GetProductsSubCategory(APIView):
                     "status": 500,
                     "success": False,
                     "message": e
-                    })
+                    }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             try:
                 ProductSubCategory.objects.filter(name=subcategory, parent_category=category_obj)
@@ -83,13 +83,13 @@ class GetProductsSubCategory(APIView):
                     "status": 404,
                     "success": False,
                     "message": f'There is no sub category named {subcategory} under {category}'
-                    }, status=status.HTTP_404_OT_FOUND)
+                    }, status=status.HTTP_404_NOT_FOUND)
             except Exception as e:
                 return Response({
                     "status": 500,
                     "success": False,
                     "message": e
-                    })
+                    }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
