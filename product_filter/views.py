@@ -62,14 +62,38 @@ class InvalidFilterParams(Exception):
         super().__init__(self.message)
     
 # Create your views here.
-class FilterProductView(APIView):
-
-    # pagination_class = PageNumberPagination
-    # page_size = 10
-    
+class FilterProductView(APIView): 
     def get(self, request):
         """
         Filter products by category, sub category, discount, keywords, rating, price, and highest price.
+
+        Query Parameters:
+        - category: (string), sub_category: (string), discount: (float), keywords: (string), rating: (int),
+        price: (string) price range (e.g., "min_price,max_price"), highest_price: (string)
+
+        Errors:
+        - 400 Bad Request: If the request contains invalid filter parameters.
+        - 404 Not Found: If there are no matching products.
+        - 500 Internal Server Error: For any other unexpected errors.
+
+        Example Request:
+        GET /api/marketplace/products-filter/?category=Electronics&discount=1000.00&keywords=laptop
+
+        Example Response:
+        {
+            "success": true,
+            "status": 200,
+            "error": null,
+            "message": "Filtered Products",
+            "data": {
+                "products": [...],  # List of product objects
+                "page_info": {
+                    "count": 42,
+                    "next": "/api/marketplace/products-filter/?page=2",
+                    "previous": null
+                }
+            }
+        }
         """
         keyword_filter = KeywordFilter()
         category_filter = CategoryFilter()
