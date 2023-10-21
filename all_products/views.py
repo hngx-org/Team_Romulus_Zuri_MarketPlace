@@ -4,19 +4,18 @@ from .serializers import AllProductSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
-from .utils import is_deleted_active
 
 
 class ProductListAPIView(ListAPIView):
 	"""
 	List All Products
 	"""
+	queryset = Product.objects.all().order_by('-updatedat')
 	serializer_class = AllProductSerializer
 	permission_classes = [AllowAny]
 
 	def list(self, request):
-		queryset = Product.objects.all().order_by('-updatedat')
-		queryset_ida = is_deleted_active(queryset)
+		queryset = self.get_queryset()
 		response = {
 			'success': True,
 			'status': 200,
