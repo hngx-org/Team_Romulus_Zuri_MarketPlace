@@ -67,7 +67,7 @@ The API should now be running locally at [http://localhost:8000/](http://localho
 ## Branches
 
 - **dev** -> pr this branch for everything `backend` related
-- **main** -> **dont touch** this branch, this is what is running in production.
+- **main** -> **dont touch** this branch, this is what is running in production!
 
 ## Contributions
 
