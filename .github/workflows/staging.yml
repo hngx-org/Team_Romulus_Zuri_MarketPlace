@@ -44,7 +44,16 @@ jobs:
           flake8 .
       - name: Run migrations
         run: |
-          python manage.py migrate
+          python manage.py migrate &
+
+      # Add a sleep command to give the server some time to start before stopping it
+      - name: Wait for the app to start
+        run: sleep 10s
+
+      # Use pkill to stop the Django server process
+      - name: Stop the app
+        run: pkill -f "python manage.py runserver"
+
       - name: Run the app
         run: |
           python manage.py runserver
