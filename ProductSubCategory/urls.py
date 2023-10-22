@@ -2,8 +2,8 @@ from django.urls import path
 from .views import GetImages, catProducts, GetProductsSubCategory
 from . import error_handlers
 
-handler404 = 'ProductSubCategory.error_handlers.handle_404'
-handler500 = 'ProductSubCategory.error_handlers.handle_500'
+# handler404 = 'ProductSubCategory.error_handlers.handle_404'
+# handler500 = 'ProductSubCategory.error_handlers.handle_500'
 
 
 urlpatterns = [
