@@ -1,8 +1,3 @@
-from django.shortcuts import render
-
-
-# Create your views here.
-
 from django.db.models import F
 from django.db.models import FloatField
 from django.db.models import Min
@@ -14,93 +9,83 @@ from rest_framework import status
 from MarketPlace.models import Product, ProductImage, User
 # from .serializers import ProductImageSerializer, UserSerializer, ProductSerializer
 from all_products.serializers import AllProductSerializer as ProductSerializer
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 
 
 class ProductRecommendationView(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[],
+        responses={
+            200: openapi.Response(
+                description="Recommended products",
+            ),
+            400: "Bad Request",
+            500: "Internal Server Error",
+        },
+        operation_summary="Get a list of recommended products",
+        operation_description="This endpoint returns a list of recommended products based on various criteria such as highest quantity, highest discount, highest rating, and lowest tax. The response includes product details.",
+    )
+    
+    
     def get(self, request):
-        """
-        List recommended products
-        """
         try:
-            # Retrieve products with the highest quantity
-            highest_quantity_products = Product.objects.filter(admin_status='approved', is_deleted='active', shop__restricted='no').order_by('-quantity')[:20]
+            recommended_products = self.get_recommended_products()
+            serialized_data = ProductSerializer(recommended_products, many=True).data
 
-            # Retrieve products with the highest discount price
-            highest_discount_products = Product.objects.filter(admin_status='approved', is_deleted='active', shop__restricted='no').order_by('-discount_price')[:20]
-
-            # Retrieve products with the highest rating
-            highest_rated_products = Product.objects.filter(
-                admin_status='approved', is_deleted='active', shop__restricted='no', rating_id__isnull=False
-            ).annotate(
-                avg_rating=Avg('rating_id__rating', output_field=FloatField())
-            ).order_by('-avg_rating')[:20]
-
-            # Retrieve products with the lowest tax
-            lowest_tax_products = Product.objects.filter(admin_status='approved', is_deleted='active', shop__restricted='no').annotate(
-                lowest_tax=Min('tax')
-            ).filter(
-                tax=F('lowest_tax')
-            )[:20]
-
-            # Combine the recommendations without duplicates
-            recommended_products = list(
-                set(
-                    highest_quantity_products |
-                    highest_discount_products |
-                    highest_rated_products |
-                    lowest_tax_products
-                )
-            )[:20]
-
-            # Serialize the recommended products
-            product_serializer = ProductSerializer(recommended_products, many=True)
-
-            # Check if the data is valid
-            if product_serializer.is_valid():
-                # Access the validated data
-                serialized_data = product_serializer.validated_data
-                response_data = {
-                    'status': 200,
-                    'success': True,
-                    'message': 'Recommended products',
-                    'data': serialized_data  # Use the validated data
-                }
-            else:
-                # Handle validation errors
-                response_data = {
-                    'status': 400,
-                    'success': False,
-                    'errors': product_serializer.errors
-                }
-
-            # response_data = {
-            #     'status': 200,
-            #     'success': True,
-            #     'message': 'Recommended products',
-            #     'data': product_serializer.data
-            # }
-            
-            # Add product images and user information to each product in the response
-            # for product_data in product_serializer.data:
-            #     product_id = product_data['id']
-            #     product = Product.objects.get(id=product_id)
-            #     product_images = ProductImage.objects.filter(product=product)
-            #     user = User.objects.get(id=product.user_id)
-
-            #     product_data['product_images'] = ProductImageSerializer(product_images, many=True).data
-            #     product_data['user'] = UserSerializer(user).data
-
-            return Response(response_data, status=status.HTTP_200_OK)
-
-        except Exception as e:
             response_data = {
+                'status': 200,
+                'success': True,
+                'message': 'Recommended products',
+                'data': serialized_data
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
+        except Exception as e:
+            error_response = {
                 'status': 500,
                 'success': False,
                 'data': [],
                 'error': str(e)
             }
-            return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(error_response, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    def get_recommended_products(self):
+        highest_quantity_products = self.get_products_by_highest_quantity()
+        highest_discount_products = self.get_products_by_highest_discount()
+        highest_rated_products = self.get_products_by_highest_rating()
+        lowest_tax_products = self.get_products_by_lowest_tax()
+
+        recommended_products = list(
+            set(
+                highest_quantity_products |
+                highest_discount_products |
+                highest_rated_products |
+                lowest_tax_products
+            )
+        )[:20]
+
+        return recommended_products
+
+    def get_products_by_highest_quantity(self):
+        return Product.objects.filter(
+            admin_status='approved', is_deleted='active', shop__restricted='no'
+        ).order_by('-quantity')[:20]
+
+    def get_products_by_highest_discount(self):
+        return Product.objects.filter(
+            admin_status='approved', is_deleted='active', shop__restricted='no'
+        ).order_by('-discount_price')[:20]
+
+    def get_products_by_highest_rating(self):
+        return Product.objects.filter(
+            admin_status='approved', is_deleted='active', shop__restricted='no', rating_id__isnull=False
+        ).annotate(avg_rating=Avg('rating_id__rating', output_field=FloatField())).order_by('-avg_rating')[:20]
+
+    def get_products_by_lowest_tax(self):
+        return Product.objects.filter(
+            admin_status='approved', is_deleted='active', shop__restricted='no'
+        ).annotate(lowest_tax=Min('tax')).filter(tax=F('lowest_tax'))[:20]
+    
 
 class SimilarProductRecommendationView(APIView):
 
@@ -119,7 +104,14 @@ class SimilarProductRecommendationView(APIView):
             }
             return Response(response_data, status=status.HTTP_404_NOT_FOUND)
 
-        similar_products = Product.objects.filter(category=current_product.category).exclude(id=product_id)
+        similar_products = Product.objects.filter(
+            category=current_product.category,
+            is_deleted=False,
+            admin_status='approved',  # Filter by admin_status = 'approved'
+            restricted='no',  # Filter by restricted = 'no'
+            shop__is_deleted=False,  # Filter by active shop, assuming 'shop' is a ForeignKey field
+            shop__is_active=True  # Filter by active shop
+        ).exclude(id=product_id)
 
         recommended_products = similar_products[:4]
 
@@ -135,85 +127,4 @@ class SimilarProductRecommendationView(APIView):
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# class ProductRecommendationView(APIView):
-#     def get(self, request):
-#         try:
-#             # Retrieve products with the highest quantity
-#             highest_quantity_products = Product.objects.order_by('-quantity')[:20]
-
-#             # Retrieve products with the highest discount price
-#             highest_discount_products = Product.objects.order_by('-discount_price')[:20]
-
-#             # Retrieve products with the highest rating
-#             highest_rated_products = Product.objects.filter(
-#                 rating_id__isnull=False
-#             ).annotate(
-#                 avg_rating=Avg('rating_id__rating', output_field=FloatField())
-#             ).order_by('-avg_rating')[:20]
-
-#             # Retrieve products with the lowest tax
-#             lowest_tax_products = Product.objects.annotate(
-#                 lowest_tax=Min('tax')
-#             ).filter(
-#                 tax=F('lowest_tax')
-#             )[:20]
-
-#             # Combine the recommendations without duplicates
-#             recommended_products = list(
-#                 set(
-#                     highest_quantity_products |
-#                     highest_discount_products |
-#                     highest_rated_products |
-#                     lowest_tax_products
-#                 )
-#             )[:20]
-
-#             # Serialize the recommended products
-#             product_serializer = ProductSerializer(recommended_products, many=True)
-
-#             response_data = {
-#                 'status': 200,
-#                 'success': True,
-#                 'message': 'Recommended products',
-#                 'data': product_serializer.data
-#             }
-            
-#             # Add product images and user information to each product in the response
-#             # for product_data in product_serializer.data:
-#             #     product_id = product_data['id']
-#             #     product = Product.objects.get(id=product_id)
-#             #     product_images = ProductImage.objects.filter(product=product)
-#             #     user = User.objects.get(id=product.user_id)
-
-#             #     product_data['product_images'] = ProductImageSerializer(product_images, many=True).data
-#             #     product_data['user'] = UserSerializer(user).data
-
-#             return Response(response_data, status=status.HTTP_200_OK)
-
-#         except Exception as e:
-#             response_data = {
-#                 'status': 500,
-#                 'success': False,
-#                 'data': [],
-#                 'error': str(e)
-#             }
-#             return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
