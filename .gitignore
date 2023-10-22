@@ -35,7 +35,7 @@ wheels/
 .installed.cfg
 *.egg
 env
-#.env
+.env
 hngenv
 
 # PyInstaller
