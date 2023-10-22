@@ -28,7 +28,17 @@ jobs:
           pip install -r requirements.txt
       - name: Create .env file
         run: |
-          echo "{{ secrets.ENV }}" >> .env
+          echo "DB_NAME=${{ secrets.ENV_DB_NAME }}" >> .env
+          echo "DB_HOST=${{ secrets.ENV_DB_HOST }}" >> .env
+          echo "DB_PORT=${{ secrets.ENV_DB_PORT }}" >> .env
+          echo "DB_USER=${{ secrets.ENV_DB_USER }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.ENV_DB_PASSWORD }}" >> .env
+          echo "DB_NAME_TWO=${{ secrets.ENV_DB_NAME_TWO }}" >> .env
+          echo "DB_HOST_TWO=${{ secrets.ENV_DB_HOST_TWO }}" >> .env
+          echo "DB_PORT_TWO=${{ secrets.ENV_DB_PORT_TWO }}" >> .env
+          echo "DB_USER_TWO=${{ secrets.ENV_DB_USER_TWO }}" >> .env
+          echo "DB_PASSWORD_TWO=${{ secrets.ENV_DB_PASSWORD_TWO }}" >> .env
+
       - name: Lint with flake8
         run: |
           flake8 .
