@@ -54,4 +54,5 @@ urlpatterns = [
     path('api/marketplace/v1/', include('product_category.urls')),
     path('api/marketplace/v1/', include('delete_wishlist.urls')),
     path('api/marketplace/v1/', include('product_view.urls')),
+    path('api/marketplace/v1/', include('delete_all_wishlist.urls')),
 ]
