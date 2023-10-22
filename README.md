@@ -4,11 +4,9 @@
 
 Zuri MarketPlace API 
 
-Live link is at https://coral-app-8bk8j.ondigitalocean.app/api/
+Live link is at [Live](https://coral-app-8bk8j.ondigitalocean.app/api/marketplace/v1/)
 
-Doc link at [https://coral-app-8bk8j.ondigitalocean.app/docs/](https://coral-app-8bk8j.ondigitalocean.app/docs/)
-
-Markdown docs at [DOCUMENTATION.md](Documentation.md)
+Doc link at [Swagger DOCs](https://coral-app-8bk8j.ondigitalocean.app/api/marketplace/v1/docs/)
 
 ## Installation Instructions
 
@@ -69,7 +67,7 @@ The API should now be running locally at [http://localhost:8000/](http://localho
 ## Branches
 
 - **dev** -> pr this branch for everything `backend` related
-- **main** -> **dont touch** this branch, this is what is running in production.
+- **main** -> **dont touch** this branch, this is what is running in production!
 
 ## Contributions
 
