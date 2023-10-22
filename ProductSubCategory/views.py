@@ -76,7 +76,7 @@ class GetProductsSubCategory(APIView):
 
             try:
                 ProductSubCategory.objects.filter(name=subcategory, parent_category=category_obj)
-                prod = Product.objects.filter(category=category_obj, is_deleted='active')
+                prod = Product.objects.filter(category=category_obj, is_deleted='active', admin_status='approved', is_published=True)
                 
             except ProductSubCategory.DoesNotExist:
                 return Response({
