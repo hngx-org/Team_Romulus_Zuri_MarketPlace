@@ -16,7 +16,7 @@ Pipfile.lock
 
 # Distribution / packaging
 .Python
-env/
+.env/
 build/
 develop-eggs/
 dist/
@@ -34,7 +34,7 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-env
+.env
 .env
 hngenv
 
@@ -98,7 +98,7 @@ celerybeat-schedule
 # virtualenv
 .venv
 venv/
-ENV/
+.env/
 .vscode
 .vscode/
 myenv/
@@ -149,7 +149,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-env/
+.env/
 build/
 develop-eggs/
 dist/
@@ -228,7 +228,7 @@ celerybeat-schedule
 # virtualenv
 .venv
 venv/
-ENV/
+.env/
 .vscode
 .vscode/
 myenv/
