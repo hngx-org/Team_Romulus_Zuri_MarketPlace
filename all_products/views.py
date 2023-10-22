@@ -5,6 +5,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from .utils import is_deleted_active
+from rest_framework.pagination import PageNumberPagination
 
 
 class ProductListAPIView(ListAPIView):
@@ -16,12 +17,20 @@ class ProductListAPIView(ListAPIView):
 
 	def list(self, request):
 		queryset = Product.objects.all().order_by('-updatedat')
-		queryset_ida = is_deleted_active(queryset)
+		queryset = is_deleted_active(queryset)
+		paginator = PageNumberPagination()
+		paginator.page_size = 10
+		result = paginator.paginate_queryset(queryset, request)
 		response = {
 			'success': True,
 			'status': 200,
-			'data': self.get_serializer(queryset, many=True).data,
 			'error': None,
 			'message': 'Sucessfully Fetched All Products',
+			'data': self.get_serializer(result, many=True).data,
+			"page_info": {
+                "count": paginator.page.paginator.count,
+                "next": paginator.get_next_link(),
+                "previous": paginator.get_previous_link(),
+            }
 		}
 		return Response(response, status=status.HTTP_200_OK)
