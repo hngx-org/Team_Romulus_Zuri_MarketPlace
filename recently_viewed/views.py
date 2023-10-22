@@ -43,11 +43,11 @@ class RecentlyViewedProducts(APIView):
             return Response(response, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             response = {
-                "message": "An unexpected error occurred: " + str(e),
+                "message": f"An unexpected error occurred: {str(e)}",
                 "status_code": 500,
                 "data": None,
                 "error": str(e),
-                "success": False
+                "success": False,
             }
             return Response(response, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -94,10 +94,10 @@ class RecentlyViewedProducts(APIView):
             return Response(response, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             response = {
-                "message": "An unexpected error occurred: " + str(e),
+                "message": f"An unexpected error occurred: {str(e)}",
                 "status_code": 500,
                 "data": None,
                 "error": str(e),
-                "success": False
+                "success": False,
             }
             return Response(response, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
