@@ -9,65 +9,81 @@ from rest_framework import status
 from MarketPlace.models import Product, ProductImage, User
 # from .serializers import ProductImageSerializer, UserSerializer, ProductSerializer
 from all_products.serializers import AllProductSerializer as ProductSerializer
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 
 
 class ProductRecommendationView(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[],
+        responses={
+            200: openapi.Response(
+                description="Recommended products",
+            ),
+            400: "Bad Request",
+            500: "Internal Server Error",
+        },
+        operation_summary="Get a list of recommended products",
+        operation_description="This endpoint returns a list of recommended products based on various criteria such as highest quantity, highest discount, highest rating, and lowest tax. The response includes product details.",
+    )
+    
+    
     def get(self, request):
-        """
-        List recommended products
-        """
         try:
-            # Retrieve products with the highest quantity
-            highest_quantity_products = Product.objects.filter(admin_status='approved', is_deleted='active', shop__restricted='no').order_by('-quantity')[:20]
-
-            # Retrieve products with the highest discount price
-            highest_discount_products = Product.objects.filter(admin_status='approved', is_deleted='active', shop__restricted='no').order_by('-discount_price')[:20]
-
-            # Retrieve products with the highest rating
-            highest_rated_products = Product.objects.filter(
-                admin_status='approved', is_deleted='active', shop__restricted='no', rating_id__isnull=False
-            ).annotate(
-                avg_rating=Avg('rating_id__rating', output_field=FloatField())
-            ).order_by('-avg_rating')[:20]
-
-            # Retrieve products with the lowest tax
-            lowest_tax_products = Product.objects.filter(admin_status='approved', is_deleted='active', shop__restricted='no').annotate(
-                lowest_tax=Min('tax')
-            ).filter(
-                tax=F('lowest_tax')
-            )[:20]
-
-            # Combine the recommendations without duplicates
-            recommended_products = list(
-                set(
-                    highest_quantity_products |
-                    highest_discount_products |
-                    highest_rated_products |
-                    lowest_tax_products
-                )
-            )[:20]
-
-            # Serialize the recommended products
-            product_serializer = ProductSerializer(recommended_products, many=True)
+            recommended_products = self.get_recommended_products()
+            serialized_data = ProductSerializer(recommended_products, many=True).data
 
             response_data = {
                 'status': 200,
                 'success': True,
                 'message': 'Recommended products',
-                'data': product_serializer.data
+                'data': serialized_data
             }
-
             return Response(response_data, status=status.HTTP_200_OK)
-
         except Exception as e:
-            response_data = {
+            error_response = {
                 'status': 500,
                 'success': False,
                 'data': [],
                 'error': str(e)
             }
-            return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(error_response, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    def get_recommended_products(self):
+        highest_quantity_products = self.get_products_by_highest_quantity()
+        highest_discount_products = self.get_products_by_highest_discount()
+        highest_rated_products = self.get_products_by_highest_rating()
+        lowest_tax_products = self.get_products_by_lowest_tax()
+
+        return list(
+            set(
+                highest_quantity_products
+                | highest_discount_products
+                | highest_rated_products
+                | lowest_tax_products
+            )
+        )[:20]
+
+    def get_products_by_highest_quantity(self):
+        return Product.objects.filter(
+            admin_status='approved', is_deleted='active', shop__restricted='no'
+        ).order_by('-quantity')[:20]
+
+    def get_products_by_highest_discount(self):
+        return Product.objects.filter(
+            admin_status='approved', is_deleted='active', shop__restricted='no'
+        ).order_by('-discount_price')[:20]
+
+    def get_products_by_highest_rating(self):
+        return Product.objects.filter(
+            admin_status='approved', is_deleted='active', shop__restricted='no', rating_id__isnull=False
+        ).annotate(avg_rating=Avg('rating_id__rating', output_field=FloatField())).order_by('-avg_rating')[:20]
+
+    def get_products_by_lowest_tax(self):
+        return Product.objects.filter(
+            admin_status='approved', is_deleted='active', shop__restricted='no'
+        ).annotate(lowest_tax=Min('tax')).filter(tax=F('lowest_tax'))[:20]
+    
 
 class SimilarProductRecommendationView(APIView):
 
@@ -86,7 +102,14 @@ class SimilarProductRecommendationView(APIView):
             }
             return Response(response_data, status=status.HTTP_404_NOT_FOUND)
 
-        similar_products = Product.objects.filter(category=current_product.category).exclude(id=product_id)
+        similar_products = Product.objects.filter(
+            category=current_product.category,
+            is_deleted='active',
+            admin_status='approved',  # Filter by admin_status = 'approved'
+            # restricted='no',  # Filter by restricted = 'no'
+            # shop__is_deleted=False,  # Filter by active shop, assuming 'shop' is a ForeignKey field
+            # shop__is_active=True  # Filter by active shop
+        ).exclude(id=product_id)
 
         recommended_products = similar_products[:4]
 
