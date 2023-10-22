@@ -126,3 +126,12 @@ class SimilarProductRecommendationView(APIView):
 
         return Response(response_data, status=status.HTTP_200_OK)
     
+class ProductNotFound(Exception):
+    def __init__(self, message="Product not found"):
+        self.message = message
+        super().__init__(self.message)
+
+class RecommendationError(Exception):
+    def __init__(self, message="Error in generating recommendations"):
+        self.message = message
+        super().__init__(self.message)

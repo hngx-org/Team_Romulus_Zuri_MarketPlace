@@ -1,7 +1,4 @@
-from django.shortcuts import render
-from django.http import Http404, JsonResponse
-from rest_framework import viewsets, status
-from rest_framework.decorators import action
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from MarketPlace.models import UserProductInteraction
@@ -15,6 +12,8 @@ class RecentlyViewedProducts(APIView):
         Fetch recently viewed products for a specific user
         """
         try:
+            # Add user_id validation here if necessary
+
             # Fetch recently viewed products for a specific user
             recently_viewed = UserProductInteraction.objects.filter(
                 user=user_id,
@@ -42,12 +41,23 @@ class RecentlyViewedProducts(APIView):
                 "success": False
             }
             return Response(response, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            response = {
+                "message": "An unexpected error occurred: " + str(e),
+                "status_code": 500,
+                "data": None,
+                "error": str(e),
+                "success": False
+            }
+            return Response(response, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
     def delete(self, request, user_id):
         """
         Delete recently viewed products for a specific user
         """
         try:
+            # Add user_id validation here if necessary
+
             # Delete recently viewed products for a specific user
             deleted_count, _ = UserProductInteraction.objects.filter(
                user=user_id,
@@ -82,3 +92,12 @@ class RecentlyViewedProducts(APIView):
                 "success": False
             }
             return Response(response, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            response = {
+                "message": "An unexpected error occurred: " + str(e),
+                "status_code": 500,
+                "data": None,
+                "error": str(e),
+                "success": False
+            }
+            return Response(response, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

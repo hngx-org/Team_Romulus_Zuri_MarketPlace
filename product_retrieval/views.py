@@ -8,10 +8,8 @@ from rest_framework.exceptions import ParseError, ValidationError
 from MarketPlace.models import Product
 from all_products.serializers import AllProductSerializer as ProductSerializer
 
-
 class ProductSearchRateThrottle(UserRateThrottle):
     rate = '50/hour'
-
 
 class ProductSearchView(APIView):
     throttle_classes = [ProductSearchRateThrottle]
@@ -30,8 +28,8 @@ class ProductSearchView(APIView):
             highlighted_description = Replace('description', Value(query), Value(f'<mark>{query}</mark>'))
 
             products = Product.objects.filter(
-                Q(name__icontains=query) | Q(description__icontains=query)
-            ).annotate(
+                Q(name__icontains=query) | Q(description__icontains=query
+            )).annotate(
                 highlighted_name=Concat(Value('<span>'), highlighted_name, Value('</span>'), output_field=CharField()),
                 highlighted_description=Concat(Value('<span>'), highlighted_description, Value('</span>'), output_field=CharField())
             ).order_by('id')
@@ -41,12 +39,8 @@ class ProductSearchView(APIView):
             paginator = Paginator(products, 10)  # 10 items per page
             try:
                 current_page = paginator.page(page)
-            except PageNotAnInteger:
-                # If page is not an integer, deliver first page.
-                current_page = paginator.page(1)
-            except EmptyPage:
-                # If page is out of range, deliver last page of results.
-                current_page = paginator.page(paginator.num_pages)
+            except (PageNotAnInteger, EmptyPage):
+                current_page = paginator.page(1)  # Default to the first page for invalid page numbers
 
             serializer = ProductSerializer(current_page, many=True)
 
@@ -65,7 +59,7 @@ class ProductSearchView(APIView):
 
             return Response(response_data)
 
-        except ValueError as e:
+        except (ValueError, ValidationError) as e:
             raise ValidationError(f"Error processing request: {str(e)}")
         except Exception as e:
             return Response({"status": "error", "message": f"An unexpected error occurred: {str(e)}"}, status=500)
