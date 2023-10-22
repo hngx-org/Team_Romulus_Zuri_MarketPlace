@@ -9,3 +9,6 @@ def admin_approved_shop(queryset):
 
 def shop_not_deleted(queryset):
 	return queryset.filter(shop__is_deleted='active')
+
+def shop_not_restricted(queryset):
+	return queryset.filter(shop__restricted='no')

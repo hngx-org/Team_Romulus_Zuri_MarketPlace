@@ -8,7 +8,8 @@ from .utils import (
 	is_deleted_active,
 	admin_status_approved,
 	admin_approved_shop,
-	shop_not_deleted
+	shop_not_deleted,
+	shop_not_restricted
 )
 from rest_framework.pagination import PageNumberPagination
 
@@ -26,6 +27,7 @@ class ProductListAPIView(ListAPIView):
 		queryset = admin_status_approved(queryset)
 		queryset = admin_approved_shop(queryset)
 		queryset = shop_not_deleted(queryset)
+		queryset = shop_not_restricted(queryset)
 		paginator = PageNumberPagination()
 		paginator.page_size = 10
 		result = paginator.paginate_queryset(queryset, request)
