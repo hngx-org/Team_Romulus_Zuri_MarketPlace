@@ -55,16 +55,14 @@ class ProductRecommendationView(APIView):
         highest_rated_products = self.get_products_by_highest_rating()
         lowest_tax_products = self.get_products_by_lowest_tax()
 
-        recommended_products = list(
+        return list(
             set(
-                highest_quantity_products |
-                highest_discount_products |
-                highest_rated_products |
-                lowest_tax_products
+                highest_quantity_products
+                | highest_discount_products
+                | highest_rated_products
+                | lowest_tax_products
             )
         )[:20]
-
-        return recommended_products
 
     def get_products_by_highest_quantity(self):
         return Product.objects.filter(
@@ -108,7 +106,7 @@ class SimilarProductRecommendationView(APIView):
             category=current_product.category,
             is_deleted=False,
             admin_status='approved',  # Filter by admin_status = 'approved'
-            restricted='no',  # Filter by restricted = 'no'
+            # restricted='no',  # Filter by restricted = 'no'
             shop__is_deleted=False,  # Filter by active shop, assuming 'shop' is a ForeignKey field
             shop__is_active=True  # Filter by active shop
         ).exclude(id=product_id)
