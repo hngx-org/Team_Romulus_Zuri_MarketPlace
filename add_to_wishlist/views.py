@@ -7,9 +7,14 @@ from .serializers import WishlistSerializer
 from django.core.exceptions import ObjectDoesNotExist
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from datetime import datetime
+
 
 
 class WishlistCreateView(views.APIView):
+    """
+    Add product to wishlist
+    """
 
     serializer_class = WishlistSerializer
 
@@ -43,11 +48,14 @@ class WishlistCreateView(views.APIView):
             )),
         })
     def post(self, request):
+        """
+        Display the user wishlist
+        """
 
         if not request.data.get("product_id"):
-            return Response({'message': 'product required in the request data'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'product required in the request data', 'status': status.HTTP_400_BAD_REQUEST, 'success': False}, status=status.HTTP_400_BAD_REQUEST)
         if not request.data.get("user_id"):
-            return Response({'message': 'no wishlist for this user'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'user id required in the request data', 'status': status.HTTP_400_BAD_REQUEST, 'success': False}, status=status.HTTP_400_BAD_REQUEST)
         
 
         product_id = request.data.get("product_id")
@@ -61,17 +69,24 @@ class WishlistCreateView(views.APIView):
 
         try:
             # Retrieve product details
-            Product.objects.get(id=product_id)
+            product = Product.objects.get(id=product_id)
         except ObjectDoesNotExist:
             return Response({"message": "Product not found."}, status=status.HTTP_404_NOT_FOUND)
 
         # Add the product to the user's wishlist
         wishlist_item, created = Wishlist.objects.get_or_create(
-            user_id=user.id, product_id=product_id)  
+            user_id=user.id, product=product)  
+        
+        #set createdat and updated at to current time
+        now = datetime.now()
+        wishlist_item.createdat = now
+        wishlist_item.updatedat = now
+        wishlist_item.save()
+
 
         serializer = self.serializer_class(wishlist_item)
 
         if created:
-            return Response({'message': 'Product added to wishlist', 'wishlist_item': serializer.data}, status=status.HTTP_201_CREATED)
+            return Response({'message': 'Product added to wishlist', 'data': serializer.data, 'status': status.HTTP_201_CREATED, 'success': True}, status=status.HTTP_201_CREATED)
         else:
-            return Response({'message': 'Product already exists in wishlist', 'wishlist_item': serializer.data}, status=status.HTTP_200_OK)
+            return Response({'message': 'Product already exists in wishlist', 'data': serializer.data, 'status': status.HTTP_200_OK, 'success': True}, status=status.HTTP_200_OK)

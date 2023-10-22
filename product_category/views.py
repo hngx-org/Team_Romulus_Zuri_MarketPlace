@@ -12,14 +12,17 @@ from django.core.paginator import Paginator
 
 class ProductListByCategoryView(APIView):
     def get(self, request, category):
+        """
+        List Product by Category
+        """
         # sort_by = request.query_params.get('sort_by', 'name')
-        product_category = ProductCategory.objects.get(name=category)
-        products = Product.objects.filter(category=product_category)
-
         if not isinstance(category, str):
             return Response({"error": "Category name must be a string value"}, status=status.HTTP_400_BAD_REQUEST)
-
+        
         try:
+            product_category = ProductCategory.objects.get(name=category)
+            products = Product.objects.filter(category=product_category, is_deleted='active', admin_status='approved', shop__restricted='no')
+
             if not products.exists():
                 return Response({"status": 200, "success": True, "data": [],
                                  'message': 'The Category exists, but has no products'},
@@ -34,6 +37,5 @@ class ProductListByCategoryView(APIView):
             return Response({"status": 404, "success": False, 'message': 'Category does not exist.'},
                             status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return Response({"status": 500, "success": False, 'error': e, "message": f"An unexpected error occurred: {str(e)}"},
+            return Response({"status": 500, "success": False, 'error': str(e), "message": f"An unexpected error occurred: {str(e)}"},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
