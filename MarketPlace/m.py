@@ -66,24 +66,6 @@ class AssessmentCategory(models.Model):
         db_table = 'assessment_category'
 
 
-class Assessments(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    skill_id = models.BigIntegerField(blank=True, null=True)
-    title = models.TextField(blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
-    start_date = models.DateTimeField(blank=True, null=True)
-    end_date = models.DateTimeField(blank=True, null=True)
-    duration_minutes = models.BigIntegerField(blank=True, null=True)
-    pass_score = models.BigIntegerField(blank=True, null=True)
-    status = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'assessments'
-
-
 class AuthGroup(models.Model):
     name = models.CharField(unique=True, max_length=150)
 
@@ -105,13 +87,13 @@ class AuthGroupPermissions(models.Model):
 
 class AuthPermission(models.Model):
     name = models.CharField(max_length=255)
-    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING)
+    content_type_id = models.IntegerField()
     codename = models.CharField(max_length=100)
 
     class Meta:
         managed = False
         db_table = 'auth_permission'
-        unique_together = (('content_type', 'codename'),)
+        unique_together = (('content_type_id', 'codename'),)
 
 
 class AuthUser(models.Model):
@@ -264,51 +246,6 @@ class Degree(models.Model):
         db_table = 'degree'
 
 
-class DjangoAdminLog(models.Model):
-    action_time = models.DateTimeField()
-    object_id = models.TextField(blank=True, null=True)
-    object_repr = models.CharField(max_length=200)
-    action_flag = models.SmallIntegerField()
-    change_message = models.TextField()
-    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING, blank=True, null=True)
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'django_admin_log'
-
-
-class DjangoContentType(models.Model):
-    app_label = models.CharField(max_length=100)
-    model = models.CharField(max_length=100)
-
-    class Meta:
-        managed = False
-        db_table = 'django_content_type'
-        unique_together = (('app_label', 'model'),)
-
-
-class DjangoMigrations(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    app = models.CharField(max_length=255)
-    name = models.CharField(max_length=255)
-    applied = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'django_migrations'
-
-
-class DjangoSession(models.Model):
-    session_key = models.CharField(primary_key=True, max_length=40)
-    session_data = models.TextField()
-    expire_date = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'django_session'
-
-
 class EducationDetail(models.Model):
     degree = models.ForeignKey(Degree, models.DO_NOTHING, blank=True, null=True)
     field_of_study = models.CharField(blank=True, null=True)
@@ -364,6 +301,14 @@ class InterestDetail(models.Model):
         db_table = 'interest_detail'
 
 
+class Language(models.Model):
+    name = models.TextField()
+
+    class Meta:
+        managed = False
+        db_table = 'language'
+
+
 class LastViewedProduct(models.Model):
     user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
     product = models.ForeignKey('Product', models.DO_NOTHING, blank=True, null=True)
@@ -379,8 +324,8 @@ class MailLog(models.Model):
     message_data = models.TextField(blank=True, null=True)  # This field type is a guess.
     message_type = models.ForeignKey('MailType', models.DO_NOTHING, blank=True, null=True)
     status = models.TextField(blank=True, null=True)  # This field type is a guess.
-    createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
     request_origin = models.CharField(max_length=225, blank=True, null=True)
 
     class Meta:
@@ -394,6 +339,15 @@ class MailType(models.Model):
     class Meta:
         managed = False
         db_table = 'mail_type'
+
+
+class Migrations(models.Model):
+    migration = models.CharField(max_length=255)
+    batch = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'migrations'
 
 
 class NotificationConfirmation(models.Model):
@@ -421,12 +375,12 @@ class NotificationSetting(models.Model):
 class Order(models.Model):
     id = models.UUIDField(primary_key=True)
     customer = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
-    subtotal = models.DecimalField(max_digits=8, decimal_places=2)
     vat = models.DecimalField(db_column='VAT', max_digits=8, decimal_places=2)  # Field name made lowercase.
     discount = models.DecimalField(max_digits=8, decimal_places=2)
     status = models.TextField()  # This field type is a guess.
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -444,6 +398,9 @@ class OrderItem(models.Model):
     promo = models.ForeignKey('Promotion', models.DO_NOTHING, blank=True, null=True)
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
+    deleted_at = models.DateTimeField(blank=True, null=True)
+    is_deleted = models.BooleanField(blank=True, null=True)
+    status = models.TextField(blank=True, null=True)  # This field type is a guess.
 
     class Meta:
         managed = False
@@ -502,9 +459,6 @@ class Product(models.Model):
         managed = False
         db_table = 'product'
 
-    def __str__(self):
-        return self.name
-
 
 class ProductCategory(models.Model):
     user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
@@ -515,8 +469,20 @@ class ProductCategory(models.Model):
         managed = False
         db_table = 'product_category'
 
-    def __str__(self):
-        return self.name
+
+class ProductDigitalAssets(models.Model):
+    id = models.UUIDField(primary_key=True)
+    name = models.CharField(max_length=255, blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
+    link = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+    product = models.OneToOneField(Product, models.DO_NOTHING, blank=True, null=True)
+    type = models.TextField(blank=True, null=True)  # This field type is a guess.
+
+    class Meta:
+        managed = False
+        db_table = 'product_digital_assets'
 
 
 class ProductImage(models.Model):
@@ -560,9 +526,6 @@ class ProductSubCategory(models.Model):
         managed = False
         db_table = 'product_sub_category'
 
-    def __str__(self):
-        return self.name
-
 
 class Project(models.Model):
     title = models.CharField(blank=True, null=True)
@@ -592,6 +555,7 @@ class PromoProduct(models.Model):
     product = models.ForeignKey(Product, models.DO_NOTHING, blank=True, null=True)
     promo = models.ForeignKey('Promotion', models.DO_NOTHING, blank=True, null=True)
     user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
+    createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -626,6 +590,20 @@ class Question(models.Model):
     class Meta:
         managed = False
         db_table = 'question'
+
+
+class ReferenceDetail(models.Model):
+    referer = models.TextField()
+    company = models.TextField()
+    position = models.TextField(blank=True, null=True)
+    email = models.TextField()
+    phone_number = models.TextField(blank=True, null=True)
+    section = models.ForeignKey('Section', models.DO_NOTHING, blank=True, null=True)
+    user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'reference_detail'
 
 
 class Report(models.Model):
@@ -697,10 +675,22 @@ class Section(models.Model):
     name = models.CharField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     meta = models.TextField(blank=True, null=True)
+    position = models.IntegerField(blank=True, null=True)
+    template = models.ForeignKey('Template', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'section'
+
+
+class SelectedCategories(models.Model):
+    sub_category = models.ForeignKey(ProductSubCategory, models.DO_NOTHING, blank=True, null=True)
+    product_category = models.ForeignKey(ProductCategory, models.DO_NOTHING)
+    product = models.ForeignKey(Product, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'selected_categories'
 
 
 class Shop(models.Model):
@@ -719,9 +709,6 @@ class Shop(models.Model):
     class Meta:
         managed = False
         db_table = 'shop'
-
-    def __str__(self):
-        return self.name
 
 
 class ShopLogs(models.Model):
@@ -790,16 +777,43 @@ class SocialUser(models.Model):
 class StoreTraffic(models.Model):
     user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
+    ip_addr = models.TextField(blank=True, null=True)
+    shop_id = models.UUIDField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'store_traffic'
 
 
+class TempUsers(models.Model):
+    id = models.UUIDField(primary_key=True)
+    first_name = models.CharField(max_length=255, blank=True, null=True)
+    last_name = models.CharField(max_length=255, blank=True, null=True)
+    email = models.CharField(max_length=255, blank=True, null=True)
+    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
+    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'temp_users'
+
+
+class Template(models.Model):
+    name = models.CharField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    created_by = models.ForeignKey('User', models.DO_NOTHING, db_column='created_by', blank=True, null=True)
+    is_selected = models.BooleanField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'template'
+
+
 class TrackPromotion(models.Model):
     product = models.ForeignKey(Product, models.DO_NOTHING, blank=True, null=True)
     user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
+    promo = models.ForeignKey(Promotion, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -830,6 +844,23 @@ class Transaction(models.Model):
         db_table = 'transaction'
 
 
+class Transactions(models.Model):
+    id = models.UUIDField(primary_key=True)
+    amount = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    status = models.TextField(blank=True, null=True)  # This field type is a guess.
+    order_id = models.UUIDField(blank=True, null=True)
+    currency = models.CharField(max_length=255, blank=True, null=True)
+    provider_ref = models.CharField(max_length=255, blank=True, null=True)
+    in_app_ref = models.CharField(max_length=255, blank=True, null=True)
+    provider = models.CharField(max_length=255, blank=True, null=True)
+    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
+    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'transactions'
+
+
 class User(models.Model):
     id = models.UUIDField(primary_key=True)
     username = models.CharField(max_length=255)
@@ -847,15 +878,12 @@ class User(models.Model):
     country = models.CharField(max_length=255, blank=True, null=True)
     profile_pic = models.TextField(blank=True, null=True)
     profile_cover_photo = models.TextField(blank=True, null=True)
-    refresh_token = models.CharField(max_length=255)
+    refresh_token = models.CharField(max_length=255, blank=True, null=True)
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
         db_table = 'user'
-
-    def __str__(self):
-        return self.username
 
 
 class UserAnalytics(models.Model):
@@ -883,28 +911,12 @@ class UserAssessment(models.Model):
         db_table = 'user_assessment'
 
 
-class UserAssessments(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    user_id = models.TextField(blank=True, null=True)
-    assessment = models.ForeignKey(Assessments, models.DO_NOTHING, blank=True, null=True)
-    score = models.BigIntegerField(blank=True, null=True)
-    time_spent = models.BigIntegerField(blank=True, null=True)
-    submission_date = models.DateTimeField(blank=True, null=True)
-    status = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'user_assessments'
-
-
 class UserBadge(models.Model):
-    assessment = models.ForeignKey(Assessment, models.DO_NOTHING, blank=True, null=True)
     user = models.ForeignKey(User, models.DO_NOTHING, blank=True, null=True)
     badge = models.ForeignKey(SkillBadge, models.DO_NOTHING, blank=True, null=True)
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
+    user_assessment = models.ForeignKey(UserAssessment, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
