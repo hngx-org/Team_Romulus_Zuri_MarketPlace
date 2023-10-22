@@ -232,6 +232,7 @@ class CustomField(models.Model):
 class CustomUserSection(models.Model):
     user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
     section = models.ForeignKey('Section', models.DO_NOTHING, blank=True, null=True)
+    title = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -244,6 +245,28 @@ class Degree(models.Model):
     class Meta:
         managed = False
         db_table = 'degree'
+
+
+class DjangoContentType(models.Model):
+    name = models.CharField(max_length=100)
+    app_label = models.CharField(max_length=100)
+    model = models.CharField(max_length=100)
+
+    class Meta:
+        managed = False
+        db_table = 'django_content_type'
+        unique_together = (('app_label', 'model'),)
+
+
+class DjangoMigrations(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    app = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    applied = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'django_migrations'
 
 
 class EducationDetail(models.Model):
@@ -307,6 +330,26 @@ class Language(models.Model):
     class Meta:
         managed = False
         db_table = 'language'
+
+
+class LanguageDetail(models.Model):
+    language = models.ForeignKey(Language, models.DO_NOTHING, db_column='language', blank=True, null=True)
+    section = models.ForeignKey('Section', models.DO_NOTHING, blank=True, null=True)
+    user = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'language_detail'
+
+
+class Laptops(models.Model):
+    brand = models.TextField(blank=True, null=True)
+    model = models.TextField(blank=True, null=True)
+    price = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'laptops'
 
 
 class LastViewedProduct(models.Model):
@@ -375,8 +418,8 @@ class NotificationSetting(models.Model):
 class Order(models.Model):
     id = models.UUIDField(primary_key=True)
     customer = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
-    vat = models.DecimalField(db_column='VAT', max_digits=8, decimal_places=2)  # Field name made lowercase.
-    discount = models.DecimalField(max_digits=8, decimal_places=2)
+    vat = models.DecimalField(db_column='VAT', max_digits=10, decimal_places=2)  # Field name made lowercase.
+    discount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.TextField()  # This field type is a guess.
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
@@ -392,9 +435,9 @@ class OrderItem(models.Model):
     product = models.ForeignKey('Product', models.DO_NOTHING, blank=True, null=True)
     customer = models.ForeignKey('User', models.DO_NOTHING, blank=True, null=True)
     merchant = models.ForeignKey('User', models.DO_NOTHING, related_name='orderitem_merchant_set', blank=True, null=True)
-    order_price = models.DecimalField(max_digits=8, decimal_places=2)
-    order_vat = models.DecimalField(db_column='order_VAT', max_digits=8, decimal_places=2)  # Field name made lowercase.
-    order_discount = models.DecimalField(max_digits=8, decimal_places=2)
+    order_price = models.DecimalField(max_digits=10, decimal_places=2)
+    order_vat = models.DecimalField(db_column='order_VAT', max_digits=10, decimal_places=2)  # Field name made lowercase.
+    order_discount = models.DecimalField(max_digits=10, decimal_places=2)
     promo = models.ForeignKey('Promotion', models.DO_NOTHING, blank=True, null=True)
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
@@ -407,6 +450,16 @@ class OrderItem(models.Model):
         db_table = 'order_item'
 
 
+class PasswordResetTokens(models.Model):
+    token = models.CharField(max_length=255)
+    userid = models.UUIDField(db_column='userId')  # Field name made lowercase.
+    expiresat = models.DateTimeField(db_column='expiresAt')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'password_reset_tokens'
+
+
 class Permission(models.Model):
     name = models.CharField(max_length=225, blank=True, null=True)
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
@@ -414,6 +467,14 @@ class Permission(models.Model):
     class Meta:
         managed = False
         db_table = 'permission'
+
+
+class Permissions(models.Model):
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        managed = False
+        db_table = 'permissions'
 
 
 class PortfolioDetail(models.Model):
@@ -454,6 +515,7 @@ class Product(models.Model):
     currency = models.CharField(max_length=10)
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
     updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
+    sub_category = models.ForeignKey('ProductSubCategory', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -844,26 +906,9 @@ class Transaction(models.Model):
         db_table = 'transaction'
 
 
-class Transactions(models.Model):
-    id = models.UUIDField(primary_key=True)
-    amount = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
-    status = models.TextField(blank=True, null=True)  # This field type is a guess.
-    order_id = models.UUIDField(blank=True, null=True)
-    currency = models.CharField(max_length=255, blank=True, null=True)
-    provider_ref = models.CharField(max_length=255, blank=True, null=True)
-    in_app_ref = models.CharField(max_length=255, blank=True, null=True)
-    provider = models.CharField(max_length=255, blank=True, null=True)
-    createdat = models.DateTimeField(db_column='createdAt')  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt')  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'transactions'
-
-
 class User(models.Model):
     id = models.UUIDField(primary_key=True)
-    username = models.CharField(max_length=255)
+    username = models.CharField(max_length=255, blank=True, null=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
@@ -878,8 +923,12 @@ class User(models.Model):
     country = models.CharField(max_length=255, blank=True, null=True)
     profile_pic = models.TextField(blank=True, null=True)
     profile_cover_photo = models.TextField(blank=True, null=True)
-    refresh_token = models.CharField(max_length=255, blank=True, null=True)
     createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
+    last_login = models.DateTimeField(blank=True, null=True)
+    refresh_token = models.TextField(blank=True, null=True)
+    is_seller = models.BooleanField(blank=True, null=True)
+    slug = models.CharField(max_length=255, blank=True, null=True)
+    two_fa_code = models.CharField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -914,9 +963,9 @@ class UserAssessment(models.Model):
 class UserBadge(models.Model):
     user = models.ForeignKey(User, models.DO_NOTHING, blank=True, null=True)
     badge = models.ForeignKey(SkillBadge, models.DO_NOTHING, blank=True, null=True)
-    createdat = models.DateTimeField(db_column='createdAt', blank=True, null=True)  # Field name made lowercase.
-    updatedat = models.DateTimeField(db_column='updatedAt', blank=True, null=True)  # Field name made lowercase.
     user_assessment = models.ForeignKey(UserAssessment, models.DO_NOTHING, blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
