@@ -153,7 +153,7 @@ class catProducts(APIView):
                     'data': None
                 }, status=status.HTTP_404_NOT_FOUND)
 
-            # Get su   bcategories related to the category
+            # Get subcategories related to the category
             subCat_obj = ProductSubCategory.objects.filter(parent_category=category_obj)
             subCat_serializer = ProductsubCatSerializer(subCat_obj, many=True).data
 
@@ -195,6 +195,4 @@ class catProducts(APIView):
                 'message': f"An error occured {e}"
             }
             )
-
-
 

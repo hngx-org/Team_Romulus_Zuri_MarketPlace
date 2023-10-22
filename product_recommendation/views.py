@@ -107,8 +107,7 @@ class SimilarProductRecommendationView(APIView):
         similar_products = Product.objects.filter(
             category=current_product.category,
             is_deleted=False,
-            admin_status='approved',  # Filter by admin_status = 'approved'
-            restricted='no',  # Filter by restricted = 'no'
+            admin_status='approved',  # Filter by admin_status = 'approved' # Filter by restricted = 'no'
             shop__is_deleted=False,  # Filter by active shop, assuming 'shop' is a ForeignKey field
             shop__is_active=True  # Filter by active shop
         ).exclude(id=product_id)
