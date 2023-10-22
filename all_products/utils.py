@@ -6,3 +6,6 @@ def admin_status_approved(queryset):
 
 def admin_approved_shop(queryset):
 	return queryset.filter(shop__admin_status='approved')
+
+def shop_not_deleted(queryset):
+	return queryset.filter(shop__is_deleted='active')
