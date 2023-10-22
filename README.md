@@ -4,9 +4,11 @@
 
 Zuri MarketPlace API 
 
-Live link is at [Live](https://coral-app-8bk8j.ondigitalocean.app/api/marketplace/v1/)
+Live link is at https://coral-app-8bk8j.ondigitalocean.app/api/
 
-Doc link at [Swagger DOCs](https://coral-app-8bk8j.ondigitalocean.app/api/marketplace/v1/docs/)
+Doc link at [https://coral-app-8bk8j.ondigitalocean.app/docs/](https://coral-app-8bk8j.ondigitalocean.app/docs/)
+
+Markdown docs at [DOCUMENTATION.md](Documentation.md)
 
 ## Installation Instructions
 
