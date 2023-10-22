@@ -119,7 +119,7 @@ class SimilarProductRecommendationView(APIView):
             "status_code": 200,
             "message": "Here are similar products",
             "data": {
-                "similar_products": serializer.data,
+                "similar_products": serializer.data
             },
             "status": "success",
         }
