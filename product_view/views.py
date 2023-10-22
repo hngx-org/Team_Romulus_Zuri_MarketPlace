@@ -7,7 +7,6 @@ from MarketPlace.models import Product
 from all_products.serializers import AllProductSerializer as ProductSerializer
 
 
-
 class SortProducts(APIView):
     def get(self, request, sorting_option):
         """
