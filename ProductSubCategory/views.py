@@ -20,22 +20,20 @@ class GetImages(ListAPIView):
     serializer_class = ProductImageSerializer
 
     def get_queryset(self):
-        product_id = self.kwargs.get('productId')  # Use get() method to avoid KeyError
-        if product_id:
-            try:
-                return ProductImage.objects.filter(product_id=product_id)
-            except ProductImage.DoesNotExist:
-                return Response(
-                    {
-                        "status_code": 404,
-                        "error": True,
-                        "message": "ProductImage does not exist"
-                        },
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-        else:
+        if not (product_id := self.kwargs.get('productId')):
             # Return all images when productId is not provided in the URL
             return ProductImage.objects.all()
+        try:
+            return ProductImage.objects.filter(product_id=product_id)
+        except ProductImage.DoesNotExist:
+            return Response(
+                {
+                    "status_code": 404,
+                    "error": True,
+                    "message": "ProductImage does not exist"
+                    },
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
 
 
@@ -76,7 +74,7 @@ class GetProductsSubCategory(APIView):
 
             try:
                 ProductSubCategory.objects.filter(name=subcategory, parent_category=category_obj)
-                prod = Product.objects.filter(category=category_obj, is_deleted='active')
+                prod = Product.objects.filter(category=category_obj, is_deleted='active', admin_status='approved', is_published=True)
                 
             except ProductSubCategory.DoesNotExist:
                 return Response({
@@ -92,16 +90,6 @@ class GetProductsSubCategory(APIView):
                     }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
-            # Get products belonging to the provided subcategory
-            # try:
-            #     prod = Product.objects.filter(category=category_obj, is_deleted='active')
-            #     #subCatProducts = Product.objects.filter(condition)
-
-            # except Exception as e:
-            #     return Response({"error": e}, status=status.HTTP_501_NOT_IMPLEMENTED)
-
-
             if not prod.exists():
                 return Response({
                     "status": 200,
@@ -110,11 +98,28 @@ class GetProductsSubCategory(APIView):
                     "data": []
                     }, status=status.HTTP_200_OK)
 
-            serialized = ProductSerializer(prod,  many=True).data
+            page = request.GET.get('page', 1)
+            items_per_page = request.GET.get('itemsPerPage', 5)
+            offset = (int(page) - 1) * int(items_per_page)
+
+            paginator = Paginator(prod, items_per_page)
+            try:
+                products = paginator.page(page)
+            except PageNotAnInteger:
+                products = paginator.page(1)
+            except EmptyPage:
+                products = paginator.page(paginator.num_pages)
+
+            serialized = ProductSerializer(products,  many=True).data
+            
             response = {
                 "status": 200,
                 "success": True,
                 "message": f"Products of {subcategory} returned",
+                "page_number": int(page),
+                "items_per_page": int(items_per_page),
+                "total_products": paginator.count,
+                "total_pages": paginator.num_pages,
                 "data": serialized
             }
             return Response(response, status=status.HTTP_200_OK)
@@ -153,17 +158,12 @@ class catProducts(APIView):
                     'data': None
                 }, status=status.HTTP_404_NOT_FOUND)
 
-            # Get su   bcategories related to the category
+            # Get subcategories related to the category
             subCat_obj = ProductSubCategory.objects.filter(parent_category=category_obj)
             subCat_serializer = ProductsubCatSerializer(subCat_obj, many=True).data
 
             # Loop through subcategories
             for subcategory in subCat_serializer:
-                subcategoryData = {
-                    'name': subcategory['name'],
-                    'products': []
-                }
-
                 # Filter products based on the category, will need to change ths to subcategory, once it is in the model
                 products = Product.objects.filter(
                     category=category_obj,
@@ -176,7 +176,10 @@ class catProducts(APIView):
                 # Serialize the filtered products
                 products_serializer = ProductSerializer(products, many=True).data
 
-                subcategoryData['products'] = products_serializer
+                subcategoryData = {
+                    'name': subcategory['name'],
+                    'products': products_serializer,
+                }
                 categoryResponse.append(subcategoryData)
 
             response = {
@@ -195,6 +198,4 @@ class catProducts(APIView):
                 'message': f"An error occured {e}"
             }
             )
-
-
 
