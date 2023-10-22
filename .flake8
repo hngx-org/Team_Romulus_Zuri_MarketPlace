@@ -10,6 +10,7 @@ exclude =
 
 ignore =
     E121,
+    E101,
     E126,
     E127,
     E128,

@@ -1,3 +1,4 @@
+"""
 from django.http import Http404, JsonResponse
 from rest_framework.response import Response
 
@@ -23,5 +24,7 @@ def handle_500(request):
     return JsonResponse({
         "status": 500,
         "success": False,
-        "message": f"There is an intenal server error: "
+        "message": f"There is an internal server error: "
         })
+
+"""
