@@ -4,7 +4,12 @@ from .serializers import AllProductSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
-from .utils import is_deleted_active
+from .utils import (
+	is_deleted_active,
+	admin_status_approved,
+	admin_approved_shop,
+	shop_not_deleted
+)
 from rest_framework.pagination import PageNumberPagination
 
 
@@ -18,6 +23,9 @@ class ProductListAPIView(ListAPIView):
 	def list(self, request):
 		queryset = Product.objects.all().order_by('-updatedat')
 		queryset = is_deleted_active(queryset)
+		queryset = admin_status_approved(queryset)
+		queryset = admin_approved_shop(queryset)
+		queryset = shop_not_deleted(queryset)
 		paginator = PageNumberPagination()
 		paginator.page_size = 10
 		result = paginator.paginate_queryset(queryset, request)
