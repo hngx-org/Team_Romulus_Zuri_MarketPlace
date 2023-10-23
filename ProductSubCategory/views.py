@@ -69,12 +69,13 @@ class GetProductsSubCategory(APIView):
                 return Response({
                     "status": 500,
                     "success": False,
-                    "message": e
+                    "message": f'An unexpected error occured: {str(e)}'
                     }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             try:
-                ProductSubCategory.objects.filter(name=subcategory, parent_category=category_obj)
-                prod = Product.objects.filter(category=category_obj, is_deleted='active', admin_status='approved', is_published=True)
+                subcategory_obj = ProductSubCategory.objects.get(name=subcategory, parent_category=category_obj)
+                # Get products
+                prod = Product.objects.filter(category=category_obj, sub_category=subcategory_obj, is_deleted='active', admin_status='approved', is_published=True)
                 
             except ProductSubCategory.DoesNotExist:
                 return Response({
@@ -86,7 +87,7 @@ class GetProductsSubCategory(APIView):
                 return Response({
                     "status": 500,
                     "success": False,
-                    "message": e
+                    "message": f'An unexpected error occured: {str(e)}'
                     }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -128,7 +129,7 @@ class GetProductsSubCategory(APIView):
             return Response({
                 "status": 500,
                 "success": False,
-                "message": f'Server Malfunction: {e}'
+                "message": f'Server Malfunction: {str(e)}'
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -167,7 +168,7 @@ class catProducts(APIView):
                 # Filter products based on the category, will need to change ths to subcategory, once it is in the model
                 products = Product.objects.filter(
                     category=category_obj,
-                    #subcategory=subcategory['id'],  # Adjust this filter once you have subcategory support
+                    sub_category=subcategory['id'],  # Adjust this filter once you have subcategory support
                     is_deleted='active',
                     admin_status='approved',
                     is_published=True

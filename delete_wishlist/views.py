@@ -46,9 +46,30 @@ class DeleteWishlistItem(APIView):
                 'status_code': 404
                 }, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            print(e)
             return Response({
                 'error': 'Internal Server Error',
                 'success': True,
-                'status_code': 500
+                'status_code': 500,
+                'message': f'{str(e)}'
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class DelAll(APIView):
+    '''Deletes all wishlist of a user'''
+    def deleteAll(self, request, user):
+        '''deletes all wishlist items at a click'''
+        try:
+            products = Wishlist.objects.filter(user=user)
+            products.delete()
+            response = {
+                    'status': 201,
+                    'success': True,
+                    'message': 'All wishlist product deleted'
+                    }
+            return Response(response, status=status_HTTP_200_OK)
+        except Exception as e:
+            response = {
+                    'status': 500,
+                    'success': False,
+                    'message': f'An error occurred {str(e)}'
+                    }
+            return Response(response, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
