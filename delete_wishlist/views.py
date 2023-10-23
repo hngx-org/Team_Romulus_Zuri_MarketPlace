@@ -64,7 +64,7 @@ class DelAll(APIView):
                     'success': True,
                     'message': 'All wishlist product deleted'
                     }
-            return Response(response, status=status_HTTP_200_OK)
+            return Response(response, status=status.HTTP_200_OK)
         except Exception as e:
             response = {
                     'status': 500,
